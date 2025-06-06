@@ -75,6 +75,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private UserDetails getUserDetails(Claims claims) {
         String subject = (String) claims.get(Claims.SUBJECT);
         String[] array = subject.split(",");
+        getUserId(array);
 
         Long userId = Long.valueOf(array[0]);
         String username = array[1];
@@ -94,6 +95,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         return new CustomUserDetails(user);
     }
 
+    public Long getUserId(String[] array){
+        return Long.valueOf(array[0]);
+    }
+
     private String getBearerToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         String[] array = header.split(" ");
@@ -111,4 +116,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         return true;
     }
+
 }
