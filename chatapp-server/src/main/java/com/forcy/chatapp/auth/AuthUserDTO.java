@@ -1,6 +1,5 @@
 package com.forcy.chatapp.auth;
 
-import com.forcy.chatapp.entity.Role;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -14,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class UserDTO {
+public class AuthUserDTO {
 
     private Long id;
     @Length(min = 5, max = 128, message = "Username must be between 5 - 128")

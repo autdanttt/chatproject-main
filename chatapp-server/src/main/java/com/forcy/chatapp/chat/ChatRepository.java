@@ -23,4 +23,16 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
     Optional<Chat> findChatByTwoUserIds(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
 
 
+    @Query("""
+        SELECT c FROM Chat c
+        JOIN c.users u
+        WHERE u.id = :userId
+""")
+    public List<Chat> findByUserId(Long userId);
+
+    @Query("""
+        SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END
+        FROM Chat c JOIN c.users u WHERE c.id = :chatId AND u.id = :userId
+""")
+    boolean existsByIdAndUserId(Long chatId, Long userId);
 }

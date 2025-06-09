@@ -1,58 +1,64 @@
 package com.forcy.chatapp.chat;
 
+import com.forcy.chatapp.entity.Chat;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
+@RequestMapping("/chats")
 public class ChatController {
-    private final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private ChatService chatService;
 
-    @Autowired
-    private MessageRepository messageRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
-    @MessageMapping("/ready")
-    public void handleReadyMessage(@Payload ChatMessage chatMessage) { // Sử dụng Principal nếu cần xác thực
-        String username = chatMessage.getSender(); // Hoặc dùng Principal nếu cấu hình
-        logger.info("Received READY message from user: {}", username);
+    private MessageService messageService;
 
+    public ChatController(ChatService chatService, UserRepository userRepository, MessageService messageService) {
+        this.chatService = chatService;
+        this.userRepository = userRepository;
+        this.messageService = messageService;
+    }
+
+    @GetMapping
+    public List<ChatResponse> getChats(@RequestHeader("Authorization") String token) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
 
-        List<Message> undeliveredMessages = messageRepository.findUndeliveredMessagesForUser(user.getId());
-        logger.info("Found {} undelivered messages for user: {}", undeliveredMessages.size(), username);
+        return chatService.getListChat(user.getId());
 
-        for (Message message : undeliveredMessages) {
-            try {
-                MessageResponse response = MessageMapper.toResponse(message, user.getId());
-                messagingTemplate.convertAndSendToUser(username, "/queue/messages", response);
-                logger.info("Sent undelivered message to user {}: {}", username, response.getContent());
-
-                message.setDeliveredAt(LocalDateTime.now());
-                messageRepository.save(message);
-                logger.info("Updated deliveredAt for message ID: {}", message.getId());
-            } catch (Exception e) {
-                logger.error("Failed to send message to user {}: {}", username, e.getMessage(), e);
-            }
-        }
     }
 
+
+
+    @GetMapping("/{chatId}/messages")
+    public ResponseEntity<?> getChatMessages(@PathVariable Long chatId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        if(!chatService.isUserInChat(chatId, user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<Message> messages = messageService.findMessagesByChatId(chatId);
+        List<MessageResponse> responses = messages.stream().map(message ->
+                MessageMapper.toResponse(message, user.getId())).toList();
+
+        return ResponseEntity.ok(responses);
+
+    }
 
 }

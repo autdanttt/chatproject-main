@@ -42,4 +42,15 @@ public class MessageRepositoryTests {
 
     }
 
+
+    @Test
+    public void testFindLastMessageUndeliveredByUserId(){
+
+        Message list = messageRepository.findTopByChatIdOrderBySentAtDesc(2L);
+        System.out.println("Message: " + list.getContent() + list.getSentAt());
+
+        assertThat(list).isNotNull();
+
+     }
+
 }

@@ -62,5 +62,18 @@ public class ChatRepositoryTests {
         assertThat(chatBetweenUsers.get().getId()).isEqualTo(3);
     }
 
+    @Test
+    public void testFindMessageByUserId() {
+
+        User user1 = entityManager.find(User.class, 5L);
+
+        List<Chat> list = chatRepository.findByUserId(user1.getId());
+
+        for (Chat chat : list) {
+            System.out.println("Chat: " + chat);
+        }
+        assertThat(list.size()).isGreaterThan(0);
+    }
+
 
 }

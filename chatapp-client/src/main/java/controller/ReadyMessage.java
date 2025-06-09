@@ -1,7 +1,8 @@
+package controller;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ReadyMessage {
-
     @JsonProperty("sender")
     private String sender;
 

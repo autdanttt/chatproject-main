@@ -24,18 +24,18 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/oauth")
 public class AuthController{
 
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    TokenService tokenService;
-    @Autowired
-    UserService userService;
-    private ModelMapper mapper;
 
-    public AuthController(ModelMapper mapper) {
+    AuthenticationManager authenticationManager;
+    TokenService tokenService;
+    UserService userService;
+    ModelMapper mapper;
+
+    public AuthController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService, ModelMapper mapper) {
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.userService = userService;
         this.mapper = mapper;
     }
-
 
     @PostMapping("/token")
     public ResponseEntity<?> getAccessToken(@RequestBody @Valid AuthRequest request){
@@ -77,7 +77,7 @@ public class AuthController{
 
             User user = userService.getByUsername(username);
 
-            UserDTO loginDTO = entity2DTO(user);
+            AuthUserDTO loginDTO = entity2DTO(user);
             AuthResponse response = tokenService.generateToken(userDetails.getUser());
             HttpHeaders jwtHeader = new HttpHeaders();
             jwtHeader.add("Jwt-Token", response.getAccessToken());
@@ -89,7 +89,7 @@ public class AuthController{
         }
 
     }
-    private UserDTO entity2DTO(User user){
-        return mapper.map(user, UserDTO.class);
+    private AuthUserDTO entity2DTO(User user){
+        return mapper.map(user, AuthUserDTO.class);
     }
 }

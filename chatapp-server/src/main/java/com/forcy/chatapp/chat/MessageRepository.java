@@ -21,4 +21,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         ) AND m.deliveredAt IS NULL AND m.user.id != :toUserId
 """)
     public List<Message> findUndeliveredMessagesForUser(@Param("toUserId") Long toUserId);
+
+    public Message findTopByChatIdOrderBySentAtDesc(Long chatId);
+
+
+    public List<Message> findByChatId(Long chatId);
+
+
+
 }

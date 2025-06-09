@@ -7,6 +7,7 @@ import com.forcy.chatapp.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,18 +28,15 @@ public class MessageService {
 
     private MessageProducer messageProducer;
 
-    private InMemorySessionManager sessionManager;
+    private ChatWebSocketHandler chatWebSocketHandler;
 
-    private SimpMessagingTemplate messagingTemplate;
-
-    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer, InMemorySessionManager sessionManager, SimpMessagingTemplate messagingTemplate) {
+    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer,@Lazy ChatWebSocketHandler chatWebSocketHandler) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.messageProducer = messageProducer;
-        this.sessionManager = sessionManager;
+        this.chatWebSocketHandler = chatWebSocketHandler;
 
-        this.messagingTemplate = messagingTemplate;
     }
 
 
@@ -72,27 +70,25 @@ public class MessageService {
         messageProducer.send(MessageMapper.toResponse(message,toUser.getId()));
 
         logger.info("🚀 [storeMessage] Gửi message tới Kafka topic cho userId={}", toUserId);
+
+//        ChatResponse chatResponse = new ChatResponse();
+//        chatResponse.setChatId(chat.getId());
+//        chatResponse.setOtherUsername(toUser.getUsername());
+//        chatResponse.setLastMessage(message.getContent());
+//        chatResponse.setLastMessageTime(message.getSentAt());
+//
+//        try {
+//            if (chatWebSocketHandler.isOnline(fromUser.getUsername())) {
+//                chatWebSocketHandler.sendMessageToUser(fromUser.getUsername(), chatResponse);
+//            }
+//        } catch (Exception e) {
+//            logger.error("Failed to send ChatResponse to UserA: {}", e.getMessage());
+//        }
     }
 
-    public void deliverMessage(MessageResponse messageResponse) {
-        logger.info("📥 [deliverMessage] Nhận message từ Kafka: {}", messageResponse);
 
-        User toUser = userRepository.findById(messageResponse.getToUserId()).orElseThrow();
-        String sessionId = sessionManager.getSessionId(toUser.getUsername());
-        logger.info("Delivering message to user: " + toUser.getUsername());
-        logger.info("Session ID found: " + sessionId);
-        if(sessionId != null){
-            messagingTemplate.convertAndSendToUser(toUser.getUsername(),"/queue/messages", messageResponse);
-            logger.info("Message sent to WebSocket for user: " + toUser.getUsername());
-
-            Message message = messageRepository.findById(messageResponse.getMessageId()).orElseThrow(()->new RuntimeException("Message not found"));
-            if(message.getDeliveredAt() == null){
-                message.setDeliveredAt(LocalDateTime.now());
-                messageRepository.save(message);
-                logger.info("Message delivery time updated for message ID: {}" ,message.getId());
-            }
-        }else {
-            logger.info("User {} is offline, cannot deliver message now.", toUser.getUsername());
-        }
+    public List<Message> findMessagesByChatId(Long chatId) {
+        return messageRepository.findByChatId(chatId);
     }
+
 }

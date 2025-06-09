@@ -11,5 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDTO {
     private String name;
-
 }
