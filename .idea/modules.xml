@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/chat-project.iml" filepath="$PROJECT_DIR$/.idea/chat-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/chatapp-client/chatapp-client.iml" filepath="$PROJECT_DIR$/chatapp-client/chatapp-client.iml" />
     </modules>
   </component>
 </project>

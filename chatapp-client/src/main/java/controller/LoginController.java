@@ -83,7 +83,7 @@ public class LoginController {
 
                 logger.info("Login successful for username: {}", loggedInUsername);
                 view.getFrame().setVisible(true);
-                chatView = new ChatView(loggedInUsername);
+                chatView = new ChatView(loggedInUsername, chatController);
                 view.getFrame().dispose();
 
                 chatController = new ChatController(chatView,loggedUserId, loggedInUsername,jwtToken);

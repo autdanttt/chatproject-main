@@ -1,5 +1,5 @@
 package model;
 
 public enum MessageType {
-    TEXT
+    TEXT, MIXED, EMOJI
 }

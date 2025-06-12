@@ -18,9 +18,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import utility.EmojiConverter;
 import view.ChatView;
 
 import javax.swing.*;
+import java.io.File;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,6 +32,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class ChatController{
     private final static String url = "ws://localhost:10000/chat";
@@ -49,6 +52,7 @@ public class ChatController{
         this.userId = userId;
         this.username = username;
         this.jwtToken = jwtToken;
+        view.setEmojiSelectedListener(this::sendEmoji);
         initializeListeners();
         setupWebSocket();
         loadChats();
@@ -90,8 +94,13 @@ public class ChatController{
                         if (message != null && currentChatId != null && message.getChatId() != null && message.getChatId().equals(currentChatId)) {
                             String display = "[" + message.getFromUserId() + "]: " + message.getContent();
                             logger.info("Received message for chat {}: {}", currentChatId, display);
-                            SwingUtilities.invokeLater(() -> view.addMessage(message.getContent(), message.getFromUserId(), message.getFromUserId().equals(userId),
-                                    message.getSentAt() != null ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A"));
+
+                            String content = message.getContent();
+
+                            MessageType messageType = message.getMessageType().equals("TEXT") ? MessageType.TEXT : MessageType.EMOJI;
+
+                            SwingUtilities.invokeLater(() -> view.addMessage(content, message.getFromUserId(), message.getFromUserId().equals(userId),
+                                    message.getSentAt() != null ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A",messageType));
                         } else {
                             logger.warn("Received null or irrelevant message for chatId: {}", currentChatId);
                         }
@@ -223,7 +232,9 @@ public class ChatController{
                         String time = message.getSentAt() != null
                                 ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm"))
                                 : LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
-                        view.addMessage(message.getContent(), message.getFromUserId(), isSentByMe, time);
+
+                        MessageType messageType = message.getMessageType().equals("TEXT") ? MessageType.TEXT : MessageType.EMOJI;
+                        view.addMessage(message.getContent(), message.getFromUserId(), isSentByMe, time, messageType);
                     } catch (Exception e) {
                         logger.error("Error processing message " + i + ": " + e.getMessage());
                     }
@@ -258,12 +269,12 @@ public class ChatController{
                     JOptionPane.showMessageDialog(view.getFrame(), "Cannot determine recipient for chatId: " + currentChatId);
                     return;
                 }
-
                 MessageRequest messageRequest = new MessageRequest();
                 messageRequest.setFromUserId(userId);
                 messageRequest.setToUserId(toUserId);
                 messageRequest.setMessageType(MessageType.TEXT);
                 messageRequest.setContent(messageContent);
+                messageRequest.setMessageType(MessageType.TEXT);
 
                 ObjectMapper objectMapper = new ObjectMapper();
 //                String json = objectMapper.writeValueAsString(messageRequest);
@@ -283,8 +294,9 @@ public class ChatController{
                 logger.info("Sent message: " + json);
                 logger.info("Response: " + response);
 
+
                 SwingUtilities.invokeLater(()->{
-                    view.addMessage(messageContent, userId, true, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+                    view.addMessage(messageContent, userId, true, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")), MessageType.TEXT);
                     view.getMessageInput().setText("");
                 });
             }catch (Exception e){
@@ -325,5 +337,56 @@ public class ChatController{
 
     public String getUsername() {
         return username;
+    }
+
+
+    public void sendEmoji(File file) {
+
+
+        if( currentChatId != null && stompSession != null && userId != null) {
+            try{
+                Long toUserId = getOtherUserId(currentChatId);
+                if(toUserId == null) {
+                    JOptionPane.showMessageDialog(view.getFrame(), "Cannot determine recipient for chatId: " + currentChatId);
+                    return;
+                }
+                MessageRequest messageRequest = new MessageRequest();
+                messageRequest.setFromUserId(userId);
+                messageRequest.setToUserId(toUserId);
+                messageRequest.setMessageType(MessageType.EMOJI);
+
+                String messageContent = file.getName();
+                messageRequest.setContent(messageContent);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+//                String json = objectMapper.writeValueAsString(messageRequest);
+                String url = "http://localhost:10000/messages";
+//                stompSession.send(url, json.getBytes());
+//                logger.info("Sent message: " + json);
+                RestTemplate restTemplate = new RestTemplate();
+                String json = objectMapper.writeValueAsString(messageRequest);
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.set("Authorization", "Bearer " + jwtToken);
+                HttpEntity<String> entity = new HttpEntity<>(json, headers);
+
+                String response = restTemplate.postForObject(url, entity, String.class);
+
+                // Ghi log nếu cần
+                logger.info("Sent message: " + json);
+                logger.info("Response: " + response);
+
+
+                SwingUtilities.invokeLater(()->{
+                    view.addMessage(messageContent, userId, true, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")), MessageType.EMOJI);
+
+                });
+            }catch (Exception e){
+                logger.error("Error sending message: " + e.getMessage());
+                JOptionPane.showMessageDialog(view.getFrame(), "Error sending message: " + e.getMessage());
+            }
+        }else {
+            JOptionPane.showMessageDialog(view.getFrame(), "Please select a chat or enter a valid message.");
+        }
     }
 }
