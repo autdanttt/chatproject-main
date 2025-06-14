@@ -1,17 +1,16 @@
-package com.forcy.chatapp.chat;
+package com.forcy.chatapp.message;
 
+import com.forcy.chatapp.chat.*;
 import com.forcy.chatapp.entity.Chat;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.repository.UserRepository;
+import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service

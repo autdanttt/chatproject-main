@@ -3,9 +3,9 @@ package com.forcy.chatapp.chat;
 import com.forcy.chatapp.entity.Chat;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.repository.UserRepository;
+import com.forcy.chatapp.message.MessageRepository;
+import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,6 @@
-package com.forcy.chatapp.service;
+package com.forcy.chatapp.user;
 
 import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

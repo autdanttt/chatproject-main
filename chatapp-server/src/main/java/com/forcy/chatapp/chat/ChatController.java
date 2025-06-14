@@ -1,11 +1,13 @@
 package com.forcy.chatapp.chat;
 
-import com.forcy.chatapp.entity.Chat;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.repository.UserRepository;
+import com.forcy.chatapp.message.MessageMapper;
+import com.forcy.chatapp.message.MessageResponse;
+import com.forcy.chatapp.message.MessageService;
+import com.forcy.chatapp.user.UserNotFoundException;
+import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,7 +41,6 @@ public class ChatController {
         return chatService.getListChat(user.getId());
 
     }
-
 
 
     @GetMapping("/{chatId}/messages")

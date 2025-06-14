@@ -1,4 +1,4 @@
-package com.forcy.chatapp.chat;
+package com.forcy.chatapp.message;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

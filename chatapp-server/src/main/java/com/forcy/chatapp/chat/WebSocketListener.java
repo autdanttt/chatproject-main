@@ -1,29 +1,22 @@
 package com.forcy.chatapp.chat;
 
-import com.forcy.chatapp.entity.Message;
-import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.repository.UserRepository;
-import com.forcy.chatapp.security.jwt.JwtTokenFilter;
-import jakarta.persistence.EntityNotFoundException;
+import com.forcy.chatapp.security.InMemorySessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class WebSocketListener {
 
-    private Logger logger = LoggerFactory.getLogger(WebSocketListener.class);
+    private final Logger logger = LoggerFactory.getLogger(WebSocketListener.class);
 
     @Autowired private InMemorySessionManager sessionManager;
 

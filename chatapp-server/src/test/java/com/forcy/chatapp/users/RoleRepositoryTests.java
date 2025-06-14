@@ -1,7 +1,7 @@
 package com.forcy.chatapp.users;
 
 import com.forcy.chatapp.entity.Role;
-import com.forcy.chatapp.repository.RoleRepository;
+import com.forcy.chatapp.user.RoleRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

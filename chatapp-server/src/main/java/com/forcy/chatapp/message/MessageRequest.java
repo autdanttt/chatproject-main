@@ -1,4 +1,4 @@
-package com.forcy.chatapp.chat;
+package com.forcy.chatapp.message;
 
 import com.forcy.chatapp.entity.MessageType;
 import lombok.AllArgsConstructor;

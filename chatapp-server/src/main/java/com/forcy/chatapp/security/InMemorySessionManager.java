@@ -1,4 +1,4 @@
-package com.forcy.chatapp.chat;
+package com.forcy.chatapp.security;
 
 import org.springframework.stereotype.Component;
 

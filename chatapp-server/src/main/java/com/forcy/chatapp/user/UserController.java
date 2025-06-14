@@ -1,9 +1,6 @@
-package com.forcy.chatapp.controller;
+package com.forcy.chatapp.user;
 
-import com.forcy.chatapp.dto.UserDTO;
 import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.service.UserService;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

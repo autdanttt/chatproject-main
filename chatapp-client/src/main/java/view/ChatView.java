@@ -3,24 +3,14 @@ package view;
 import controller.ChatController;
 import model.ChatItem;
 import model.MessageType;
-import utility.EmojiUtil;
 
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +20,7 @@ public class ChatView {
     private JFrame frame;
     private JTextField searchInput ;
     private JTextPane messageInput;
-    private JButton searchButton, sendButton, emojiButton, attachButton;
+    private JButton searchButton, sendButton, emojiButton, attachButton, callButton, testLocalVideoButton;
     private JList<ChatItem> chatList;
     private DefaultListModel<ChatItem> chatListModel;
     private JPanel chatPanel;
@@ -38,9 +28,9 @@ public class ChatView {
     private ChatController chatController;
     private JPanel messagesPanel;
     private Consumer<File> emojiSelectedListener;
+    private Consumer<File> fileSelectedListener;
 
-    public ChatView(String username, ChatController chatController) {
-        this.chatController = chatController;
+    public ChatView(String username) {
 
         frame = new JFrame("Zola");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,6 +86,10 @@ public class ChatView {
 
         attachButton = new JButton("📎");
 
+        callButton = new JButton("Call");
+
+        testLocalVideoButton = new JButton("Test");
+
 
         JPanel inputPanel = new JPanel(new BorderLayout());
         JPanel buttonPanel = new JPanel();
@@ -103,6 +97,12 @@ public class ChatView {
 
         emojiButton.addActionListener(e -> showEmojiPicker());
         buttonPanel.add(attachButton);
+
+        attachButton.addActionListener(e -> showFileChooser());
+        buttonPanel.add(callButton);
+
+        buttonPanel.add(testLocalVideoButton);
+
         inputPanel.add(messageInput, BorderLayout.CENTER);
         inputPanel.add(buttonPanel, BorderLayout.WEST);
         inputPanel.add(sendButton, BorderLayout.EAST);
@@ -114,10 +114,32 @@ public class ChatView {
 
         frame.setVisible(true);
     }
+
+
+    private void showFileChooser() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+        int result = fileChooser.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            if(fileSelectedListener != null) {
+                fileSelectedListener.accept(file);
+            }
+        }
+
+    }
+
     public void setEmojiSelectedListener(Consumer<File> emojiSelectedListener) {
         this.emojiSelectedListener = emojiSelectedListener;
     }
 
+    public void setFileSelectedListener(Consumer<File> fileSelectedListener) {
+        this.fileSelectedListener = fileSelectedListener;
+    }
+
+    public void setChatController(ChatController chatController) {
+        this.chatController = chatController;
+    }
 
     private void showEmojiPicker() {
         JDialog emojiDialog = new JDialog(frame, "Chọn Emoji", true);
@@ -219,6 +241,14 @@ public class ChatView {
         return messagesPanel;
     }
 
+    public JButton getCallButton() {
+        return callButton;
+    }
+
+    public JButton getTestLocalVideoButton() {
+        return testLocalVideoButton;
+    }
+
     public void clearMessages() {
         messagesPanel.removeAll();
         messagesPanel.revalidate();
@@ -226,48 +256,12 @@ public class ChatView {
 
     }
 
-//    public void addMessage(String content, Long fromUserId, boolean isSentByMe, String time, MessageType messageType) {
-//
-//        JPanel messageBubble = new JPanel(new BorderLayout());
-//        messageBubble.setMaximumSize(new Dimension(300, 100));
-//
-//        JEditorPane messagePane = new JEditorPane("text/html", content);
-//
-//
-//        if(messageType.equals(MessageType.TEXT)) {
-//        }else {
-//            messagePane.setEditable(false);
-//            messagePane.setBackground(isSentByMe ? new Color(0, 122, 225) : new Color(230, 230, 230));
-//            messagePane.setForeground(Color.WHITE);
-//            messagePane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
-//            messagePane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-//        }
-//
-//        JLabel timeLabel = new JLabel(time);
-//        timeLabel.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
-//
-//        if(isSentByMe){
-//            messageBubble.add(messagePane, BorderLayout.EAST);
-//        }else {
-//            messageBubble.add(messagePane, BorderLayout.WEST);
-//        }
-//
-//        messageBubble.add(timeLabel, BorderLayout.SOUTH);
-//
-//        messagesPanel.add(messageBubble);
-//        messagesPanel.revalidate();
-//        messagesPanel.repaint();
-//
-//
-//        JScrollPane messageScroll = (JScrollPane) chatPanel.getComponent(0);
-//        JScrollBar vertical = messageScroll.getVerticalScrollBar();
-//        vertical.setValue(vertical.getMaximum());
-//    }
+
 public void addMessage(String content, Long fromUserId, boolean isSentByMe, String time, MessageType messageType) {
     JPanel messageBubble = new JPanel(new BorderLayout());
     messageBubble.setMaximumSize(new Dimension(300, 100));
 
-    JComponent messageComponent;
+    JComponent messageComponent = null;
 
     if (messageType == MessageType.EMOJI) {
         // Emoji path đã được gửi dưới dạng filename như "smile.png"
@@ -285,7 +279,7 @@ public void addMessage(String content, Long fromUserId, boolean isSentByMe, Stri
         } else {
             messageComponent = new JLabel("[Emoji not found: " + content + "]");
         }
-    } else {
+    } else if(messageType == MessageType.TEXT){
         JEditorPane messagePane = new JEditorPane("text/html", content);
         messagePane.setEditable(false);
         messagePane.setBackground(isSentByMe ? new Color(0, 122, 225) : new Color(230, 230, 230));
@@ -293,6 +287,32 @@ public void addMessage(String content, Long fromUserId, boolean isSentByMe, Stri
         messagePane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
         messagePane.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         messageComponent = messagePane;
+    }else if(messageType == MessageType.IMAGE){
+//        try {
+//            ImageIcon originalIcon = chatController.getImageIcon(content); // content là mediaId
+//            Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+//            JLabel imageLabel = new JLabel(new ImageIcon(scaledImage));
+//            imageLabel.setOpaque(true);
+//            imageLabel.setBackground(isSentByMe ? new Color(0, 122, 225) : new Color(230, 230, 230));
+//            imageLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+//            messageComponent = imageLabel;
+//        } catch (IOException e) {
+//            messageComponent = new JLabel("[Image error: " + content + "]");
+//        }
+//
+        File imageFile = new File(new File(System.getProperty("user.dir")).getParent() + "/uploads/" + content);
+        System.out.println("File: " + imageFile.getAbsolutePath());
+        if (imageFile.exists()) {
+            ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
+            Image scaled = icon.getImage().getScaledInstance(100,100 , Image.SCALE_SMOOTH);
+            JLabel imageLabel = new JLabel(new ImageIcon(scaled));
+            imageLabel.setOpaque(true);
+            imageLabel.setBackground(isSentByMe ? new Color(0, 122, 225) : new Color(230, 230, 230));
+            imageLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            messageComponent = imageLabel;
+        } else {
+            messageComponent = new JLabel("[Image not found: " + content + "]");
+        }
     }
 
     JLabel timeLabel = new JLabel(time);

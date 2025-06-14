@@ -1,29 +1,30 @@
 package payload;
 
-public class MyCustomPayload {
-    private String type;
-    private String spd;
+public class CandidatePayload implements WebRTCPayload {
+    private String type = "candidate";
     private IceCandidate candidate;
     private Long toUserId;
 
-
-    public MyCustomPayload() {
+    public CandidatePayload() {
     }
 
+    public CandidatePayload(IceCandidate candidate, Long toUserId) {
+        this.candidate = candidate;
+        this.toUserId = toUserId;
+    }
+
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
+    public Long getToUserId() {
+        return toUserId;
+    }
+
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getSpd() {
-        return spd;
-    }
-
-    public void setSpd(String spd) {
-        this.spd = spd;
     }
 
     public IceCandidate getCandidate() {
@@ -32,10 +33,6 @@ public class MyCustomPayload {
 
     public void setCandidate(IceCandidate candidate) {
         this.candidate = candidate;
-    }
-
-    public Long getToUserId() {
-        return toUserId;
     }
 
     public void setToUserId(Long toUserId) {

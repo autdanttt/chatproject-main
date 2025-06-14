@@ -1,7 +1,6 @@
 package com.forcy.chatapp.message;
 
 
-import com.forcy.chatapp.chat.MessageRepository;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
 import org.junit.jupiter.api.Test;

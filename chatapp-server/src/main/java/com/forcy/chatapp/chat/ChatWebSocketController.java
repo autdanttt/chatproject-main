@@ -2,11 +2,13 @@ package com.forcy.chatapp.chat;
 
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
-import com.forcy.chatapp.repository.UserRepository;
+import com.forcy.chatapp.message.MessageMapper;
+import com.forcy.chatapp.message.MessageRepository;
+import com.forcy.chatapp.message.MessageResponse;
+import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

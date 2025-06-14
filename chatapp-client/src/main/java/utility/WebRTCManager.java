@@ -1,3 +1,5 @@
+package utility;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controller.ChatController;
@@ -19,6 +21,7 @@ import payload.CandidatePayload;
 import payload.IceCandidate;
 import payload.SdpPayload;
 import view.MainVideoFrame;
+import view.VideoPanel;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -32,15 +35,20 @@ public class WebRTCManager {
     private final ChatController chatController;
     private PeerConnectionFactory factory;
     private RTCPeerConnection peerConnection;
-    private MainVideoFrame mainVideoFrame;
+
+    private VideoPanel localPanel;
+    private VideoPanel remotePanel;
 
 
     public WebRTCManager(ChatController chatController) {
         this.chatController = chatController;
     }
+    public void setVideoPanel(VideoPanel localPanel, VideoPanel remotePanel) {
+        this.localPanel = localPanel;
+        this.remotePanel = remotePanel;
+    }
 
     public void initialize(Long toUserId) {
-        mainVideoFrame = new MainVideoFrame();
         try {
             factory = new PeerConnectionFactory();
             if (factory == null) {
@@ -104,7 +112,7 @@ public class WebRTCManager {
                             public void onVideoFrame(VideoFrame frame) {
                                 BufferedImage image = i420ToBufferedImage(frame.buffer);
                                 SwingUtilities.invokeLater(() -> {
-                                    mainVideoFrame.remotePanel.updateImage(image);
+                                    remotePanel.updateImage(image);
                                 });
                             }
                         });
@@ -129,13 +137,21 @@ public class WebRTCManager {
         }
     }
 
-    public void addMediaStream(){
+    public void addMediaStream(int cameraId){
         // Video
         List<VideoDevice> cams = MediaDevices.getVideoCaptureDevices();
+
         if (!cams.isEmpty()) {
+            for (int i = 0; i < cams.size(); i++) {
+                logger.warning("i : " + cams.get(i).toString());
+            }
             VideoDeviceSource videoSource = new VideoDeviceSource();
-            videoSource.setVideoCaptureDevice(cams.get(0));
+            videoSource.setVideoCaptureDevice(cams.get(cameraId));
+            //VIDEO START
+            videoSource.start();
+
             VideoTrack vt = factory.createVideoTrack("video0", (VideoTrackSource) videoSource);
+
             vt.addSink(new VideoTrackSink() {
                 @Override
                 public void onVideoFrame(VideoFrame frame) {
@@ -143,11 +159,12 @@ public class WebRTCManager {
                     VideoFrameBuffer frameBuffer = frame.buffer;
                     BufferedImage img = i420ToBufferedImage(frameBuffer);
                     SwingUtilities.invokeLater(() ->{
-                        mainVideoFrame.localPanel.updateImage(img);
+                        localPanel.updateImage(img);
                     });
                 }
             });
             peerConnection.addTrack(vt, List.of("stream1"));
+            logger.info("Local video track added to PeerConnection");
         }
 
         //Audio
@@ -241,7 +258,7 @@ public class WebRTCManager {
         if(session != null && session.isConnected()){
             String type = sdp.sdpType == RTCSdpType.OFFER ? "offer" : "answer";
 
-            SdpPayload sdpPayload = new SdpPayload(type, sdp.sdp,toUserId);
+            SdpPayload sdpPayload = new SdpPayload(type, sdp.sdp,null, toUserId);
             ObjectMapper objectMapper = new ObjectMapper();
             String payload;
 
@@ -292,47 +309,61 @@ public class WebRTCManager {
     }
 
     public void handleIncomingOffer(RTCSessionDescription sdp, Long fromUserId) {
-        RTCSessionDescription offer = new RTCSessionDescription(RTCSdpType.OFFER, sdp.sdp);
+        SwingUtilities.invokeLater(() -> {
+            MainVideoFrame videoFrame = new MainVideoFrame();
+            videoFrame.setVisible(true);
 
-        peerConnection.setRemoteDescription(offer, new SetSessionDescriptionObserver() {
-            @Override
-            public void onSuccess() {
-                logger.info("Remote offer SDP set successfully");
 
-                peerConnection.createAnswer(new RTCAnswerOptions(), new CreateSessionDescriptionObserver() {
 
-                    @Override
-                    public void onSuccess(RTCSessionDescription description) {
-
-                        peerConnection.setLocalDescription(description, new SetSessionDescriptionObserver() {
-
-                            @Override
-                            public void onSuccess() {
-                                logger.info("Local answer SDP set successfully");
-                                sendSdpToPeer(description, fromUserId);
-                            }
-
-                            @Override
-                            public void onFailure(String error) {
-                                logger.info("Failed to set local answer SDP: {}" + error);
-
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void onFailure(String error) {
-                        logger.info("Failed to create answer SDP: {}" + error);
-
-                    }
-                });
+            if (peerConnection == null) {
+                initialize(fromUserId); // Quan trọng
             }
+            RTCSessionDescription offer = new RTCSessionDescription(RTCSdpType.OFFER, sdp.sdp);
 
-            @Override
-            public void onFailure(String error) {
-                logger.info("Failed to set remote offer SDP: {}" + error);
-            }
+            peerConnection.setRemoteDescription(offer, new SetSessionDescriptionObserver() {
+                @Override
+                public void onSuccess() {
+                    logger.info("Remote offer SDP set successfully");
+
+                    addMediaStream(0);
+                    // 2. Gán panel vào WebRTCManager
+                    setVideoPanel(videoFrame.remotePanel,videoFrame.localPanel);
+                    peerConnection.createAnswer(new RTCAnswerOptions(), new CreateSessionDescriptionObserver() {
+
+                        @Override
+                        public void onSuccess(RTCSessionDescription description) {
+
+
+                            peerConnection.setLocalDescription(description, new SetSessionDescriptionObserver() {
+
+                                @Override
+                                public void onSuccess() {
+                                    logger.info("Local answer SDP set successfully");
+                                    sendSdpToPeer(description, fromUserId);
+                                }
+
+                                @Override
+                                public void onFailure(String error) {
+                                    logger.info("Failed to set local answer SDP: {}" + error);
+
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            logger.info("Failed to create answer SDP: {}" + error);
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    logger.info("Failed to set remote offer SDP: {}" + error);
+                }
+            });
         });
 
     }
@@ -352,6 +383,43 @@ public class WebRTCManager {
             peerConnection = null;
             logger.info("PeerConnection closed");
         }
+    }
+
+    public void testLocalVideoOnly() {
+        try {
+            factory = new PeerConnectionFactory();
+
+            List<VideoDevice> cameras = MediaDevices.getVideoCaptureDevices();
+            if (cameras.isEmpty()) {
+                logger.warning("Không tìm thấy thiết bị camera");
+                return;
+            }
+
+            VideoDeviceSource videoSource = new VideoDeviceSource();
+            videoSource.setVideoCaptureDevice(cameras.get(0));
+            videoSource.start();
+
+            VideoTrack localTrack = factory.createVideoTrack("local_video", videoSource);
+            localTrack.addSink(new VideoTrackSink() {
+                @Override
+                public void onVideoFrame(VideoFrame frame) {
+                    logger.info("Video frame received: " + frame);
+                    BufferedImage img = i420ToBufferedImage(frame.buffer);
+                    SwingUtilities.invokeLater(() -> {
+                        localPanel.updateImage(img); // bạn có JPanel hiển thị ở đây
+                    });
+                }
+            });
+
+            logger.info("Đang hiển thị video local từ webcam");
+
+        } catch (Exception e) {
+            logger.warning("Lỗi khi test local video: " + e.getMessage());
+        }
+    }
+
+    public void setLocalPanel(VideoPanel localPanel) {
+        this.localPanel = localPanel;
     }
 }
 

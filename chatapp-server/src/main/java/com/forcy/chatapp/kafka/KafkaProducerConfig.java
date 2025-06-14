@@ -1,6 +1,7 @@
-package com.forcy.chatapp.chat;
+package com.forcy.chatapp.kafka;
 
 
+import com.forcy.chatapp.message.MessageResponse;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;

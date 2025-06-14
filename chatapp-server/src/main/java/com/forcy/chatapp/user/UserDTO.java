@@ -1,4 +1,4 @@
-package com.forcy.chatapp.dto;
+package com.forcy.chatapp.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,28 +1,35 @@
 package controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import dev.onvoid.webrtc.RTCIceCandidate;
+import dev.onvoid.webrtc.RTCSdpType;
+import dev.onvoid.webrtc.RTCSessionDescription;
 import model.*;
-import org.glassfish.grizzly.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.*;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import utility.EmojiConverter;
+import payload.CandidatePayload;
+import payload.IceCandidate;
+import payload.SdpPayload;
+import utility.WebRTCManager;
 import view.ChatView;
+import view.MainVideoFrame;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,8 +38,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 public class ChatController{
     private final static String url = "ws://localhost:10000/chat";
@@ -44,6 +51,7 @@ public class ChatController{
     private String jwtToken;
     private StompSession stompSession;
     private Long currentChatId;
+    private WebRTCManager webRTCManager;
 //    private ChatStompClient chatClient;
 
 
@@ -52,10 +60,79 @@ public class ChatController{
         this.userId = userId;
         this.username = username;
         this.jwtToken = jwtToken;
+        this.webRTCManager = new WebRTCManager(this);
         view.setEmojiSelectedListener(this::sendEmoji);
+        view.setFileSelectedListener(this::sendFile);
         initializeListeners();
         setupWebSocket();
+
         loadChats();
+    }
+
+    private void sendFile(File file){
+        HttpHeaders uploadHeaders = new HttpHeaders();
+        uploadHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+        uploadHeaders.set("Authorization", "Bearer " + jwtToken);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("userId", userId);
+        body.add("mediaFile", new FileSystemResource(file));
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, uploadHeaders);
+        String urlUpload = "http://localhost:10000/v1/media/upload";
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map> responseUpload = restTemplate.postForEntity(urlUpload, requestEntity, Map.class);
+        if(responseUpload.getStatusCode().is2xxSuccessful()) {
+           String messageContent = (String) responseUpload.getBody().get("mediaId");
+            if(!messageContent.isEmpty() && currentChatId != null && stompSession != null && userId != null) {
+                try{
+                    Long toUserId = getOtherUserId(currentChatId);
+                    if(toUserId == null) {
+                        JOptionPane.showMessageDialog(view.getFrame(), "Cannot determine recipient for chatId: " + currentChatId);
+                        return;
+                    }
+                    MessageRequest messageRequest = new MessageRequest();
+                    messageRequest.setFromUserId(userId);
+                    messageRequest.setToUserId(toUserId);
+                    messageRequest.setMessageType(MessageType.IMAGE);
+                    messageRequest.setContent(messageContent);
+
+
+                    ObjectMapper objectMapper = new ObjectMapper();
+//                String json = objectMapper.writeValueAsString(messageRequest);
+                    String url = "http://localhost:10000/messages";
+//                stompSession.send(url, json.getBytes());
+
+                    String json = objectMapper.writeValueAsString(messageRequest);
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    headers.set("Authorization", "Bearer " + jwtToken);
+                    HttpEntity<String> entity = new HttpEntity<>(json, headers);
+
+                    String response = restTemplate.postForObject(url, entity, String.class);
+
+                    // Ghi log nếu cần
+                    logger.info("Sent message: " + json);
+                    logger.info("Response: " + response);
+
+
+                    SwingUtilities.invokeLater(()->{
+                        view.addMessage(messageContent, userId, true, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")), MessageType.IMAGE);
+                        view.getMessageInput().setText("");
+                    });
+                }catch (Exception e){
+                    logger.error("Error sending message: " + e.getMessage());
+                    JOptionPane.showMessageDialog(view.getFrame(), "Error sending message: " + e.getMessage());
+                }
+            }else {
+                JOptionPane.showMessageDialog(view.getFrame(), "Please select a chat or enter a valid message.");
+            }
+
+
+        }else {
+            throw new RuntimeException("Error sending file" + responseUpload.getStatusCode());
+        }
+
     }
 
     private void setupWebSocket() {
@@ -97,7 +174,16 @@ public class ChatController{
 
                             String content = message.getContent();
 
-                            MessageType messageType = message.getMessageType().equals("TEXT") ? MessageType.TEXT : MessageType.EMOJI;
+                          //  MessageType messageType = message.getMessageType().equals("TEXT") ? MessageType.TEXT : MessageType.EMOJI;
+
+                            MessageType messageType;
+                            if (message.getMessageType().equals("TEXT")){
+                                messageType = MessageType.TEXT;
+                            } else if (message.getMessageType().equals("EMOJI")) {
+                                messageType = MessageType.EMOJI;
+                            }else {
+                                messageType = MessageType.IMAGE;
+                            }
 
                             SwingUtilities.invokeLater(() -> view.addMessage(content, message.getFromUserId(), message.getFromUserId().equals(userId),
                                     message.getSentAt() != null ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A",messageType));
@@ -112,6 +198,10 @@ public class ChatController{
                 readyMessage.setType("READY");
                 session.send("/app/ready", readyMessage);
                 logger.info("Sent ready message for user: {}", username);
+
+
+                subscribeToSdp();
+                subscribeToCandidate();
             }
 
             @Override
@@ -145,6 +235,82 @@ public class ChatController{
             }
         });
 
+
+
+    }
+    private void startVideoCall(){
+        SwingUtilities.invokeLater(() -> {
+            MainVideoFrame videoFrame = new MainVideoFrame();
+            videoFrame.setVisible(true);
+
+            if(currentChatId != null && stompSession != null && userId != null) {
+                Long toUserId = getOtherUserId(currentChatId);
+
+                // 1. Set panel
+                webRTCManager.setVideoPanel(videoFrame.localPanel, videoFrame.remotePanel);
+
+                // 2. Khởi tạo WebRTC PeerConnection + Factory
+                webRTCManager.initialize(toUserId);
+
+                // 3. Thêm media track (audio/video)
+                webRTCManager.addMediaStream(1);
+
+                // 4. Gửi SDP offer
+                webRTCManager.createOffer(toUserId);
+
+            }else {
+                JOptionPane.showMessageDialog(view.getFrame(), "Hãy chọn một người để gọi");
+
+            }
+
+        });
+
+    }
+
+    private void subscribeToCandidate() {
+        stompSession.subscribe("/user/queue/candidate", new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return CandidatePayload.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                CandidatePayload candidatePayload = (CandidatePayload) payload;
+                IceCandidate candidate = candidatePayload.getCandidate();
+
+                RTCIceCandidate rtcIceCandidate = new RTCIceCandidate(
+                        candidate.getSdpMid(),
+                        candidate.getSdpMLineIndex(),
+                        candidate.getCandidate()
+                );
+
+                webRTCManager.handleCandidate(rtcIceCandidate);
+
+            }
+        });
+    }
+
+    private void subscribeToSdp() {
+        stompSession.subscribe("/user/queue/sdp", new StompFrameHandler() {
+
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return SdpPayload.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                SdpPayload sdpPayload = (SdpPayload) payload;
+
+                if("offer".equals(sdpPayload.getType())) {
+                    webRTCManager.handleIncomingOffer(new RTCSessionDescription(RTCSdpType.OFFER, sdpPayload.getSdp()), sdpPayload.getFromUserId());
+                }else {
+                    webRTCManager.handleAnswer(new RTCSessionDescription(RTCSdpType.ANSWER, sdpPayload.getSdp()));
+                }
+
+            }
+        });
 
     }
 
@@ -191,6 +357,8 @@ public class ChatController{
     private void initializeListeners() {
         view.getSearchButton().addActionListener(e->searchUsers());
         view.getSendButton().addActionListener(e->sendMessage());
+        view.getCallButton().addActionListener(e -> startVideoCall());
+//        view.getTestLocalVideoButton().addActionListener(e -> testCall());
         view.getChatList().addListSelectionListener(e->{
             if(!e.getValueIsAdjusting()) {
                 ChatItem selectedChat = view.getChatList().getSelectedValue();
@@ -203,8 +371,14 @@ public class ChatController{
             }
         });
 
-        view.getSendButton().addActionListener(e->sendMessage());
     }
+
+//    private void testCall() {
+//        MainVideoFrame mainVideoFrame = new MainVideoFrame(); // hoặc Singleton nếu đã có
+//        mainVideoFrame.setVisible(true);
+//        webRTCManager.setLocalPanel(mainVideoFrame.getLocalPanel());
+//        webRTCManager.testLocalVideoOnly();
+//    }
 
     private void loadChatHistory(Long chatId) {
         logger.info("Chat id: " + chatId);
@@ -233,7 +407,18 @@ public class ChatController{
                                 ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm"))
                                 : LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
 
-                        MessageType messageType = message.getMessageType().equals("TEXT") ? MessageType.TEXT : MessageType.EMOJI;
+//                        MessageType messageType = message.getMessageType().equals("TEXT") ?  MessageType.TEXT : MessageType.EMOJI;
+
+                    //    MessageType messageType = message.getMessageType().equals("TEXT") ? (message.getMessageType().equals("EMOJI") ? MessageType.EMOJI : MessageType.TEXT) : MessageType.IMAGE;
+
+                        MessageType messageType;
+                        if (message.getMessageType().equals("TEXT")){
+                            messageType = MessageType.TEXT;
+                        } else if (message.getMessageType().equals("EMOJI")) {
+                            messageType = MessageType.EMOJI;
+                        }else {
+                            messageType = MessageType.IMAGE;
+                        }
                         view.addMessage(message.getContent(), message.getFromUserId(), isSentByMe, time, messageType);
                     } catch (Exception e) {
                         logger.error("Error processing message " + i + ": " + e.getMessage());
@@ -274,7 +459,7 @@ public class ChatController{
                 messageRequest.setToUserId(toUserId);
                 messageRequest.setMessageType(MessageType.TEXT);
                 messageRequest.setContent(messageContent);
-                messageRequest.setMessageType(MessageType.TEXT);
+
 
                 ObjectMapper objectMapper = new ObjectMapper();
 //                String json = objectMapper.writeValueAsString(messageRequest);
@@ -309,6 +494,14 @@ public class ChatController{
 
     }
 
+    public StompSession getStompSession() {
+        return stompSession;
+    }
+
+    public void setStompSession(StompSession stompSession) {
+        this.stompSession = stompSession;
+    }
+
     private Long getOtherUserId(Long chatId) {
         Enumeration<ChatItem> elements = view.getChatListModel().elements();
         Iterator<ChatItem> iterator = Collections.list(elements).iterator();
@@ -341,8 +534,6 @@ public class ChatController{
 
 
     public void sendEmoji(File file) {
-
-
         if( currentChatId != null && stompSession != null && userId != null) {
             try{
                 Long toUserId = getOtherUserId(currentChatId);
@@ -388,5 +579,29 @@ public class ChatController{
         }else {
             JOptionPane.showMessageDialog(view.getFrame(), "Please select a chat or enter a valid message.");
         }
+    }
+    public byte[] downloadMedia(String mediaId) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken); // Thêm token cho GET
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        String url = "http://localhost:10000/v1/media?mediaId=" + mediaId;
+        ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity, byte[].class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new IOException("Download failed: " + response.getStatusCode());
+        }
+
+    }
+
+    public ImageIcon getImageIcon(String mediaId) throws IOException {
+        byte[] imageBytes = downloadMedia(mediaId);
+        return new ImageIcon(imageBytes);
+    }
+
+    public String getJwtToken() {
+        return jwtToken;
     }
 }

@@ -1,4 +1,4 @@
-package com.forcy.chatapp.chat;
+package com.forcy.chatapp.user;
 
 public class UserNotFoundException extends RuntimeException{
     public UserNotFoundException(String username) {

@@ -1,0 +1,5 @@
+# Chuẩn hóa tất cả file văn bản để dùng LF khi commit
+* text=auto eol=lf
+
+# Đảm bảo file XML (như pom.xml) dùng LF
+*.xml text eol=lf

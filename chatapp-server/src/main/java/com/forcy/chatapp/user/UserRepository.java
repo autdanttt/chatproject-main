@@ -1,4 +1,4 @@
-package com.forcy.chatapp.repository;
+package com.forcy.chatapp.user;
 
 import com.forcy.chatapp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

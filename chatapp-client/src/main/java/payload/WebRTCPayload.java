@@ -1,4 +1,6 @@
 package payload;
 
-public class WebRTCPayload {
+public interface WebRTCPayload {
+    String getType();
+    Long getToUserId();
 }
