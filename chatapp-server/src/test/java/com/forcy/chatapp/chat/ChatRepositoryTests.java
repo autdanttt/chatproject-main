@@ -34,8 +34,8 @@ public class ChatRepositoryTests {
     @Test
     public void testAddChat() {
 
-        User user1 = entityManager.find(User.class, 4L);
-        User user2 = entityManager.find(User.class, 5L);
+        User user1 = entityManager.find(User.class, 1L);
+        User user2 = entityManager.find(User.class, 3L);
         Chat chat = new Chat();
         chat.setUsers(new ArrayList<>());
         chatRepository.save(chat);

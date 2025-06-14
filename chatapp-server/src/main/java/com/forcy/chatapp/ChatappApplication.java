@@ -16,6 +16,7 @@ public class ChatappApplication {
 		mapper.getConfiguration().setMatchingStrategy(STRICT);
 		return mapper;
 	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ChatappApplication.class, args);
 	}

@@ -59,7 +59,7 @@ public class AuthController{
             AuthResponse response = tokenService.refreshTokens(request);
             return ResponseEntity.ok(response);
         } catch (RefreshTokenExpiredException | RefreshTokenNotFoundException e) {
-            e.printStackTrace();
+           System.out.println("Refresh token expired");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

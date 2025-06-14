@@ -14,7 +14,6 @@ import java.util.Set;
 @Setter
 @ToString
 public class AuthUserDTO {
-
     private Long id;
     @Length(min = 5, max = 128, message = "Username must be between 5 - 128")
     @NotNull(message = "Username cannot be null")

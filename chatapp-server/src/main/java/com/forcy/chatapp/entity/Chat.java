@@ -19,7 +19,6 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToMany(mappedBy = "chats")
     private List<User> users;
 
