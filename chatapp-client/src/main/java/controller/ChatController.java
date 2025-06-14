@@ -202,8 +202,6 @@ public class ChatController{
                 }
             }
         });
-
-        view.getSendButton().addActionListener(e->sendMessage());
     }
 
     private void loadChatHistory(Long chatId) {

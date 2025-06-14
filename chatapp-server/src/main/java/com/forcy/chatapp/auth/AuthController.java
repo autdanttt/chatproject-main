@@ -5,7 +5,6 @@ import com.forcy.chatapp.security.CustomUserDetails;
 import com.forcy.chatapp.service.UserService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +59,7 @@ public class AuthController{
             AuthResponse response = tokenService.refreshTokens(request);
             return ResponseEntity.ok(response);
         } catch (RefreshTokenExpiredException | RefreshTokenNotFoundException e) {
-            e.printStackTrace();
+           System.out.println("Refresh token expired");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

@@ -17,13 +17,16 @@ import java.util.UUID;
 public class TokenService {
     @Value("${app.security.jwt.refresh-token.expiration}")
     private int refreshTokenExpiration;
-    @Autowired
     RefreshTokenRepository refreshTokenRepo;
     @Autowired
     JwtUtility jwtUtil;
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    public TokenService(RefreshTokenRepository refreshTokenRepo) {
+        this.refreshTokenRepo = refreshTokenRepo;
+    }
 
     public AuthResponse generateToken(User user){
         String accessToken = jwtUtil.generateAccessToken(user);
@@ -43,6 +46,7 @@ public class TokenService {
 
         return response;
     }
+
     public AuthResponse refreshTokens(RefreshTokenRequest  request) throws RefreshTokenNotFoundException, RefreshTokenExpiredException {
 
         String rawRefreshToken = request.getRefreshToken();
