@@ -1,0 +1,29 @@
+# IntelliJ IDEA files
+.idea/
+*.iml
+
+# Compiled output
+/target/
+/out/
+*.class
+
+# Logs
+*.log
+
+# Dependency directories
+/lib/
+/libs/
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Other
+.env
+/build/
+
+# Spring Boot configuration files
+application.properties
+application.yml
+application-*.properties
+application-*.yml
