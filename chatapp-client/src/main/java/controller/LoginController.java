@@ -83,10 +83,16 @@ public class LoginController {
 
                 logger.info("Login successful for username: {}", loggedInUsername);
                 view.getFrame().setVisible(true);
-                chatView = new ChatView(loggedInUsername, chatController);
-                view.getFrame().dispose();
+
+                chatView = new ChatView(loggedInUsername);
 
                 chatController = new ChatController(chatView,loggedUserId, loggedInUsername,jwtToken);
+                chatView.setChatController(chatController);
+
+                chatView.getFrame().setVisible(true);
+                view.getFrame().dispose();
+
+
             } else {
                 logger.warn("Login failed for username: {}. Status code: {}", username, response.getStatusLine().getStatusCode());
                 JOptionPane.showMessageDialog(view.getFrame(), "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);

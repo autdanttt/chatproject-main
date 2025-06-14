@@ -2,7 +2,7 @@ package com.forcy.chatapp.auth;
 
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.CustomUserDetails;
-import com.forcy.chatapp.service.UserService;
+import com.forcy.chatapp.user.UserService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;

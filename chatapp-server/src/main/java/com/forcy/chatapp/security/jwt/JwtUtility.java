@@ -3,13 +3,10 @@ package com.forcy.chatapp.security.jwt;
 import com.forcy.chatapp.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
