@@ -370,10 +370,6 @@ public class ChatController{
                 }
             }
         });
-<<<<<<< HEAD
-=======
-
->>>>>>> 0af02a91d4a6d43130f0245ea8494dc7d93acc2f
     }
 
 //    private void testCall() {

@@ -6,6 +6,8 @@
 /target/
 /out/
 *.class
+.idea
+.vscode
 
 # Logs
 *.log
