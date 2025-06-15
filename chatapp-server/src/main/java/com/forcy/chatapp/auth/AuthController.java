@@ -21,9 +21,8 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/oauth")
+
 public class AuthController{
-
-
     AuthenticationManager authenticationManager;
     TokenService tokenService;
     UserService userService;
@@ -54,7 +53,6 @@ public class AuthController{
 
     @PostMapping("/token/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest request){
-
         try{
             AuthResponse response = tokenService.refreshTokens(request);
             return ResponseEntity.ok(response);
@@ -63,12 +61,11 @@ public class AuthController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
+    // Api login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request){
         String username = request.getUsername();
         String password = request.getPassword();
-
 
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -80,14 +77,12 @@ public class AuthController{
             AuthResponse response = tokenService.generateToken(userDetails.getUser());
             HttpHeaders jwtHeader = new HttpHeaders();
             jwtHeader.add("Jwt-Token", response.getAccessToken());
-
-
             return new ResponseEntity<>(loginDTO, jwtHeader, OK);
         }catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
     }
+
     private AuthUserDTO entity2DTO(User user){
         return mapper.map(user, AuthUserDTO.class);
     }
