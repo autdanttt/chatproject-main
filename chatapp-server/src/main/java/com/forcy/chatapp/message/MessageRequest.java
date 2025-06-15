@@ -11,7 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MessageRequest {
-
     private Long fromUserId;
     private Long toUserId;
     private MessageType messageType;
