@@ -53,7 +53,7 @@ public class LoginController {
             httpPost.setHeader("Content-Type", "application/json");
 
             String json =  String.format("{\"username\":\"%s\",\"password\":\"%s\"}", username, password);
-            logger.info("username and password: " + username + password);
+            logger.info("username and password: " + username + " " + password);
             httpPost.setEntity(new StringEntity(json));
 
             CloseableHttpResponse response = client.execute(httpPost);

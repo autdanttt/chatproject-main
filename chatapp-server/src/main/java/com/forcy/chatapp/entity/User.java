@@ -49,7 +49,6 @@ public class User {
     )
     private List<ChatGroup> groups;
 
-
     @ManyToMany
     @JoinTable(
             name = "users_chats",
