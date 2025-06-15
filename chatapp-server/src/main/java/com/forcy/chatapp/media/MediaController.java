@@ -17,7 +17,6 @@ public class MediaController {
     @Autowired
     private AssetService assetService;
 
-
     @PostMapping("/upload")
     public ResponseEntity<?> uploadMedia(@RequestParam Long userId, @RequestParam("mediaFile")MultipartFile mediaFile) throws IOException {
         String mediaId = assetService.uploadMedia(userId, mediaFile);

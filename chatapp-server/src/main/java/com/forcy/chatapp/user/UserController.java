@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
 
+public class UserController {
     @Autowired
     private UserService userService;
 
@@ -20,5 +20,4 @@ public class UserController {
 
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-
 }
