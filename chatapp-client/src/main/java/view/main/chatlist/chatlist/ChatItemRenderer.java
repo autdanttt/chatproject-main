@@ -7,12 +7,11 @@ import java.awt.*;
 
 public class ChatItemRenderer extends DefaultListCellRenderer {
     @Override
-    public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                  boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JPanel panel = new JPanel(new BorderLayout(10, 0));
         if (value instanceof ChatItem) {
             ChatItem item = (ChatItem) value;
-            JLabel avatarLabel = new JLabel("👤"); // Placeholder cho avatar
+            JLabel avatarLabel = new JLabel("👤");
             JLabel usernameLabel = new JLabel(item.getUsername());
             JLabel lastMessageLabel = new JLabel(item.getLastMessage() != null ? item.getLastMessage() : "");
             JLabel timeLabel = new JLabel(item.getFormattedTime());

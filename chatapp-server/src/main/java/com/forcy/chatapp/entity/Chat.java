@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 public class Chat {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +26,6 @@ public class Chat {
 
     @Override
     public String toString() {
-        return "Chat{" +
-                "id=" + id + "}";
+        return "Chat{" + "id=" + id + "}";
     }
 }

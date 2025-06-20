@@ -11,7 +11,8 @@ public class MainVideoFrame extends JFrame {
     public MainVideoFrame() {
         setTitle("Video Call");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(1, 2)); // 1 dòng, 2 cột
+        setLayout(new GridLayout(1, 2));
+        setLocationRelativeTo(null);
 
         localPanel = new VideoPanel();
         remotePanel = new VideoPanel();
@@ -19,7 +20,7 @@ public class MainVideoFrame extends JFrame {
         add(localPanel);
         add(remotePanel);
 
-        setSize(800, 600); // hoặc tùy chỉnh
+        setSize(800, 600);
         setLocationRelativeTo(null);
         setVisible(true);
     }

@@ -16,3 +16,4 @@ public class ChatResponse {
     private String lastMessage;
     private LocalDateTime lastMessageTime;
 }
+

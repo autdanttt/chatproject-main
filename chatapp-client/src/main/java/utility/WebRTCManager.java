@@ -151,8 +151,8 @@ public class WebRTCManager {
         List<VideoDevice> cams = MediaDevices.getVideoCaptureDevices();
 
         if (!cams.isEmpty()) {
-            for (int i = 0; i < cams.size(); i++) {
-                logger.warning("i : " + cams.get(i).toString());
+            for (VideoDevice cam : cams) {
+                logger.warning("i : " + cam.toString());
             }
             VideoDeviceSource videoSource = new VideoDeviceSource();
             videoSource.setVideoCaptureDevice(cams.get(cameraId));
@@ -164,7 +164,7 @@ public class WebRTCManager {
             vt.addSink(new VideoTrackSink() {
                 @Override
                 public void onVideoFrame(VideoFrame frame) {
-                    logger.info("Received video frame " + frame);
+//                    logger.info("Received video frame " + frame);
                     VideoFrameBuffer frameBuffer = frame.buffer;
                     BufferedImage img = i420ToBufferedImage(frameBuffer);
                     SwingUtilities.invokeLater(() ->{
@@ -226,6 +226,7 @@ public class WebRTCManager {
 
         return image;
     }
+
     private static int clamp(int val) {
         return Math.max(0, Math.min(255, val));
     }
