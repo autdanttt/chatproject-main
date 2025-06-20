@@ -1,5 +1,8 @@
 package com.forcy.chatapp.message;
 
+import com.forcy.chatapp.entity.Message;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +20,12 @@ public class MessageController {
 
 
     @PostMapping
-    public void sendMessage(@RequestBody MessageRequest messageRequest) {
-        messageService.storeMessage(messageRequest);
+    public ResponseEntity<?> sendMessage(@RequestBody MessageRequest messageRequest) {
+        Message message = messageService.storeMessage(messageRequest);
+
+        MessageResponse messageResponse = MessageMapper.toResponse(message, messageRequest.getToUserId());
+        return new ResponseEntity<>(messageResponse, HttpStatus.CREATED);
+
+
     }
 }

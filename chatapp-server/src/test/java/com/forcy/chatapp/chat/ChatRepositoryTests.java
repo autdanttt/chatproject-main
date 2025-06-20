@@ -43,9 +43,11 @@ public class ChatRepositoryTests {
         user1.getChats().add(chat);
         user2.getChats().add(chat);
 
-        userRepository.saveAll(List.of(user1, user2));
-        chat.setUsers(new ArrayList<>(List.of(user1, user2)));
-        Chat savedChat = chatRepository.save(chat);
+        //Optional<Chat> existChat = chatRepository.findChatByTwoUserIds(user1.getId(), user2.getId());
+            userRepository.saveAll(List.of(user1, user2));
+            chat.setUsers(new ArrayList<>(List.of(user1, user2)));
+            Chat savedChat = chatRepository.save(chat);
+
 
         assertThat(savedChat.getId()).isGreaterThan(0);
     }
