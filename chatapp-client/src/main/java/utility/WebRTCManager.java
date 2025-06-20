@@ -2,7 +2,9 @@ package utility;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import controller.ChatController;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 import dev.onvoid.webrtc.*;
 import dev.onvoid.webrtc.media.MediaDevices;
 import dev.onvoid.webrtc.media.MediaStreamTrack;
@@ -22,6 +24,7 @@ import payload.IceCandidate;
 import payload.SdpPayload;
 import view.MainVideoFrame;
 import view.VideoPanel;
+import view.main.UserToken;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -30,19 +33,30 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class WebRTCManager {
+    private final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(WebRTCManager.class);
     private static final Logger logger = Logger.getLogger(WebRTCManager.class.getName());
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(WebRTCManager.class);
-    private final ChatController chatController;
     private PeerConnectionFactory factory;
     private RTCPeerConnection peerConnection;
+    private String jwtToken;
 
     private VideoPanel localPanel;
     private VideoPanel remotePanel;
 
 
-    public WebRTCManager(ChatController chatController) {
-        this.chatController = chatController;
+    @Inject
+    public WebRTCManager( EventBus eventBus) {
+        eventBus.register(this);
     }
+
+    @Subscribe
+    public void onJwtToken(UserToken userToken) {
+        LOGGER.info("Received JWT token: " + userToken.getJwtToken());
+        this.jwtToken = userToken.getJwtToken();
+
+    }
+
+
     public void setVideoPanel(VideoPanel localPanel, VideoPanel remotePanel) {
         this.localPanel = localPanel;
         this.remotePanel = remotePanel;
@@ -68,8 +82,6 @@ public class WebRTCManager {
 
                 @Override
                 public void onIceCandidate(RTCIceCandidate candidate) {
-                    StompSession session = chatController.getStompSession();
-                    if (session != null && session.isConnected()) {
 
                         IceCandidate iceCandidate = new IceCandidate(candidate.sdpMid, candidate.sdpMLineIndex, candidate.sdp);
 
@@ -90,7 +102,7 @@ public class WebRTCManager {
                         RestTemplate restTemplate = new RestTemplate();
                         HttpHeaders headers = new HttpHeaders();
                         headers.setContentType(MediaType.APPLICATION_JSON);
-                        headers.set("Authorization", "Bearer " + chatController.getJwtToken());
+                        headers.set("Authorization", "Bearer " + jwtToken);
                         HttpEntity<String> entity = new HttpEntity<>(payload, headers);
 
                         String response = restTemplate.postForObject(url, entity, String.class);
@@ -98,9 +110,6 @@ public class WebRTCManager {
                         logger.info("Candidate payload {} " + payload);
                         logger.info("Response from send candidate " + response);
                         logger.info("Sent ICE candidate: " + candidate.sdp);
-                    } else {
-                        logger.warning("STOMP session not connected, cannot send ICE candidate");
-                    }
                 }
 
                 @Override
@@ -254,8 +263,6 @@ public class WebRTCManager {
     }
 
     private void sendSdpToPeer(RTCSessionDescription sdp, Long toUserId) {
-        StompSession session = chatController.getStompSession();
-        if(session != null && session.isConnected()){
             String type = sdp.sdpType == RTCSdpType.OFFER ? "offer" : "answer";
 
             SdpPayload sdpPayload = new SdpPayload(type, sdp.sdp,null, toUserId);
@@ -275,7 +282,7 @@ public class WebRTCManager {
             HttpHeaders headers = new HttpHeaders();
 
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "Bearer " + chatController.getJwtToken());
+            headers.set("Authorization", "Bearer " +jwtToken);
             HttpEntity<String> entity = new HttpEntity<>(payload, headers);
 
             String response = restTemplate.postForObject(url, entity, String.class);
@@ -286,9 +293,6 @@ public class WebRTCManager {
 
 
             logger.info("Sent SDP ({}): {}" + type + sdp.sdp);
-        }else {
-            logger.info("STOMP session not connected, cannot send SDP");
-        }
 
     }
 
@@ -312,8 +316,6 @@ public class WebRTCManager {
         SwingUtilities.invokeLater(() -> {
             MainVideoFrame videoFrame = new MainVideoFrame();
             videoFrame.setVisible(true);
-
-
 
             if (peerConnection == null) {
                 initialize(fromUserId); // Quan trọng

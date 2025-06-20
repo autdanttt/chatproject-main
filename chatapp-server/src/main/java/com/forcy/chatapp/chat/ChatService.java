@@ -6,11 +6,13 @@ import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class ChatService {
     private ChatRepository chatRepository;
 
@@ -58,4 +60,12 @@ public class ChatService {
     }
 
 
+    public boolean delete(Long chatId) {
+         try{
+             chatRepository.deleteById(chatId);
+             return true;
+         }catch (EntityNotFoundException e){
+             return false;
+         }
+    }
 }
