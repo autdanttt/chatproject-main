@@ -14,4 +14,14 @@ public class MessageRequest {
     public void setMessageType(MessageType messageType) { this.messageType = messageType; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
+    @Override
+    public String toString() {
+        return "MessageRequest{" +
+                "fromUserId=" + fromUserId +
+                ", toUserId=" + toUserId +
+                ", messageType=" + messageType +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

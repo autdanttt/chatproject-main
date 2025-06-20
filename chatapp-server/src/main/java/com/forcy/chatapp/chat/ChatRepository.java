@@ -2,6 +2,7 @@ package com.forcy.chatapp.chat;
 
 import com.forcy.chatapp.entity.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -34,4 +35,14 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
         FROM Chat c JOIN c.users u WHERE c.id = :chatId AND u.id = :userId
 """)
     boolean existsByIdAndUserId(Long chatId, Long userId);
+
+
+    @Query("""
+    DELETE FROM Chat c
+    WHERE c.id = :chatId
+""")
+    @Modifying
+    public void deleteByChatId(Long chatId);
+
+
 }

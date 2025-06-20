@@ -39,7 +39,7 @@ public class MessageService {
     }
 
 
-    public void storeMessage(MessageRequest messageRequest) {
+    public Message storeMessage(MessageRequest messageRequest) {
         logger.info("🔁 [storeMessage] Bắt đầu lưu tin nhắn từ userId={} đến userId={}", messageRequest.getFromUserId(), messageRequest.getToUserId());
         User fromUser = userRepository.findById(messageRequest.getFromUserId()).orElseThrow();
 
@@ -58,8 +58,6 @@ public class MessageService {
                     newChat.setUsers(List.of(fromUser, toUser));
                     return chatRepository.save(newChat);
                 });
-
-
 
         Message message = MessageMapper.toEntity(messageRequest,fromUser,chat);
         messageRepository.save(message);
@@ -83,6 +81,7 @@ public class MessageService {
 //        } catch (Exception e) {
 //            logger.error("Failed to send ChatResponse to UserA: {}", e.getMessage());
 //        }
+        return message;
     }
 
 

@@ -1,11 +1,11 @@
-package view;
+package view.main.chatlist.chatlist;
 
 import model.ChatItem;
 
 import javax.swing.*;
 import java.awt.*;
 
-class ChatItemRenderer extends DefaultListCellRenderer {
+public class ChatItemRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                   boolean isSelected, boolean cellHasFocus) {

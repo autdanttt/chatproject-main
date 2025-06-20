@@ -33,13 +33,12 @@ public class ChatController {
     }
 
     @GetMapping
-    public List<ChatResponse> getChats(@RequestHeader("Authorization") String token) {
+    public List<ChatResponse> getChats() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
 
         return chatService.getListChat(user.getId());
-
     }
 
 
@@ -60,5 +59,10 @@ public class ChatController {
 
     }
 
+    @DeleteMapping("/{chatId}")
+    public ResponseEntity<?> deleteChat(@PathVariable Long chatId) {
+        boolean isDeleted = chatService.delete(chatId);
+        return ResponseEntity.ok(isDeleted);
+    }
 
 }
