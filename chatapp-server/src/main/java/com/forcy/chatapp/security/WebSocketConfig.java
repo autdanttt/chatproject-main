@@ -52,7 +52,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
                     @Override
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-                        logger.info("🔥 WebSocket Handshake started: {}", request.getURI());
+//                        logger.info("🔥 WebSocket Handshake started: {}", request.getURI());
                         return super.beforeHandshake(request, response, wsHandler, attributes);
                     }
                 });
@@ -68,8 +68,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                logger.info("STOMP Command: {}", accessor.getCommand());
-                logger.info("Header: {}", accessor.toNativeHeaderMap());
+//                logger.info("STOMP Command: {}", accessor.getCommand());
+//                logger.info("Header: {}", accessor.toNativeHeaderMap());
                 assert accessor != null;
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
@@ -85,7 +85,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     }
 
                     if (jwtToken == null || jwtToken.isEmpty()) {
-                        logger.error("No token found in Authorization header");
+//                        logger.error("No token found in Authorization header");
                         throw new SecurityException("No token provided");
                     }
 
@@ -93,17 +93,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     try {
                         authentication = jwtTokenProvider.getAuthentication(jwtToken);
                         if (authentication == null) {
-                            logger.error("Authentication returned null for token: {}", jwtToken);
+//                            logger.error("Authentication returned null for token: {}", jwtToken);
                             throw new SecurityException("Invalid token");
                         }
                     } catch (JwtValidationException e) {
-                        logger.error("JWT validation failed: {}", e.getMessage());
+//                        logger.error("JWT validation failed: {}", e.getMessage());
                         throw new SecurityException("Invalid JWT token: " + e.getMessage());
                     }
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     accessor.setUser(authentication);
-                    logger.info("Authentication success: {}", authentication.getName());
+                    logger.info("->>>>>>>>>>>>>>>>>>>>>>Xác thực thành công: {}", authentication.getName());
                 }
                 return message;
             }
