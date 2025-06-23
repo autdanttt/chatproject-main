@@ -6,7 +6,7 @@ public class ReadyMessage {
     @JsonProperty("sender")
     private String sender;
 
-    @JsonProperty("type")
+    @JsonProperty("message")
     private String type;
 
     public ReadyMessage() {

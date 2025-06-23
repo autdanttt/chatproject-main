@@ -14,6 +14,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.WebSocketHandler;
@@ -67,22 +68,26 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+              //  StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
                 logger.info("STOMP Command: {}", accessor.getCommand());
-                logger.info("Header: {}", accessor.toNativeHeaderMap());
+                logger.info("Header in Inbound channel: {}", accessor.toNativeHeaderMap());
                 assert accessor != null;
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String jwtToken = null;
 
                     // Kiểm tra header Authorization từ STOMP
+
                     Map<String, List<String>> nativeHeaders = accessor.toNativeHeaderMap();
+                    logger.info("nativeHeaders: {}", nativeHeaders);
                     if (nativeHeaders.containsKey("Authorization")) {
                         String authHeader = nativeHeaders.get("Authorization").get(0);
                         if (authHeader != null && authHeader.startsWith("Bearer ")) {
                             jwtToken = authHeader.substring(7); // Lấy token
                         }
                     }
+                    logger.info("jwtToken: {}", jwtToken);
 
                     if (jwtToken == null || jwtToken.isEmpty()) {
                         logger.error("No token found in Authorization header");
@@ -90,22 +95,30 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     }
 
                     Authentication authentication = null;
+
                     try {
+                        logger.info("jwtToken in try catch: {}", jwtToken);
                         authentication = jwtTokenProvider.getAuthentication(jwtToken);
+                        logger.info("authentication: {}", authentication);
                         if (authentication == null) {
                             logger.error("Authentication returned null for token: {}", jwtToken);
                             throw new SecurityException("Invalid token");
                         }
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        accessor.setUser(authentication);
+                        logger.info("Authentication: {}", authentication);
+                        logger.info("Auth success");
                     } catch (JwtValidationException e) {
                         logger.error("JWT validation failed: {}", e.getMessage());
                         throw new SecurityException("Invalid JWT token: " + e.getMessage());
                     }
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    accessor.setUser(authentication);
+
+
                     logger.info("Authentication success: {}", authentication.getName());
                 }
-                return message;
+                return MessageBuilder.createMessage(message.getPayload(), accessor.getMessageHeaders());
+//                return message;
             }
         });
     }

@@ -54,14 +54,27 @@ public class ChatRepositoryTests {
 
     @Test
     public void testFindChat() {
-        User user1 = entityManager.find(User.class, 4L);
-        User user2 = entityManager.find(User.class, 5L);
+        User user1 = entityManager.find(User.class, 5L);
+        User user2 = entityManager.find(User.class, 4L);
 
 
         Optional<Chat> chatBetweenUsers= chatRepository.findChatByTwoUserIds(user1.getId(), user2.getId());
 
         assertThat(chatBetweenUsers.get().getUsers().size()).isEqualTo(2);
+        assertThat(chatBetweenUsers.isPresent()).isTrue();
         assertThat(chatBetweenUsers.get().getId()).isEqualTo(3);
+    }
+    @Test
+    public void testFindChatNotExist() {
+        User user1 = entityManager.find(User.class, 1L);
+        User user2 = entityManager.find(User.class, 5L);
+
+
+        Optional<Chat> chatBetweenUsers= chatRepository.findChatByTwoUserIds(user1.getId(), user2.getId());
+
+//        assertThat(chatBetweenUsers.get().getUsers().size()).isEqualTo(2);
+        assertThat(chatBetweenUsers.isPresent()).isTrue();
+//        assertThat(chatBetweenUsers.get().getId()).isEqualTo(3);
     }
 
     @Test

@@ -50,6 +50,7 @@ public class SendMessageServiceImpl implements SendMessageService {
             ResponseEntity<MessageResponse> response = restTemplate.exchange(
                     url, HttpMethod.POST, entity, MessageResponse.class
             );
+
             if (response.getStatusCode().is2xxSuccessful()) {
                 LOGGER.info("Message sent: {}", response.getBody());
                 LOGGER.info("Response code: {}", response.getStatusCode());

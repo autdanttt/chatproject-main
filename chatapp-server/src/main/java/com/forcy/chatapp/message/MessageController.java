@@ -1,8 +1,10 @@
 package com.forcy.chatapp.message;
 
 import com.forcy.chatapp.entity.Message;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/messages")
+@Validated
 public class MessageController {
 
     private MessageService messageService;
@@ -20,7 +23,7 @@ public class MessageController {
 
 
     @PostMapping
-    public ResponseEntity<?> sendMessage(@RequestBody MessageRequest messageRequest) {
+    public ResponseEntity<?> sendMessage(@RequestBody @Valid MessageRequest messageRequest) {
         Message message = messageService.storeMessage(messageRequest);
 
         MessageResponse messageResponse = MessageMapper.toResponse(message, messageRequest.getToUserId());

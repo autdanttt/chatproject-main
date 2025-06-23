@@ -1,9 +1,15 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MessageRequest {
+
     private Long fromUserId;
+
     private Long toUserId;
+
     private MessageType messageType;
+
     private String content;
 
     public Long getFromUserId() { return fromUserId; }

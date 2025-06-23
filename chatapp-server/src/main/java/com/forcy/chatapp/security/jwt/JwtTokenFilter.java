@@ -22,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -83,14 +84,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         User user = new User();
         user.setId(userId);
         user.setUsername(username);
-        String roles = (String) claims.get("roles");
-        roles = roles.replace("[", "").replace("]", "");
-        String[] rolesName = roles.split(",");
-        for (String aRoleName : rolesName){
-            user.addRole(new Role(aRoleName));
-        }
 
-        LOGGER.info("User parsed from JWT: "+ user.getId() + ", " + user.getUsername() + ", ");
+        List<?> roles = (List<?>) claims.get("roles");
+        for (Object roleObj : roles) {
+            if (roleObj instanceof String roleName) {
+                user.addRole(new Role(roleName));
+            }
+        }
+              LOGGER.info("User parsed from JWT: "+ user.getId() + ", " + user.getUsername() + ", ");
         LOGGER.info("ROLE: "+ user.getRoles());
         return new CustomUserDetails(user);
     }

@@ -5,6 +5,8 @@ import com.forcy.chatapp.payload.CandidatePayload;
 import com.forcy.chatapp.payload.SdpPayload;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,6 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/video-call")
 public class VideoCallController {
+    private final Logger logger = LoggerFactory.getLogger(VideoCallController.class);
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -47,7 +50,9 @@ public class VideoCallController {
         responsePayload.setSdp(sdpPayload.getSdp());
         responsePayload.setType(sdpPayload.getType());
 
+        logger.info(responsePayload.toString());
         messagingTemplate.convertAndSendToUser(toUser.getUsername(), "/queue/sdp", responsePayload);
+        logger.info("send sdp to " + toUser.getUsername());
 
         return ResponseEntity.ok("SDP sent to " + toUser.getUsername());
 

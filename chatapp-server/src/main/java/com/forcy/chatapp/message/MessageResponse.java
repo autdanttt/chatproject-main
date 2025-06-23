@@ -1,12 +1,13 @@
 package com.forcy.chatapp.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.forcy.chatapp.entity.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,12 +15,22 @@ import java.time.LocalDateTime;
 @Setter
 public class MessageResponse {
     private Long messageId;
+
     private Long fromUserId;
+
     private Long toUserId;
+
+
     private Long chatId;
+
+
     private MessageType messageType;
+
     private String content;
-    private LocalDateTime sentAt;
-    private LocalDateTime deliveredAt;
+
+
+    private Date sentAt;
+
+    private Date deliveredAt;
 
 }

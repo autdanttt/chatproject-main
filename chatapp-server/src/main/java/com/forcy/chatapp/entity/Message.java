@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "messages")
@@ -41,8 +42,8 @@ public class Message {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private LocalDateTime sentAt;
-    private LocalDateTime deliveredAt;
-    private LocalDateTime seenAt;
+    private Date sentAt;
+    private Date deliveredAt;
+    private Date seenAt;
 
 }

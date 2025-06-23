@@ -38,4 +38,17 @@ public class UserRepositoryTests {
         User savedUser = userRepository.save(user);
         assertThat(savedUser.getId()).isGreaterThan(0);
     }
+    @Test
+    public void testCreateUserWithRoleV2() {
+        Role role = entityManager.find(Role.class, 6);
+        User user = new User();
+        user.setUsername("autdant6");
+
+        user.setPassword(passwordEncoder.encode("12345678"));
+        user.setPhoneNumber("0918288362");
+        user.addRole(role);
+
+        User savedUser = userRepository.save(user);
+        assertThat(savedUser.getId()).isGreaterThan(0);
+    }
 }

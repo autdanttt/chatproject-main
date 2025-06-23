@@ -292,7 +292,8 @@ public class WebRTCManager {
             logger.info("Received SDP To Server : " + response);
 
 
-            logger.info("Sent SDP ({}): {}" + type + sdp.sdp);
+        logger.info("Sent SDP ({}): {}" + type + sdp.sdp);
+
 
     }
 
@@ -313,6 +314,7 @@ public class WebRTCManager {
     }
 
     public void handleIncomingOffer(RTCSessionDescription sdp, Long fromUserId) {
+        logger.info("Handle Incoming Offer");
         SwingUtilities.invokeLater(() -> {
             MainVideoFrame videoFrame = new MainVideoFrame();
             videoFrame.setVisible(true);

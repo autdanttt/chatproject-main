@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -56,6 +57,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                 auth -> auth.requestMatchers("/api/oauth/**", "/chat").permitAll()
+//                        .requestMatchers("/chat/**").authenticated()
+                        .requestMatchers("/messages/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/chats/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/chats/**").authenticated()
+                        .requestMatchers("/v1/media/**").authenticated()
                         .anyRequest().authenticated()
         ).csrf(csrf->csrf.disable())
                 .exceptionHandling(exh -> exh.authenticationEntryPoint((request, response, authException) -> {

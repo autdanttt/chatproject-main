@@ -11,6 +11,16 @@ public class ErrorDTO {
     private String path;
     private List<String> errors = new ArrayList<>();
 
+    public ErrorDTO() {
+    }
+
+    public ErrorDTO(Date timestamp, int status, String path, List<String> errors) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.path = path;
+        this.errors = errors;
+    }
+
     public Date getTimestamp() {
         return timestamp;
     }

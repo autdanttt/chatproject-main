@@ -1,6 +1,7 @@
 package utility;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -21,6 +22,7 @@ import payload.IceCandidate;
 import payload.SdpPayload;
 import view.ApiResult;
 import view.ErrorDTO;
+import view.login.TokenManager;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -50,14 +52,18 @@ public class WebSocketClientManager {
             WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
 
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JSR310Module());
+
             MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
             converter.setObjectMapper(objectMapper);
             stompClient.setMessageConverter(converter);
 
-            StompHeaders headers = new StompHeaders();
-            headers.add("Authorization", "Bearer " + jwtToken);
-            logger.info("Connecting with headers: {}", headers);
+
+//            WebSocketHttpHeaders httpHeaders = new WebSocketHttpHeaders();
+//            httpHeaders.add("Authorization", "Bearer " + TokenManager.getAccessToken());
+//
+            StompHeaders stompHeaders = new StompHeaders();
+            stompHeaders.add("Authorization", "Bearer " + TokenManager.getAccessToken());
+            logger.info("Connecting with stompHeaders: {}", stompHeaders);
 
             StompSessionHandler sessionHandler = new StompSessionHandlerAdapter() {
                 @Override
@@ -72,16 +78,35 @@ public class WebSocketClientManager {
                         }
                         @Override
                         public void handleFrame(StompHeaders headers, Object payload) {
-                            MessageResponse message = (MessageResponse) payload;
-                            if (message != null) {
-                                logger.info("Message received: {}", message.getContent());
-                                eventBus.post(message);
+                            logger.info("Raw WebSocket payload: {}", payload);
+                            if (payload != null) {
+                                ObjectMapper mapper = new ObjectMapper();
+                                mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+                                try {
+                                    MessageResponse message = mapper.readValue(payload.toString(), MessageResponse.class);
+                                    logger.info("Parsed message: {}", message.getContent());
+                                    eventBus.post(message);
+                                } catch (Exception e) {
+                                    logger.error("Failed to parse payload: {}", e.getMessage(), e);
+                                }
                             } else {
-                                logger.warn("Received null message");
+                                logger.warn("Received null payload");
                             }
                         }
                     });
-
+//                    .addReceiptTask(()-> {
+//                        logger.info("✅ Subscription /user/queue/messages confirmed");
+//
+//                        ReadyMessage readyMessage = new ReadyMessage();
+//                        readyMessage.setSender(username);
+//                        readyMessage.setType("READY");
+//                        stompSession.send("/app/ready", readyMessage);
+//                        logger.info("✅ Sent READY after confirming subscription");
+//                    });
+                    subscribeToSdp();
+                    logger.info("Subscribed to sdp mode");
+                    subscribeToCandidate();
+                    logger.info("Subscribed to candidate");
                     // Gửi ready
                     ReadyMessage readyMessage = new ReadyMessage();
                     readyMessage.setSender(username);
@@ -89,8 +114,7 @@ public class WebSocketClientManager {
                     session.send("/app/ready", readyMessage);
                     logger.info("Sent READY message for user: {}", username);
 
-                    subscribeToSdp();
-                    subscribeToCandidate();
+
                 }
 
                 @Override
@@ -104,7 +128,7 @@ public class WebSocketClientManager {
                 }
             };
 
-            CompletableFuture<StompSession> future = stompClient.connectAsync(url, (WebSocketHttpHeaders) null, headers, sessionHandler);
+            CompletableFuture<StompSession> future = stompClient.connectAsync(url, (WebSocketHttpHeaders)null, stompHeaders, sessionHandler);
 
             try {
                 future.get(3, TimeUnit.SECONDS); // đợi 3 giây
@@ -123,6 +147,9 @@ public class WebSocketClientManager {
         }
     }
     private void subscribeToSdp() {
+
+        logger.info("Subscribing to sdp mode in subscribeToSdp");
+
         stompSession.subscribe("/user/queue/sdp", new StompFrameHandler() {
 
             @Override
@@ -130,14 +157,30 @@ public class WebSocketClientManager {
                 return SdpPayload.class;
             }
 
+
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
-                SdpPayload sdpPayload = (SdpPayload) payload;
 
-                if("offer".equals(sdpPayload.getType())) {
-                    webRTCManager.handleIncomingOffer(new RTCSessionDescription(RTCSdpType.OFFER, sdpPayload.getSdp()), sdpPayload.getFromUserId());
-                }else {
-                    webRTCManager.handleAnswer(new RTCSessionDescription(RTCSdpType.ANSWER, sdpPayload.getSdp()));
+                logger.info("📥 Received STOMP frame on /user/queue/sdp");
+
+                try {
+                    SdpPayload sdpPayload = (SdpPayload) payload;
+                    logger.info("📩 Received SdpPayload: {}", sdpPayload);
+
+                    if ("offer".equalsIgnoreCase(sdpPayload.getType())) {
+                        logger.info("👉 Received SDP offer from user {}", sdpPayload.getFromUserId());
+                        webRTCManager.handleIncomingOffer(
+                                new RTCSessionDescription(RTCSdpType.OFFER, sdpPayload.getSdp()),
+                                sdpPayload.getFromUserId()
+                        );
+                    } else {
+                        logger.info("👉 Received SDP answer");
+                        webRTCManager.handleAnswer(
+                                new RTCSessionDescription(RTCSdpType.ANSWER, sdpPayload.getSdp())
+                        );
+                    }
+                } catch (Exception e) {
+                    logger.error("❌ Error while handling SdpPayload frame", e);
                 }
 
             }
@@ -156,6 +199,7 @@ public class WebSocketClientManager {
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
                 CandidatePayload candidatePayload = (CandidatePayload) payload;
+                logger.info("Received Candidate payload: {}", candidatePayload);
                 IceCandidate candidate = candidatePayload.getCandidate();
 
                 RTCIceCandidate rtcIceCandidate = new RTCIceCandidate(
@@ -163,6 +207,7 @@ public class WebSocketClientManager {
                         candidate.getSdpMLineIndex(),
                         candidate.getCandidate()
                 );
+
 
                 webRTCManager.handleCandidate(rtcIceCandidate);
 

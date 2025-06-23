@@ -1,5 +1,6 @@
 package com.forcy.chatapp.security.jwt;
 
+import com.forcy.chatapp.entity.Role;
 import com.forcy.chatapp.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtility {
@@ -35,12 +38,17 @@ public class JwtUtility {
         logger.info("Date now is {}", now);
         Date expiration = new Date(expirationTimeMillis);
         logger.info("Expiration Date is {}", expiration);
+        // Lấy danh sách tên role
+        List<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .subject(subject)
                 .issuer(issuerName)
                 .issuedAt(now)
                 .expiration(expiration)
-                .claim("roles", user.getRoles().toString())
+                .claim("roles", roles)
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS512)
                 .compact();
     }

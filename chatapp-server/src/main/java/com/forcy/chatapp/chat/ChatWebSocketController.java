@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -51,7 +52,7 @@ public class ChatWebSocketController {
                 messagingTemplate.convertAndSendToUser(username, "/queue/messages", response);
                 logger.info("Sent undelivered message to user {}: {}", username, response.getContent());
 
-                message.setDeliveredAt(LocalDateTime.now());
+                message.setDeliveredAt(new Date());
                 messageRepository.save(message);
                 logger.info("Updated deliveredAt for message ID: {}", message.getId());
             } catch (Exception e) {

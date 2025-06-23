@@ -1,10 +1,16 @@
 package payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SdpPayload implements WebRTCPayload {
 
+
     private String type;
+
     private String sdp;
+
     private Long fromUserId;
+
     private Long toUserId;
 
 
@@ -44,6 +50,7 @@ public class SdpPayload implements WebRTCPayload {
     public Long getToUserId() {
         return toUserId;
     }
+
 
     public Long getFromUserId() {
         return fromUserId;

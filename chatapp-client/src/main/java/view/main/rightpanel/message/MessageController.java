@@ -11,8 +11,10 @@ import di.BaseController;
 import view.main.UserToken;
 import view.main.chatlist.chatlist.ChatSelectedEvent;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class MessageController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
@@ -49,9 +51,11 @@ public class MessageController extends BaseController {
 
     private void addMessagePanel(MessageResponse message) {
         boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+
         String time = message.getSentAt() != null
-                ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm"))
-                : LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+                ? formatter.format(message.getSentAt())
+                : formatter.format(new Date());
 
         MessageType messageType;
         if (message.getMessageType().equals("TEXT")){
@@ -71,9 +75,11 @@ public class MessageController extends BaseController {
         for(int i = 0; i < messages.length; i++) {
             MessageResponse message = messages[i];
             boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+
             String time = message.getSentAt() != null
-                    ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm"))
-                    : LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+                    ? formatter.format(message.getSentAt())
+                    : formatter.format(new Date());
 
             MessageType messageType;
             if (message.getMessageType().equals("TEXT")){
