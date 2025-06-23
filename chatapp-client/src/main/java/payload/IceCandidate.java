@@ -1,8 +1,13 @@
 package payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class IceCandidate {
+    @JsonProperty("sdp_mid")
     private String sdpMid;
+    @JsonProperty("sdp_m_line_index")
     private int sdpMLineIndex;
+    @JsonProperty("candidate")
     private String candidate;
 
     public IceCandidate() {

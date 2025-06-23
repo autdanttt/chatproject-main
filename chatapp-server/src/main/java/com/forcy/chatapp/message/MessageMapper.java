@@ -5,6 +5,7 @@ import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class MessageMapper {
 
@@ -15,7 +16,7 @@ public class MessageMapper {
         message.setChat(chat);
         message.setType(request.getMessageType());
         message.setContent(request.getContent());
-        message.setSentAt(LocalDateTime.now());
+        message.setSentAt(new Date());
 
         return message;
 
@@ -31,7 +32,7 @@ public class MessageMapper {
         response.setChatId(message.getChat().getId());
         response.setMessageType(message.getType());
         response.setContent(message.getContent());
-        response.setSentAt(message.getSentAt());
+        response.setSentAt(new Date());
         response.setDeliveredAt(message.getDeliveredAt());
 
 

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import di.BaseController;
 import utility.WebSocketClientManager;
 import view.ApiResult;
+import view.login.AutoRefreshScheduler;
+import view.login.TokenManager;
 
 import javax.swing.*;
 
@@ -46,9 +48,10 @@ public class MainChatController extends BaseController {
         mainChatView.setUsername(this.username);
         mainChatView.setVisible(true);
 
-        eventBus.post(new UserToken(jwtToken, userId, username));
+        eventBus.post(new UserToken(TokenManager.getAccessToken(), userId, username));
+        AutoRefreshScheduler.start();
 
-        ApiResult<String> result = webSocketClientManager.setupWebSocket(jwtToken, username);
+        ApiResult<String> result = webSocketClientManager.setupWebSocket(TokenManager.getAccessToken(), username);
 
         if (result.isSuccess()) {
             JOptionPane.showMessageDialog(mainChatView, "Connected to server");

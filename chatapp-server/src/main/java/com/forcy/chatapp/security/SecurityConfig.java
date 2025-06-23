@@ -56,6 +56,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                 auth -> auth.requestMatchers("/api/oauth/**", "/chat").permitAll()
+                        .requestMatchers("/api/test/admin").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
         ).csrf(csrf->csrf.disable())
                 .exceptionHandling(exh -> exh.authenticationEntryPoint((request, response, authException) -> {
