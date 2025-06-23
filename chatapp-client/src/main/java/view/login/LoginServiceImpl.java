@@ -11,14 +11,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class LoginServiceImpl implements LoginService {
 
 
     @Override
     public UserLogin authenticate(String username, String password) throws IOException {
-
 
         String url = "http://localhost:10000/api/oauth/login";
         CloseableHttpClient client = HttpClients.createDefault();
@@ -33,7 +31,6 @@ public class LoginServiceImpl implements LoginService {
         UserLogin userLogin = new UserLogin();
 
 
-        // Trich xuat JWT Token tu header
         Header[] headers = response.getAllHeaders();
         for (Header header : headers) {
             if ("Jwt-Token".equalsIgnoreCase(header.getName())) {

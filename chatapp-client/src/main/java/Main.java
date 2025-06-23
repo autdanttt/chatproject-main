@@ -4,11 +4,10 @@ import di.AppModule;
 import di.AppNavigator;
 import view.login.LoginController;
 import view.main.MainChatController;
-import view.main.chatlist.chatlist.ChatListController;
-import view.main.rightpanel.message.MessageController;
-import view.main.rightpanel.usernameinfo.callvideo.CallVideoController;
-import view.main.rightpanel.usernameinfo.usernamestatus.UsernameStatusController;
-import view.main.search.search.SearchController;
+import view.main.leftPanel.chatlist.ChatListController;
+import view.main.rightPanel.message.MessageController;
+import view.main.rightPanel.otherInfoTop.InfoOtherAndFeatureController;
+import view.main.leftPanel.search.SearchController;
 import view.register.RegisterController;
 
 
@@ -17,11 +16,6 @@ import javax.swing.*;
 public class Main extends JFrame {
 
     public static void main(String[] args) {
-//        SwingUtilities.invokeLater(()->{
-//            LoginView view = new LoginView();
-//            new LoginControllerMain(view);
- //       });
-
         Injector injector = Guice.createInjector(new AppModule());
         AppNavigator navigator = injector.getInstance(AppNavigator.class);
 
@@ -31,8 +25,7 @@ public class Main extends JFrame {
         navigator.registerController("Search", SearchController.class);
         navigator.registerController("ChatList", ChatListController.class);
         navigator.registerController("Message", MessageController.class);
-        navigator.registerController("CallVideo", CallVideoController.class);
-        navigator.registerController("UsernameStatus", UsernameStatusController.class);
+        navigator.registerController("InfoOtherAndFeature", InfoOtherAndFeatureController.class);
 
         SwingUtilities.invokeLater(()->{
             navigator.navigateTo("Login");

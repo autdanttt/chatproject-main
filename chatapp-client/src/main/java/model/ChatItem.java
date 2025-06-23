@@ -9,7 +9,7 @@ public class ChatItem {
     private String otherUsername;
     private String lastMessage;
     private LocalDateTime lastMessageTime;
-
+    private String avatar;
 
     public ChatItem(Long chatId,Long otherUserId, String username, String lastMessage, LocalDateTime lastMessageTime) {
         this.chatId = chatId;
@@ -34,5 +34,12 @@ public class ChatItem {
 
     public String getFormattedTime() {
         return lastMessageTime != null ? lastMessageTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "";
+    }
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

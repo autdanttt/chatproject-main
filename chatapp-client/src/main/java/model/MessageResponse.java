@@ -3,11 +3,11 @@ package model;
 import java.time.LocalDateTime;
 
 public class MessageResponse {
-    private Long messageId;      // Thêm để khớp với JSON
+    private Long messageId;
     private Long fromUserId;
-    private Long toUserId;       // Thêm nếu cần (dùng để xác định chat 1-1)
+    private Long toUserId;
     private Long chatId;
-    private String messageType;  // Thêm nếu cần xử lý loại tin nhắn
+    private String messageType;
     private String content;
     private LocalDateTime sentAt;
     private LocalDateTime deliveredAt;

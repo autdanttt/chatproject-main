@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.client.RestTemplate;
 import payload.CandidatePayload;
 import payload.IceCandidate;
@@ -51,7 +50,6 @@ public class WebRTCManager {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + userToken.getJwtToken());
         this.jwtToken = userToken.getJwtToken();
 
     }

@@ -57,13 +57,11 @@ public class WebSocketClientManager {
 
             StompHeaders headers = new StompHeaders();
             headers.add("Authorization", "Bearer " + jwtToken);
-            logger.info("Connecting with headers: {}", headers);
 
             StompSessionHandler sessionHandler = new StompSessionHandlerAdapter() {
                 @Override
                 public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
                     stompSession = session;
-                    logger.info("✅ Connected to WebSocket server: {}", connectedHeaders);
 
                     session.subscribe("/user/queue/messages", new StompFrameHandler() {
                         @Override
@@ -87,7 +85,6 @@ public class WebSocketClientManager {
                     readyMessage.setSender(username);
                     readyMessage.setType("READY");
                     session.send("/app/ready", readyMessage);
-                    logger.info("Sent READY message for user: {}", username);
 
                     subscribeToSdp();
                     subscribeToCandidate();
