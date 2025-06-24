@@ -1,23 +1,33 @@
 package model;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Date;
 
 public class MessageResponse {
-    private Long messageId;
+    @JsonProperty("message_id")
+    private Long messageId;      // Thêm để khớp với JSON
+    @JsonProperty("from_user_id")
     private Long fromUserId;
-    private Long toUserId;
+    @JsonProperty("to_user_id")
+    private Long toUserId;       // Thêm nếu cần (dùng để xác định chat 1-1)
+    @JsonProperty("chat_id")
     private Long chatId;
-    private String messageType;
+    @JsonProperty("message_type")
+    private String messageType;  // Thêm nếu cần xử lý loại tin nhắn
+    @JsonProperty("content")
     private String content;
-    private LocalDateTime sentAt;
-    private LocalDateTime deliveredAt;
+    @JsonProperty("sent_at")
+    private Date sentAt;
+    @JsonProperty("delivered_at")
+    private Date deliveredAt;
 
     public Long getFromUserId() { return fromUserId; }
     public void setFromUserId(Long fromUserId) { this.fromUserId = fromUserId; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
-    public LocalDateTime getSentAt() { return sentAt; }
-    public void setSentAt(LocalDateTime sentAt) { this.sentAt = sentAt; }
+    public Date getSentAt() { return sentAt; }
+    public void setSentAt(Date sentAt) { this.sentAt = sentAt; }
 
     public Long getMessageId() {
         return messageId;
@@ -43,11 +53,11 @@ public class MessageResponse {
         this.messageType = messageType;
     }
 
-    public LocalDateTime getDeliveredAt() {
+    public Date getDeliveredAt() {
         return deliveredAt;
     }
 
-    public void setDeliveredAt(LocalDateTime deliveredAt) {
+    public void setDeliveredAt(Date deliveredAt) {
         this.deliveredAt = deliveredAt;
     }
 

@@ -28,19 +28,17 @@ public class SecurityConfig {
 
     @Autowired
     JwtTokenFilter jwtFilter;
-
     @Bean
-    PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    UserDetailsService userDetailsService() {
+    UserDetailsService userDetailsService(){
         return new CustomUserDetailsService();
     }
-
     @Bean
-    DaoAuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(passwordEncoder());
         authProvider.setUserDetailsService(userDetailsService());
@@ -52,15 +50,15 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers("/api/oauth/**", "/chat", "/api/users/register", "/chats").permitAll()
-                                .anyRequest().authenticated()
-                ).csrf(csrf -> csrf.disable())
+                auth -> auth.requestMatchers("/api/oauth/**", "/chat").permitAll()
+                        .requestMatchers("/api/test/admin").hasAnyRole("ADMIN")
+                        .anyRequest().authenticated()
+        ).csrf(csrf->csrf.disable())
                 .exceptionHandling(exh -> exh.authenticationEntryPoint((request, response, authException) -> {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
                 }))

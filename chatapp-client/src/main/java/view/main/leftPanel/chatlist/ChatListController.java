@@ -9,6 +9,7 @@ import model.ChatResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
+import view.login.TokenManager;
 import view.main.UserToken;
 
 public class ChatListController extends BaseController {
@@ -29,19 +30,25 @@ public class ChatListController extends BaseController {
             if(!e.getValueIsAdjusting()) {
                 ChatItem selectedChat = chatListPanel.getChatList().getSelectedValue();
                 if(selectedChat != null) {
+//                    eventBus.post(selectedChat.getChatId());
                     eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId()));
                     eventBus.post(new UsernameUpdateEvent(selectedChat.getUsername()));
                 }
             }
         });
+
     }
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        ChatResponse[] list = getListChat(userToken.getJwtToken());
+        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
+
+        ChatResponse[] list = getListChat();
+
         chatListPanel.getChatListModel().clear();
 
         for (ChatResponse chat : list) {
+            LOGGER.info("Adding chat: " + chat);
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     chat.getChatId(),
                     chat.getOtherUserId(),
@@ -50,10 +57,11 @@ public class ChatListController extends BaseController {
                     chat.getLastMessageTime()
             ));
         }
+
     }
 
-    private ChatResponse[] getListChat(String jwtToken) {
-        return chatListService.getChatList(jwtToken);
+    private ChatResponse[] getListChat() {
+        return chatListService.getChatList(TokenManager.getAccessToken());
     }
 
     @Override

@@ -38,36 +38,12 @@ public class LoginController extends BaseController {
 
             try {
                 UserLogin userLogin = loginService.authenticate(username, password);
-
-                if (userLogin == null) {
-                    JOptionPane.showMessageDialog(loginView, "Lỗi không xác định: Không nhận được phản hồi từ server.");
-                    return;
-                }
-
-                if (userLogin.getStatusCode() == 200) {
-                    if (userLogin.getJwtToken() == null || userLogin.getUsername() == null) {
-                        JOptionPane.showMessageDialog(loginView, "Dữ liệu phản hồi không hợp lệ.");
-                        return;
-                    }
-
-                    navigator.navigateTo(
-                            "MainChat",
-                            userLogin.getUserId(),
-                            userLogin.getUsername(),
-                            userLogin.getJwtToken()
-                    );
-                } else if (userLogin.getStatusCode() == 401) {
-                    JOptionPane.showMessageDialog(loginView, "Tên đăng nhập hoặc mật khẩu không đúng.");
-                } else {
-                    JOptionPane.showMessageDialog(loginView, "Đăng nhập thất bại. Mã lỗi: " + userLogin.getStatusCode());
+                if(userLogin.getStatusCode() == 200) {
+                    navigator.navigateTo("MainChat",userLogin.getUserId(), userLogin.getUsername(), TokenManager.getAccessToken());
                 }
 
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(loginView, "Lỗi kết nối đến máy chủ. Vui lòng kiểm tra mạng.");
-                ex.printStackTrace();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(loginView, "Đã xảy ra lỗi không xác định.");
-                ex.printStackTrace();
+                throw new RuntimeException(ex);
             }
         });
 

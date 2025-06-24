@@ -2,13 +2,18 @@ package view.main;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import di.BaseController;
 import utility.WebSocketClientManager;
 import view.ApiResult;
+import view.login.AutoRefreshScheduler;
+import view.login.TokenManager;
 
 import javax.swing.*;
 
 public class MainChatController extends BaseController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainChatController.class);
     private String username;
     private Long userId;
     private String jwtToken;
@@ -19,10 +24,11 @@ public class MainChatController extends BaseController {
 
 
     @Inject
-    public MainChatController(MainChatView mainChatView, WebSocketClientManager webSocketClientManager, EventBus eventBus) {
+    public MainChatController(MainChatView mainChatView,WebSocketClientManager webSocketClientManager, EventBus eventBus) {
         this.mainChatView = mainChatView;
         this.webSocketClientManager = webSocketClientManager;
         this.eventBus = eventBus;
+
     }
 
     @Override
@@ -37,11 +43,21 @@ public class MainChatController extends BaseController {
         this.jwtToken = (String) params[2];
 
         if (mainChatView == null) {
-            setupDependencies();
+            setupDependencies(); // Chỉ setup lần đầu
         }
         mainChatView.setUsername(this.username);
-        eventBus.post(new UserToken(jwtToken, userId, username));
-        ApiResult<String> result = webSocketClientManager.setupWebSocket(jwtToken, username);
+        mainChatView.setVisible(true);
+
+        eventBus.post(new UserToken(TokenManager.getAccessToken(), userId, username));
+        AutoRefreshScheduler.start();
+
+        ApiResult<String> result = webSocketClientManager.setupWebSocket(TokenManager.getAccessToken(), username);
+
+        if (result.isSuccess()) {
+            JOptionPane.showMessageDialog(mainChatView, "Connected to server");
+        }else {
+            JOptionPane.showMessageDialog(mainChatView, result.getError().getErrors().indexOf(0));
+        }
     }
 
     @Override

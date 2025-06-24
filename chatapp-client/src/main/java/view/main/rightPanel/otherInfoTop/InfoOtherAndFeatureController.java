@@ -7,10 +7,12 @@ import di.BaseController;
 import event.UsernameUpdateEvent;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
+import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import javax.swing.*;
+import java.util.logging.Logger;
 
 public class InfoOtherAndFeatureController extends BaseController {
     private final InfoOtherAndFeature infoOtherAndFeature;
@@ -27,6 +29,24 @@ public class InfoOtherAndFeatureController extends BaseController {
 
         eventBus.register(this);
         initializeListeners();
+    }
+
+    @Subscribe
+    public void onJwtToken(UserToken userToken) {
+        this.userId = userToken.getUserId();
+    }
+
+    @Subscribe
+    public void onChatSelected(ChatSelectedEvent event) {
+        this.chatId = event.getChatId();
+        this.otherUserId = event.getUserId();
+    }
+
+
+    @Override
+    protected void setupDependencies() {
+
+
     }
 
     private void initializeListeners() {
@@ -49,16 +69,6 @@ public class InfoOtherAndFeatureController extends BaseController {
         });
     }
 
-    @Subscribe
-    public void onJwtToken(UserToken userToken) {
-        this.userId = userToken.getUserId();
-    }
-
-    @Subscribe
-    public void onChatSelected(ChatSelectedEvent event) {
-        this.chatId = event.getChatId();
-        this.otherUserId = event.getUserId();
-    }
 
     @Subscribe
     public void onUsernameUpdate(UsernameUpdateEvent event) {
@@ -66,14 +76,12 @@ public class InfoOtherAndFeatureController extends BaseController {
     }
 
     @Override
-    protected void setupDependencies() {
-    }
-
-    @Override
     public void activate(Object... params) {
+
     }
 
     @Override
     public void deactivate() {
+
     }
 }

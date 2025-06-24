@@ -1,5 +1,6 @@
 package com.forcy.chatapp.auth;
 
+import com.forcy.chatapp.entity.Role;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.CustomUserDetails;
 import com.forcy.chatapp.user.UserService;
@@ -17,12 +18,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/oauth")
-
 public class AuthController{
+
+
     AuthenticationManager authenticationManager;
     TokenService tokenService;
     UserService userService;
@@ -53,11 +58,17 @@ public class AuthController{
 
     @PostMapping("/token/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest request){
+
         try{
             AuthResponse response = tokenService.refreshTokens(request);
-            return ResponseEntity.ok(response);
-        } catch (RefreshTokenExpiredException | RefreshTokenNotFoundException e) {
-           System.out.println("Refresh token expired");
+
+            RefreshTokenResponse refreshTokenResponse = new RefreshTokenResponse();
+            refreshTokenResponse.setAccessToken(response.getAccessToken());
+            refreshTokenResponse.setRefreshToken(response.getRefreshToken());
+
+            return ResponseEntity.ok(refreshTokenResponse);
+        } catch (RefreshTokenExpiredException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -67,22 +78,45 @@ public class AuthController{
         String username = request.getUsername();
         String password = request.getPassword();
 
+
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
             User user = userService.getByUsername(username);
 
-            AuthUserDTO loginDTO = entity2DTO(user);
+            AuthUserDTO loginDTO = new AuthUserDTO();
+            loginDTO.setId(user.getId());
+            loginDTO.setUsername(user.getUsername());
+            loginDTO.setPhoneNumber(user.getPhoneNumber());
+            Set<RoleDTO> roleDTOS = new HashSet<>();
+            for (Role role : user.getRoles()) {
+                RoleDTO roleDTO = new RoleDTO();
+                roleDTO.setId(role.getId());
+                roleDTO.setName(role.getName());
+                roleDTO.setDescription(role.getDescription());
+                roleDTOS.add(roleDTO);
+            }
+
+            loginDTO.setRoles(roleDTOS);
+
             AuthResponse response = tokenService.generateToken(userDetails.getUser());
-            HttpHeaders jwtHeader = new HttpHeaders();
-            jwtHeader.add("Jwt-Token", response.getAccessToken());
-            return new ResponseEntity<>(loginDTO, jwtHeader, OK);
+            response.setUser(loginDTO);
+
+
+
+//            AuthUserDTO loginDTO = entity2DTO(user);
+//            AuthResponse response = tokenService.generateToken(userDetails.getUser());
+//            HttpHeaders jwtHeader = new HttpHeaders();
+//            jwtHeader.add("Jwt-Token", response.getAccessToken());
+
+
+            return new ResponseEntity<>(response, OK);
         }catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-    }
 
+    }
     private AuthUserDTO entity2DTO(User user){
         return mapper.map(user, AuthUserDTO.class);
     }

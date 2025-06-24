@@ -17,12 +17,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.web.client.RestTemplate;
 import payload.CandidatePayload;
 import payload.IceCandidate;
 import payload.SdpPayload;
 import view.MainVideoFrame;
 import view.VideoPanel;
+import view.login.TokenManager;
 import view.main.UserToken;
 
 import javax.swing.*;
@@ -37,7 +39,7 @@ public class WebRTCManager {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(WebRTCManager.class);
     private PeerConnectionFactory factory;
     private RTCPeerConnection peerConnection;
-    private String jwtToken;
+//    private String jwtToken;
 
     private VideoPanel localPanel;
     private VideoPanel remotePanel;
@@ -50,7 +52,8 @@ public class WebRTCManager {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        this.jwtToken = userToken.getJwtToken();
+        LOGGER.info("Received JWT token: " + userToken.getJwtToken());
+ //       this.jwtToken = userToken.getJwtToken();
 
     }
 
@@ -100,7 +103,7 @@ public class WebRTCManager {
                         RestTemplate restTemplate = new RestTemplate();
                         HttpHeaders headers = new HttpHeaders();
                         headers.setContentType(MediaType.APPLICATION_JSON);
-                        headers.set("Authorization", "Bearer " + jwtToken);
+                        headers.set("Authorization", "Bearer " + TokenManager.getAccessToken());
                         HttpEntity<String> entity = new HttpEntity<>(payload, headers);
 
                         String response = restTemplate.postForObject(url, entity, String.class);
@@ -149,8 +152,8 @@ public class WebRTCManager {
         List<VideoDevice> cams = MediaDevices.getVideoCaptureDevices();
 
         if (!cams.isEmpty()) {
-            for (VideoDevice cam : cams) {
-                logger.warning("i : " + cam.toString());
+            for (int i = 0; i < cams.size(); i++) {
+                logger.warning("i : " + cams.get(i).toString());
             }
             VideoDeviceSource videoSource = new VideoDeviceSource();
             videoSource.setVideoCaptureDevice(cams.get(cameraId));
@@ -162,7 +165,7 @@ public class WebRTCManager {
             vt.addSink(new VideoTrackSink() {
                 @Override
                 public void onVideoFrame(VideoFrame frame) {
-//                    logger.info("Received video frame " + frame);
+                    logger.info("Received video frame " + frame);
                     VideoFrameBuffer frameBuffer = frame.buffer;
                     BufferedImage img = i420ToBufferedImage(frameBuffer);
                     SwingUtilities.invokeLater(() ->{
@@ -224,7 +227,6 @@ public class WebRTCManager {
 
         return image;
     }
-
     private static int clamp(int val) {
         return Math.max(0, Math.min(255, val));
     }
@@ -281,7 +283,7 @@ public class WebRTCManager {
             HttpHeaders headers = new HttpHeaders();
 
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Authorization", "Bearer " +jwtToken);
+            headers.set("Authorization", "Bearer " +TokenManager.getAccessToken());
             HttpEntity<String> entity = new HttpEntity<>(payload, headers);
 
             String response = restTemplate.postForObject(url, entity, String.class);

@@ -11,6 +11,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Component
 public class MessageConsumer {
@@ -48,7 +49,7 @@ public class MessageConsumer {
 
             Message message = messageRepository.findById(messageResponse.getMessageId()).orElseThrow(() -> new RuntimeException("Message not found"));
             if (message.getDeliveredAt() == null) {
-                message.setDeliveredAt(LocalDateTime.now());
+                message.setDeliveredAt(new Date());
                 messageRepository.save(message);
                 logger.info("Message delivery time updated for message ID: {}" , message.getId());
             }
