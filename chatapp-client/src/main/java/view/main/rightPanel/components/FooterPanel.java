@@ -1,10 +1,7 @@
 package view.main.rightPanel.components;
 
+import custom.CreateButton;
 import custom.RoundedTextField;
-import org.apache.commons.logging.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import view.main.rightPanel.sendmessage.SendMessageController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,43 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FooterPanel extends JPanel {
+public class FooterLeftPanel extends JPanel {
     private JButton sendImage, sendBtn, sendEmoji;
     private JTextField sendMessage;
     private Consumer<File> emojiSelectedListener;
     private Consumer<File> imageSelectedListener;
 
-    public FooterPanel() {
+    public FooterLeftPanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 5, 11));
         setBackground(Color.WHITE);
 
-        sendEmoji = new JButton();
-        sendEmoji.setIcon(new ImageIcon("D:/chat_ui/images/EMOJI.png"));
-        sendEmoji.setPreferredSize(new Dimension(48, 48));
-        sendEmoji.setBorder(BorderFactory.createEmptyBorder());
-        sendEmoji.setContentAreaFilled(false);
-        sendEmoji.setFocusPainted(false);
-        sendEmoji.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        sendEmoji = new CreateButton("D:/chat_ui/images/EMOJI.png");
         sendEmoji.addActionListener(e -> showEmojiPicker());
 
-        sendImage = new JButton();
-        sendImage.setIcon(new ImageIcon("D:/chat_ui/images/SEND_IAMGE.png"));
-        sendImage.setPreferredSize(new Dimension(48, 48));
-        sendImage.setBorder(BorderFactory.createEmptyBorder());
-        sendImage.setContentAreaFilled(false);
-        sendImage.setFocusPainted(false);
+        sendImage = new CreateButton("D:/chat_ui/images/SEND_IAMGE.png");
         sendImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         sendImage.addActionListener(e -> showFileChooser());
 
         sendMessage = new RoundedTextField(40);
         sendMessage.setPreferredSize(new Dimension(450, 48));
 
-        sendBtn = new JButton();
-        sendBtn.setIcon(new ImageIcon("D:/chat_ui/images/SEND.png"));
-        sendBtn.setPreferredSize(new Dimension(48, 48));
-        sendBtn.setBorder(BorderFactory.createEmptyBorder());
-        sendBtn.setContentAreaFilled(false);
-        sendBtn.setFocusPainted(false);
+        sendBtn = new CreateButton("D:/chat_ui/images/SEND.png");
         sendBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         add(sendEmoji);
