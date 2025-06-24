@@ -1,4 +1,4 @@
-package com.forcy.chatapp.group;
+package com.forcy.chatapp.group.dto;
 
 import lombok.Getter;
 import lombok.Setter;

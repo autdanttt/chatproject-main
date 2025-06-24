@@ -19,8 +19,10 @@ public class ChatGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "groups")
-    private List<User> users;
+    private String name; // tên nhóm
+
+    @OneToMany(mappedBy = "group")
+    private List<GroupMember> members;
 
     @OneToMany(mappedBy = "group")
     private List<Message> messages;

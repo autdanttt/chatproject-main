@@ -1,14 +1,16 @@
 package com.forcy.chatapp.group;
 
 import com.forcy.chatapp.entity.*;
+import com.forcy.chatapp.group.dto.ChatGroupDTO;
+import com.forcy.chatapp.group.dto.CreateGroupRequest;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatGroupService {
@@ -59,6 +61,35 @@ public class ChatGroupService {
         groupDTO.setName(group.getName());
         groupDTO.setCreatorId(creator.getId());
         groupDTO.setMemberIds(allMemberIds.stream().toList());
+
+        return groupDTO;
+    }
+
+
+    public ChatGroupDTO updateGroupName(Long groupId, Long userId, String newName){
+        ChatGroup group = chatGroupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException("Group not found with id: " + groupId));
+
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
+                .orElseThrow(() -> new AccessDeniedException("Bạn không phải thành viên nhóm"));
+
+        if (member.getRole() != MemberRole.ADMIN) {
+            throw new AccessDeniedException("Chỉ ADMIN mới được sửa tên nhóm");
+        }
+
+        group.setName(newName);
+        ChatGroup updatedGroup = chatGroupRepository.save(group);
+
+        ChatGroupDTO groupDTO = new ChatGroupDTO();
+        groupDTO.setId(updatedGroup.getId());
+        groupDTO.setName(updatedGroup.getName());
+        groupDTO.setCreatorId(member.getId());
+
+        List<Long> memberListId = new ArrayList<>();
+        for (GroupMember user : group.getMembers()) {
+            memberListId.add(user.getId());
+        }
+        groupDTO.setMemberIds(memberListId);
 
         return groupDTO;
     }

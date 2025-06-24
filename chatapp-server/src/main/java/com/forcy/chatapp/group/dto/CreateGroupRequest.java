@@ -1,4 +1,4 @@
-package com.forcy.chatapp.group;
+package com.forcy.chatapp.group.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

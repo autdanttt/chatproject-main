@@ -3,6 +3,7 @@ package com.forcy.chatapp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -41,13 +42,8 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_group",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
-    private List<ChatGroup> groups;
+    @OneToMany(mappedBy = "user")
+    private List<GroupMember> groupMembers;
 
     @ManyToMany
     @JoinTable(

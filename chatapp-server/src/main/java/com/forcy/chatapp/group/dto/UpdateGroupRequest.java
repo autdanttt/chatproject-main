@@ -1,4 +1,4 @@
-package com.forcy.chatapp.group;
+package com.forcy.chatapp.group.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -11,7 +11,5 @@ public class UpdateGroupRequest {
     @NotNull
     @Length(min = 2, max = 30, message = "Name must be between 2 - 30")
     private String name;
-    @NotNull
-    private Long userId;
 
 }

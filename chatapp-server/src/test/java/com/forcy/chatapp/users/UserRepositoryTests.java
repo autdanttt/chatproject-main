@@ -29,10 +29,10 @@ public class UserRepositoryTests {
     public void testCreateUser() {
         Role role = entityManager.find(Role.class, 2);
         User user = new User();
-        user.setUsername("autdant7");
+        user.setUsername("admin1");
 
         user.setPassword(passwordEncoder.encode("12345678"));
-        user.setPhoneNumber("0998423424");
+        user.setPhoneNumber("0998423426");
         user.addRole(role);
 
         User savedUser = userRepository.save(user);
