@@ -1,5 +1,6 @@
 package com.forcy.chatapp;
 
+import com.forcy.chatapp.auth.RefreshTokenNotFoundException;
 import com.forcy.chatapp.security.jwt.JwtValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -74,6 +75,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return error;
     }
 
+    @ExceptionHandler(RefreshTokenNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorDTO handleRefreshTokenNotFoundException(HttpServletRequest request, Exception ex){
+        ErrorDTO error = new ErrorDTO();
+
+        error.setTimestamp(new Date());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.addError(ex.getMessage());
+        error.setPath(request.getServletPath());
+
+        LOGGER.error(ex.getMessage(), ex);
+        return error;
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -85,8 +101,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         error.setPath(((ServletWebRequest) request).getRequest().getServletPath());
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         fieldErrors.forEach(fieldError -> {
-            error.addError(fieldError.getField() + ": "+ fieldError.getDefaultMessage());
+            String snakeField = toSnakeCase(fieldError.getField());
+            error.addError(snakeField + ": " + fieldError.getDefaultMessage());
         });
+
         return new ResponseEntity<>(error, headers, status);
+    }
+
+    public static String toSnakeCase(String input) {
+        return input.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 }

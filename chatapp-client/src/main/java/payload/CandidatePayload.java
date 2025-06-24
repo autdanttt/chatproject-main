@@ -1,8 +1,11 @@
 package payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CandidatePayload implements WebRTCPayload {
     private String type = "candidate";
     private IceCandidate candidate;
+    @JsonProperty("to_user_id")
     private Long toUserId;
 
     public CandidatePayload() {

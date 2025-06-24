@@ -1,10 +1,16 @@
 package payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SdpPayload implements WebRTCPayload {
 
+    @JsonProperty("type")
     private String type;
+    @JsonProperty("sdp")
     private String sdp;
+    @JsonProperty("from_user_id")
     private Long fromUserId;
+    @JsonProperty("to_user_id")
     private Long toUserId;
 
 

@@ -9,50 +9,64 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginServiceImpl implements LoginService {
 
 
+
+
+
     @Override
     public UserLogin authenticate(String username, String password) throws IOException {
-
-
+         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:10000/api/oauth/login";
-        CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setHeader("Content-Type", "application/json");
 
-        String json =  String.format("{\"username\":\"%s\",\"password\":\"%s\"}", username, password);
-        httpPost.setEntity(new StringEntity(json));
-        CloseableHttpResponse response = client.execute(httpPost);
-        String responseBody = EntityUtils.toString(response.getEntity());
+        // Tạo request body
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("username", username);
+        requestBody.put("password", password);
 
-        UserLogin userLogin = new UserLogin();
+        // Tạo HTTP entity
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
 
+        try {
+            ResponseEntity<AuthResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    entity,
+                    AuthResponse.class
+            );
 
-        // Trich xuat JWT Token tu header
-        Header[] headers = response.getAllHeaders();
-        for (Header header : headers) {
-            if ("Jwt-Token".equalsIgnoreCase(header.getName())) {
-                userLogin.setJwtToken(header.getValue());
-                break;
-            }
+            AuthResponse authResponse = response.getBody();
+            AuthUserDTO user = authResponse.getUser();
+
+            UserLogin userLogin = new UserLogin();
+            userLogin.setStatusCode(response.getStatusCodeValue());
+            userLogin.setUserId(user.getId());
+            userLogin.setUsername(user.getUsername());
+            userLogin.setPhoneNumber(user.getPhoneNumber());
+            userLogin.setRoles(user.getRoles());
+
+            TokenManager.setAccessToken(authResponse.getAccessToken());
+            TokenManager.setRefreshToken(authResponse.getRefreshToken());
+            TokenManager.setUsername(user.getUsername());
+
+            return userLogin;
+
+        } catch (HttpClientErrorException e) {
+            UserLogin userLogin = new UserLogin();
+            userLogin.setStatusCode(e.getRawStatusCode());
+            return userLogin;
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(responseBody);
-
-        if (response.getStatusLine().getStatusCode() == 200) {
-            userLogin.setStatusCode(200);
-            userLogin.setUsername(jsonNode.get("username").asText());
-            userLogin.setUserId(jsonNode.get("id").asLong());
-        }else {
-            userLogin.setStatusCode(401);
-        }
-
-        return userLogin;
     }
 }

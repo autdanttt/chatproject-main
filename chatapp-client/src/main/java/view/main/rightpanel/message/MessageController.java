@@ -8,11 +8,14 @@ import model.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
+import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.chatlist.chatlist.ChatSelectedEvent;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class MessageController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
@@ -30,7 +33,7 @@ public class MessageController extends BaseController {
 
     @Subscribe
     public void onGetJwtToken(UserToken userToken) {
-        this.jwtToken = userToken.getJwtToken();
+        this.jwtToken = TokenManager.getAccessToken();
         this.userId = userToken.getUserId();
         LOGGER.info("JWT Token: " + jwtToken);
     }
@@ -49,10 +52,11 @@ public class MessageController extends BaseController {
 
     private void addMessagePanel(MessageResponse message) {
         boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);
-        String time = message.getSentAt() != null
-                ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm"))
-                : LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
-
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        Date sentAt = message.getSentAt();
+        String time = sentAt != null
+                ? formatter.format(sentAt)
+                : formatter.format(new Date());
         MessageType messageType;
         if (message.getMessageType().equals("TEXT")){
             messageType = MessageType.TEXT;
@@ -67,13 +71,15 @@ public class MessageController extends BaseController {
     private void addListMessage(Long chatId, Long userId) {
         messagePanel.clearMessages();
         LOGGER.info("Jwt token: " + jwtToken);
-        MessageResponse[] messages = messageService.getMessageByChatId(chatId, jwtToken);
+        MessageResponse[] messages = messageService.getMessageByChatId(chatId, TokenManager.getAccessToken());
         for(int i = 0; i < messages.length; i++) {
             MessageResponse message = messages[i];
             boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);
-            String time = message.getSentAt() != null
-                    ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm"))
-                    : LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+            Date sentAt = message.getSentAt();
+            String time = sentAt != null
+                    ? formatter.format(sentAt)
+                    : formatter.format(new Date());
 
             MessageType messageType;
             if (message.getMessageType().equals("TEXT")){

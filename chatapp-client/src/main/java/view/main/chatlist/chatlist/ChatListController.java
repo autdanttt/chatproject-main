@@ -9,6 +9,7 @@ import model.ChatResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
+import view.login.TokenManager;
 import view.main.UserToken;
 
 public class ChatListController extends BaseController {
@@ -40,9 +41,9 @@ public class ChatListController extends BaseController {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + userToken.getJwtToken());
+        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
 
-        ChatResponse[] list = getListChat(userToken.getJwtToken());
+        ChatResponse[] list = getListChat();
 
         chatListPanel.getChatListModel().clear();
 
@@ -59,8 +60,8 @@ public class ChatListController extends BaseController {
 
     }
 
-    private ChatResponse[] getListChat(String jwtToken) {
-        return chatListService.getChatList(jwtToken);
+    private ChatResponse[] getListChat() {
+        return chatListService.getChatList(TokenManager.getAccessToken());
     }
 
     @Override

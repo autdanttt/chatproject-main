@@ -31,7 +31,7 @@ public class LoginController extends BaseController {
             try {
                 UserLogin userLogin = loginService.authenticate(username, password);
                 if(userLogin.getStatusCode() == 200) {
-                    navigator.navigateTo("MainChat",userLogin.getUserId(), userLogin.getUsername(), userLogin.getJwtToken());
+                    navigator.navigateTo("MainChat",userLogin.getUserId(), userLogin.getUsername(), TokenManager.getAccessToken());
                 }
 
             } catch (IOException ex) {
