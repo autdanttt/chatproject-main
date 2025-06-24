@@ -61,7 +61,7 @@ public class AuthController{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-    // Api login
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request){
         String username = request.getUsername();

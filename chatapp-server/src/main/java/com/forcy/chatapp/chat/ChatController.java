@@ -1,5 +1,6 @@
 package com.forcy.chatapp.chat;
 
+import com.forcy.chatapp.ErrorDTO;
 import com.forcy.chatapp.entity.Chat;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
@@ -9,6 +10,7 @@ import com.forcy.chatapp.message.MessageService;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -84,18 +89,33 @@ public class ChatController {
     }
 
     @DeleteMapping("/{chatId}")
-    public ResponseEntity<?> deleteChat(@PathVariable Long chatId) {
+    public ResponseEntity<?> deleteChat(@PathVariable Long chatId, HttpServletRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         try {
             chatService.deleteChat(chatId, currentUser.getId());
-            return ResponseEntity.noContent().build(); // 204 No Content
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Xóa chat thành công!");
+            return ResponseEntity.ok(response);
+
         } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setTimestamp(new Date());
+            errorDTO.setStatus(HttpStatus.FORBIDDEN.value());
+            errorDTO.setPath(request.getRequestURI());
+            errorDTO.addError("Bạn không có quyền xoá cuộc trò chuyện này");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDTO);
+
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            ErrorDTO errorDTO = new ErrorDTO();
+            errorDTO.setTimestamp(new Date());
+            errorDTO.setStatus(HttpStatus.NOT_FOUND.value());
+            errorDTO.setPath(request.getRequestURI());
+            errorDTO.addError(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDTO);
         }
     }
-
 }
