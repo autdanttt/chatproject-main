@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import controllers.FooterLeftController;
 import service.*;
 import utility.WebRTCManager;
 import view.login.LoginController;
@@ -13,26 +14,22 @@ import view.login.LoginServiceImpl;
 import view.main.MainChatController;
 import view.main.MainChatView;
 import utility.WebSocketClientManager;
-import view.main.chatlist.chatlist.ChatListController;
-import view.main.chatlist.chatlist.ChatListPanel;
-import view.main.chatlist.chatlist.ChatListService;
-import view.main.chatlist.chatlist.ChatListServiceImpl;
-import view.main.rightpanel.RightPanel;
-import view.main.rightpanel.message.MessageController;
-import view.main.rightpanel.message.MessagePanel;
-import view.main.rightpanel.message.MessageService;
-import view.main.rightpanel.message.MessageServiceImpl;
-import view.main.rightpanel.sendmessage.SendMessageController;
-import view.main.rightpanel.sendmessage.SendMessagePanel;
-import view.main.rightpanel.sendmessage.SendMessageService;
-import view.main.rightpanel.sendmessage.SendMessageServiceImpl;
-import view.main.rightpanel.usernameinfo.UsernameInfoPanel;
-import view.main.rightpanel.usernameinfo.callvideo.CallVideoController;
-import view.main.rightpanel.usernameinfo.callvideo.CallVideoPanel;
-import view.main.rightpanel.usernameinfo.usernamestatus.UsernameStatusController;
-import view.main.rightpanel.usernameinfo.usernamestatus.UsernameStatusPanel;
-import view.main.search.search.SearchController;
-import view.main.search.search.SearchPanel;
+import view.main.leftPanel.chatlist.ChatListController;
+import view.main.leftPanel.chatlist.ChatListPanel;
+import view.main.leftPanel.chatlist.ChatListService;
+import view.main.leftPanel.chatlist.ChatListServiceImpl;
+import view.main.rightPanel.RightPanel;
+import view.main.rightPanel.components.FooterPanel;
+import view.main.rightPanel.message.MessageController;
+import view.main.rightPanel.message.MessagePanel;
+import view.main.rightPanel.message.MessageService;
+import view.main.rightPanel.message.MessageServiceImpl;
+import view.main.rightPanel.sendmessage.SendMessageController;
+import view.main.rightPanel.sendmessage.SendMessageService;
+import view.main.rightPanel.sendmessage.SendMessageServiceImpl;
+import view.main.rightPanel.otherInfoTop.InfoOtherAndFeature;
+import view.main.leftPanel.search.SearchController;
+import view.main.leftPanel.search.SearchPanel;
 import view.register.RegisterController;
 
 public class AppModule extends AbstractModule {
@@ -49,29 +46,36 @@ public class AppModule extends AbstractModule {
         bind(MessageService.class).to(MessageServiceImpl.class);
         bind(SendMessageService.class).to(SendMessageServiceImpl.class);
 
+        //Controller Login and Register
         bind(LoginController.class);
         bind(RegisterController.class);
+
+        // Controller Left Panel
         bind(SearchController.class);
-        bind(MainChatController.class);
-        bind(CallVideoController.class);
-        bind(UsernameStatusController.class);
-        bind(SendMessageController.class);
         bind(ChatListController.class);
+        bind(FooterLeftController.class);
+
+        //Controller Main
+        bind(MainChatController.class);
+
+        //Controller Right Panel
+        bind(SendMessageController.class);
         bind(MessageController.class);
 
-        bind(CallVideoPanel.class).in(Singleton.class);
-        bind(UsernameStatusPanel.class).in(Singleton.class);
-        bind(UsernameInfoPanel.class).in(Singleton.class);
-        bind(MessagePanel.class).in(Singleton.class);
-        bind(SendMessagePanel.class).in(Singleton.class);
-        bind(MainChatView.class).in(Singleton.class);
-        bind(ChatListPanel.class).in(Singleton.class);
+        //View Left Panel
         bind(SearchPanel.class).in(Singleton.class);
-        bind(RightPanel.class).in(Singleton.class);
+        bind(view.main.leftPanel.components.FooterPanel.class).in(Singleton.class);
         bind(ChatListPanel.class).in(Singleton.class);
+
+        //View Right Pannel
+        bind(InfoOtherAndFeature.class).in(Singleton.class);
+        bind(FooterPanel.class).in(Singleton.class);
+        bind(RightPanel.class).in(Singleton.class);
         bind(MessagePanel.class).in(Singleton.class);
-        bind(WebSocketClientManager.class).in(Singleton.class);
+        bind(MainChatView.class).in(Singleton.class);
+
         bind(WebRTCManager.class).in(Singleton.class);
+        bind(WebSocketClientManager.class).in(Singleton.class);
     }
 
     @Provides

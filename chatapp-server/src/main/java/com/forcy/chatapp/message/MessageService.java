@@ -83,6 +83,9 @@ public class MessageService {
 //        }
         return message;
     }
+    public Message getLastMessageInChat(Long chatId) {
+        return messageRepository.findTopByChatIdOrderBySentAtDesc(chatId);
+    }
 
 
     public List<Message> findMessagesByChatId(Long chatId) {

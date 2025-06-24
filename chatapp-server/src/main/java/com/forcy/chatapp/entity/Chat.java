@@ -14,11 +14,9 @@ import java.util.List;
 @Getter
 @Setter
 public class Chat {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @ManyToMany(mappedBy = "chats")
     private List<User> users;
@@ -28,7 +26,6 @@ public class Chat {
 
     @Override
     public String toString() {
-        return "Chat{" +
-                "id=" + id + "}";
+        return "Chat{" + "id=" + id + "}";
     }
 }

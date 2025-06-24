@@ -11,7 +11,7 @@ public class ChatItem {
     private String otherUsername;
     private String lastMessage;
     private Date lastMessageTime;
-
+    private String avatar;
 
     public ChatItem(Long chatId, Long otherUserId, String username, String lastMessage, Date lastMessageTime) {
         this.chatId = chatId;
@@ -39,5 +39,12 @@ public class ChatItem {
                 ? new SimpleDateFormat("HH:mm").format(lastMessageTime)
                 : "";
 
+    }
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

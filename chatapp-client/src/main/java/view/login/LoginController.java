@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
 
+import javax.swing.*;
 import java.io.IOException;
 
 
@@ -26,8 +27,15 @@ public class LoginController extends BaseController {
         this.loginView = new LoginView();
 
         loginView.addLoginButtonListener(e -> {
-            String username = loginView.getUsername();
-            String password = loginView.getPassword();
+            String username = loginView.getUsername().trim();
+            String password = loginView.getPassword().trim();
+            logger.info("username : " + username + " password : " + password);
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(loginView, "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
+                return;
+            }
+
             try {
                 UserLogin userLogin = loginService.authenticate(username, password);
                 if(userLogin.getStatusCode() == 200) {
