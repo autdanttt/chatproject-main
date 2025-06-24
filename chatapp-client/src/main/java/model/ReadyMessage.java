@@ -1,28 +1,19 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class ReadyMessage {
     @JsonProperty("sender")
     private String sender;
 
-    @JsonProperty("type")
-    private String type;
+    @JsonProperty("message")
+    private String message;
 
     public ReadyMessage() {
     }
 
-    public ReadyMessage(String sender, String type) {
+    public ReadyMessage(String sender, String message) {
         this.sender = sender;
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+        this.message = message;
     }
 
     public String getSender() {
@@ -33,11 +24,19 @@ public class ReadyMessage {
         this.sender = sender;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         return "ReadyMessage{" +
                 "sender='" + sender + '\'' +
-                ", type='" + type + '\'' +
+                ", message='" + message + '\'' +
                 '}';
     }
 }

@@ -5,18 +5,20 @@ import custom.CreateButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class FooterPanel extends JPanel {
     private JButton addButton, deleteButton, addGroupButton;
+    private String basePath = new File(System.getProperty("user.dir")).getParent();
 
     public FooterPanel() {
         setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 16));
         setPreferredSize(new Dimension(400, 80));
         setBackground(Color.WHITE);
 
-        deleteButton = new CreateButton("D:/chatproject-main/images/DELETE_CHAT.png");
-        addButton = new CreateButton("D:/chatproject-main/images/ADD_USER.png");
-        addGroupButton = new CreateButton("D:/chatproject-main/images/ADD_GROUP_USER.png");
+        deleteButton = new CreateButton(basePath + "/images/DELETE_CHAT.png");
+        addButton = new CreateButton(basePath + "/images/ADD_USER.png");
+        addGroupButton = new CreateButton(basePath + "/images/ADD_GROUP_USER.png");
 
         add(deleteButton);
         add(addGroupButton);

@@ -20,7 +20,11 @@ public class FooterLeftController extends BaseController {
 
     private void initializeListeners() {
         footerPanel.addChatListener(e -> {
-            LOGGER.info("->>>>>>>>>>>>>>>>>>>>>>>> ");
+            LOGGER.info("->>>>>>>>>>>>>>>>>>>>>>>>djfdhfdsfd ");
+        });
+
+        footerPanel.deleteChatListener(e -> {
+            LOGGER.info("->>>>>>>>>>>>>>>>>>>>>>>>>> dffdsfsd");
         });
     }
 
