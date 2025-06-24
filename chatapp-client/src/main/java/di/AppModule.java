@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import controllers.FooterLeftController;
 import service.*;
 import utility.WebRTCManager;
 import view.login.LoginController;
@@ -45,25 +46,36 @@ public class AppModule extends AbstractModule {
         bind(MessageService.class).to(MessageServiceImpl.class);
         bind(SendMessageService.class).to(SendMessageServiceImpl.class);
 
+        //Controller Login and Register
         bind(LoginController.class);
         bind(RegisterController.class);
+
+        // Controller Left Panel
         bind(SearchController.class);
-        bind(MainChatController.class);
-        bind(SendMessageController.class);
         bind(ChatListController.class);
+        bind(FooterLeftController.class);
+
+        //Controller Main
+        bind(MainChatController.class);
+
+        //Controller Right Panel
+        bind(SendMessageController.class);
         bind(MessageController.class);
 
-        bind(InfoOtherAndFeature.class).in(Singleton.class);
-        bind(MessagePanel.class).in(Singleton.class);
-        bind(FooterPanel.class).in(Singleton.class);
-        bind(MainChatView.class).in(Singleton.class);
-        bind(ChatListPanel.class).in(Singleton.class);
+        //View Left Panel
         bind(SearchPanel.class).in(Singleton.class);
-        bind(RightPanel.class).in(Singleton.class);
+        bind(view.main.leftPanel.components.FooterPanel.class).in(Singleton.class);
         bind(ChatListPanel.class).in(Singleton.class);
+
+        //View Right Pannel
+        bind(InfoOtherAndFeature.class).in(Singleton.class);
+        bind(FooterPanel.class).in(Singleton.class);
+        bind(RightPanel.class).in(Singleton.class);
         bind(MessagePanel.class).in(Singleton.class);
-        bind(WebSocketClientManager.class).in(Singleton.class);
+        bind(MainChatView.class).in(Singleton.class);
+
         bind(WebRTCManager.class).in(Singleton.class);
+        bind(WebSocketClientManager.class).in(Singleton.class);
     }
 
     @Provides

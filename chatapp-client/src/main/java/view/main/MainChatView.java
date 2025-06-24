@@ -30,7 +30,7 @@ public class MainChatView extends JFrame {
 
     private void initUI() {
         setTitle("Chat App");
-        setSize(1000, 800);
+        setSize(1200, 800);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

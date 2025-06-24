@@ -31,7 +31,7 @@ public class RightPanel extends JPanel {
         this.centerPanel = centerPanel;
         this.footerPanel = footerPanel;
 
-        setPreferredSize(new Dimension(600, 800));
+        setPreferredSize(new Dimension(700, 800));
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 

@@ -1,5 +1,6 @@
 package view.main.rightPanel.message;
 
+import custom.ModernScrollBarUI;
 import custom.RoundedPanel;
 import model.MessageType;
 
@@ -12,7 +13,7 @@ public class MessagePanel extends JPanel {
 
     public MessagePanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setPreferredSize(new Dimension(500, 470));
+        setPreferredSize(new Dimension(700, 470));
         setBackground(Color.WHITE);
 
         messageItemPanel = new JPanel();
@@ -20,10 +21,9 @@ public class MessagePanel extends JPanel {
         messageItemPanel.setBackground(Color.WHITE);
 
         JScrollPane scrollPane = new JScrollPane(messageItemPanel);
-        scrollPane.getViewport().setOpaque(true);
-        scrollPane.getViewport().setBackground(Color.WHITE);
-        scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setUI(new ModernScrollBarUI());
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         add(scrollPane, BorderLayout.CENTER);
     }

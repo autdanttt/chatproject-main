@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class FooterPanel extends JPanel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageController.class);
     private JButton sendImage, sendBtn, sendEmoji;
     private JTextField sendMessage;
     private Consumer<File> emojiSelectedListener;
@@ -46,8 +45,8 @@ public class FooterPanel extends JPanel {
         sendImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
         sendImage.addActionListener(e -> showFileChooser());
 
-        sendMessage = new RoundedTextField(20);
-        sendMessage.setPreferredSize(new Dimension(250, 48));
+        sendMessage = new RoundedTextField(40);
+        sendMessage.setPreferredSize(new Dimension(450, 48));
 
         sendBtn = new JButton();
         sendBtn.setIcon(new ImageIcon("D:/chat_ui/images/SEND.png"));

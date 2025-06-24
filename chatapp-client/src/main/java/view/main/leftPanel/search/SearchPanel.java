@@ -1,5 +1,6 @@
 package view.main.leftPanel.search;
 
+import custom.CreateButton;
 import custom.RoundedTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ public class SearchPanel extends JPanel {
 
     public SearchPanel() {
         setLayout(new GridBagLayout());
-        setPreferredSize(new Dimension(400, 100));
+        setPreferredSize(new Dimension(300, 100));
         setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -29,13 +30,7 @@ public class SearchPanel extends JPanel {
         searchTextField = new RoundedTextField(20);
         searchTextField.setPreferredSize(new Dimension(250, 40));
 
-        searchButton = new JButton();
-        searchButton.setIcon(new ImageIcon("D:/chatproject-main/images/SEARCH.png"));
-        searchButton.setPreferredSize(new Dimension(48, 48));
-        searchButton.setBorder(BorderFactory.createEmptyBorder(0, 9, 0, 0));
-        searchButton.setContentAreaFilled(false);
-        searchButton.setFocusPainted(false);
-        searchButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        searchButton = new CreateButton("D:/chatproject-main/images/SEARCH.png");
 
         pn1.add(searchTextField, BorderLayout.CENTER);
         pn1.add(searchButton, BorderLayout.EAST);
@@ -50,5 +45,4 @@ public class SearchPanel extends JPanel {
     public String getSearchText() {
         return searchTextField.getText();
     }
-
 }

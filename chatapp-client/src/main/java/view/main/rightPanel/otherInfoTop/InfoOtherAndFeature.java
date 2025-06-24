@@ -28,7 +28,7 @@ public class InfoOtherAndFeature extends JPanel {
         this.webRTCManager = webRTCManager;
 
         setLayout(new GridLayout(1, 2));
-        setPreferredSize(new Dimension(500, 70));
+        setPreferredSize(new Dimension(700, 70));
         setBackground(Color.WHITE);
 
         JPanel usernamePanel = new JPanel(new BorderLayout());

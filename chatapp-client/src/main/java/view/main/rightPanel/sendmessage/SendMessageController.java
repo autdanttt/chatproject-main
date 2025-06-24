@@ -36,6 +36,7 @@ public class SendMessageController extends BaseController {
         footerPanel.setEmojiSelectedListener(this::sendEmoji);
         footerPanel.setImageSelectedListener(this::sendImage);
         eventBus.register(this);
+
         initializeListeners();
     }
 
@@ -47,7 +48,6 @@ public class SendMessageController extends BaseController {
 
     private void sendTextMessage() {
         String content = footerPanel.getTextField().getText().trim();
-        LOGGER.info("->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Sending text message: " + content);
         if(!content.isEmpty() && chatId != null && otherUserId != null) {
             ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(jwtToken, userId, otherUserId, content, MessageType.TEXT);
             if (result.isSuccess()) {

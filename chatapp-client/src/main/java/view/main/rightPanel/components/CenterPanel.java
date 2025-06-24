@@ -18,7 +18,7 @@ public class CenterPanel extends JPanel {
         this.messagePanel = messagePanel;
 
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(600, 600));
+        setPreferredSize(new Dimension(700, 600));
         setBackground(Color.WHITE);
         setBorder(new EmptyBorder(0, 10, 0, 10));
 
