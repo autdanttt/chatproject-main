@@ -27,7 +27,6 @@ public class UserService{
     public User registerUser(AuthUserDTO dto){
         log.info("Registering new user");
         if(userRepository.findByUsername(dto.getUsername()).isPresent()){
-            log.info(">>>>>>>>>>>>>>>>>>>>User already exists");
             throw new RuntimeException("Username already exists");
         }
         User user = new User();
