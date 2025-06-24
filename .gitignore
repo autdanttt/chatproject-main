@@ -1,6 +1,7 @@
 # IntelliJ IDEA files
 .idea/
 *.iml
+/src/main/resources/
 
 # Compiled output
 /target/
@@ -25,7 +26,8 @@ Thumbs.db  # Windows
 /build/
 
 # Spring Boot configuration files
-application.properties
+**/application.properties
+#application.properties
 application.yml
 application-*.properties
 application-*.yml

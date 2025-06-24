@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class SearchPanel extends JPanel {
     private final Logger logger = LoggerFactory.getLogger(SearchPanel.class);
     private JTextField searchTextField;
     private JButton searchButton;
+    private String basePath = new File(System.getProperty("user.dir")).getParent();
 
     public SearchPanel() {
         setLayout(new GridBagLayout());
@@ -30,7 +32,7 @@ public class SearchPanel extends JPanel {
         searchTextField = new RoundedTextField(20);
         searchTextField.setPreferredSize(new Dimension(250, 40));
 
-        searchButton = new CreateButton("D:/chatproject-main/images/SEARCH.png");
+        searchButton = new CreateButton(basePath + "/images/SEARCH.png");
 
         pn1.add(searchTextField, BorderLayout.CENTER);
         pn1.add(searchButton, BorderLayout.EAST);

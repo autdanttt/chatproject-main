@@ -1,10 +1,7 @@
 package view.main.rightPanel.components;
 
+import custom.CreateButton;
 import custom.RoundedTextField;
-import org.apache.commons.logging.Log;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import view.main.rightPanel.sendmessage.SendMessageController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,38 +19,24 @@ public class FooterPanel extends JPanel {
     private JTextField sendMessage;
     private Consumer<File> emojiSelectedListener;
     private Consumer<File> imageSelectedListener;
+    private String basePath = new File(System.getProperty("user.dir")).getParent();
 
     public FooterPanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 5, 11));
         setBackground(Color.WHITE);
 
-        sendEmoji = new JButton();
-        sendEmoji.setIcon(new ImageIcon("D:/chat_ui/images/EMOJI.png"));
-        sendEmoji.setPreferredSize(new Dimension(48, 48));
-        sendEmoji.setBorder(BorderFactory.createEmptyBorder());
-        sendEmoji.setContentAreaFilled(false);
-        sendEmoji.setFocusPainted(false);
-        sendEmoji.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        sendEmoji = new CreateButton(basePath + "/images/EMOJI.png");
         sendEmoji.addActionListener(e -> showEmojiPicker());
 
-        sendImage = new JButton();
-        sendImage.setIcon(new ImageIcon("D:/chat_ui/images/SEND_IAMGE.png"));
-        sendImage.setPreferredSize(new Dimension(48, 48));
-        sendImage.setBorder(BorderFactory.createEmptyBorder());
-        sendImage.setContentAreaFilled(false);
-        sendImage.setFocusPainted(false);
+        sendImage = new CreateButton(basePath + "/images/SEND_IAMGE.png");
         sendImage.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         sendImage.addActionListener(e -> showFileChooser());
 
         sendMessage = new RoundedTextField(40);
         sendMessage.setPreferredSize(new Dimension(450, 48));
 
-        sendBtn = new JButton();
-        sendBtn.setIcon(new ImageIcon("D:/chat_ui/images/SEND.png"));
-        sendBtn.setPreferredSize(new Dimension(48, 48));
-        sendBtn.setBorder(BorderFactory.createEmptyBorder());
-        sendBtn.setContentAreaFilled(false);
-        sendBtn.setFocusPainted(false);
+        sendBtn = new CreateButton(basePath + "/images/SEND.png");
         sendBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         add(sendEmoji);
@@ -69,7 +52,7 @@ public class FooterPanel extends JPanel {
         int result = fileChooser.showOpenDialog(owner);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            if(imageSelectedListener != null) {
+            if (imageSelectedListener != null) {
                 imageSelectedListener.accept(file);
             }
         }
@@ -77,28 +60,28 @@ public class FooterPanel extends JPanel {
 
     private void showEmojiPicker() {
         Frame owner = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
-        JDialog emojiDialog = new JDialog(owner,"Chọn Emoji", true);
+        JDialog emojiDialog = new JDialog(owner, "Chọn Emoji", true);
         emojiDialog.setLayout(new BorderLayout());
         emojiDialog.setSize(300, 400);
 
         JPanel emojiPanel = new JPanel(new GridLayout(0, 5, 5, 5));
         List<String> selectedEmojis = new ArrayList<>();
 
-        String basePath = new File(System.getProperty("user.dir")).getParent() + "/twemoji";
-        File twemojiDir = new File(basePath);
-        if(twemojiDir.exists() && twemojiDir.isDirectory()) {
+
+        File twemojiDir = new File(basePath + "/twemoji");
+        if (twemojiDir.exists() && twemojiDir.isDirectory()) {
             File[] files = twemojiDir.listFiles((dir, name) -> name.endsWith(".png"));
-            if(files != null) {
+            if (files != null) {
                 for (File file : files) {
                     JLabel emojiLabel = new JLabel();
-                    try{
+                    try {
                         String filePath = file.toURI().toString();
-                        if(filePath != null){
+                        if (filePath != null) {
                             ImageIcon icon = new ImageIcon(new URL(filePath));
                             Image img = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
                             emojiLabel.setIcon(new ImageIcon(img));
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         emojiLabel.setText("Error");
                         System.out.println("Error loading image for " + file.getName() + " : " + e.getMessage());
                     }
@@ -106,7 +89,7 @@ public class FooterPanel extends JPanel {
                     emojiLabel.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            if(emojiSelectedListener != null) {
+                            if (emojiSelectedListener != null) {
                                 emojiSelectedListener.accept(file);
                             }
                             emojiDialog.dispose();
@@ -115,7 +98,7 @@ public class FooterPanel extends JPanel {
                     emojiPanel.add(emojiLabel);
                 }
             }
-        }else {
+        } else {
             System.err.println("Twemoji directory not found at: " + twemojiDir.getAbsolutePath());
             JOptionPane.showMessageDialog(this, "Không tìm thấy thư mục twemoji: " + twemojiDir.getAbsolutePath());
         }

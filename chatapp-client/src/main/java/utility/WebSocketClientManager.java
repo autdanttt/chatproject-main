@@ -83,7 +83,7 @@ public class WebSocketClientManager {
                     // Gửi ready
                     ReadyMessage readyMessage = new ReadyMessage();
                     readyMessage.setSender(username);
-                    readyMessage.setType("READY");
+                    readyMessage.setMessage("READY");
                     session.send("/app/ready", readyMessage);
 
                     subscribeToSdp();

@@ -31,7 +31,7 @@ public class SendMessageController extends BaseController {
     private Long chatId;
 
     @Inject
-    public SendMessageController(FooterPanel footerPanel,SendMessageService sendMessageService, EventBus eventBus) {
+    public SendMessageController(FooterPanel footerPanel, SendMessageService sendMessageService, EventBus eventBus) {
         this.footerPanel = footerPanel;
         this.sendMessageService = sendMessageService;
         footerPanel.setEmojiSelectedListener(this::sendEmoji);

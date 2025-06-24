@@ -3,6 +3,7 @@ package view.main.rightPanel.otherInfoTop;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import custom.CreateButton;
 import event.UsernameUpdateEvent;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
@@ -12,6 +13,7 @@ import view.main.leftPanel.chatlist.ChatSelectedEvent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class InfoOtherAndFeature extends JPanel {
     private final JLabel userOtherName;
@@ -22,6 +24,8 @@ public class InfoOtherAndFeature extends JPanel {
     private Long chatId;
     private Long otherUserId;
     private Long userId;
+
+    private String basePath = new File(System.getProperty("user.dir")).getParent();
 
     @Inject
     public InfoOtherAndFeature(WebRTCManager webRTCManager, EventBus eventBus) {
@@ -38,34 +42,19 @@ public class InfoOtherAndFeature extends JPanel {
         avatarOtherPanel.setBackground(Color.WHITE);
         JLabel avatarOtherLabel = new JLabel();
         avatarOtherLabel.setPreferredSize(new Dimension(48, 48));
-        avatarOtherLabel.setIcon(new ImageIcon("D:/chat_ui/images/Group 14.png"));
+        avatarOtherLabel.setIcon(new ImageIcon(basePath + "/images/Group 14.png"));
         userOtherName = new JLabel("None");
         userOtherName.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
         avatarOtherPanel.add(avatarOtherLabel);
         avatarOtherPanel.add(userOtherName);
 
-        JPanel callPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 10));
-        callPanel.setBackground(Color.WHITE);
-
         JPanel featurePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 11));
         featurePanel.setBackground(Color.WHITE);
 
-        callVideoButton = new JButton();
-        callVideoButton.setIcon(new ImageIcon("D:/chat_ui/images/CALL_VIDEO.png"));
-        callVideoButton.setPreferredSize(new Dimension(48, 48));
-        callVideoButton.setBorder(BorderFactory.createEmptyBorder());
-        callVideoButton.setContentAreaFilled(false);
-        callVideoButton.setFocusPainted(false);
-        callVideoButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        callVideoButton = new CreateButton(basePath + "/images/CALL_VIDEO.png");
 
-        callPhoneButton = new JButton();
-        callPhoneButton.setIcon(new ImageIcon("D:/chat_ui/images/CALL_PHONE.png"));
-        callPhoneButton.setPreferredSize(new Dimension(48, 48));
-        callPhoneButton.setBorder(BorderFactory.createEmptyBorder());
-        callPhoneButton.setContentAreaFilled(false);
-        callPhoneButton.setFocusPainted(false);
-        callPhoneButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        callPhoneButton = new CreateButton(basePath + "/images/CALL_PHONE.png");
 
         featurePanel.add(callPhoneButton);
         featurePanel.add(callVideoButton);

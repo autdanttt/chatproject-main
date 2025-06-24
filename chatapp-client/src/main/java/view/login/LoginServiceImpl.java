@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class LoginServiceImpl implements LoginService {
 
-
     @Override
     public UserLogin authenticate(String username, String password) throws IOException {
          RestTemplate restTemplate = new RestTemplate();
