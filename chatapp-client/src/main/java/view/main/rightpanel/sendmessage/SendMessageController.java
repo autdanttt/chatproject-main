@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import di.BaseController;
 import view.ApiResult;
 import view.ErrorDTO;
+import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.chatlist.chatlist.ChatSelectedEvent;
 
@@ -46,7 +47,7 @@ public class SendMessageController extends BaseController {
             String messageContent = (String) responseUpload.getBody().get("mediaId");
 
            if(!messageContent.isEmpty()   && chatId != null && otherUserId != null){
-               ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(jwtToken, userId, otherUserId, messageContent, MessageType.IMAGE);
+               ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, messageContent, MessageType.IMAGE);
 
                LOGGER.info("Result: " + result);
                if (result.isSuccess()) {
@@ -75,7 +76,7 @@ public class SendMessageController extends BaseController {
         LOGGER.info("Text message: " + content);
 
         if(!content.isEmpty()   && chatId != null && otherUserId != null){
-            ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(jwtToken, userId, otherUserId, content, MessageType.EMOJI);
+            ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, content, MessageType.EMOJI);
             LOGGER.info("Result: " + result);
             if (result.isSuccess()) {
                 MessageResponse message = result.getData();
@@ -94,8 +95,8 @@ public class SendMessageController extends BaseController {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + userToken.getJwtToken());
-        this.jwtToken = userToken.getJwtToken();
+        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
+        this.jwtToken = TokenManager.getAccessToken();
         this.userId = userToken.getUserId();
     }
 
@@ -116,7 +117,7 @@ public class SendMessageController extends BaseController {
         LOGGER.info("Text message: " + content);
 
         if(!content.isEmpty() && chatId != null && otherUserId != null) {
-            ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(jwtToken, userId, otherUserId, content, MessageType.TEXT);
+            ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, content, MessageType.TEXT);
             LOGGER.info("Result: " + result);
             if (result.isSuccess()) {
                 MessageResponse message = result.getData();

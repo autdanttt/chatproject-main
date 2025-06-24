@@ -1,17 +1,19 @@
 package model;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class ChatItem {
     private Long chatId;
     private Long otherUserId;
     private String otherUsername;
     private String lastMessage;
-    private LocalDateTime lastMessageTime;
+    private Date lastMessageTime;
 
 
-    public ChatItem(Long chatId,Long otherUserId, String username, String lastMessage, LocalDateTime lastMessageTime) {
+    public ChatItem(Long chatId, Long otherUserId, String username, String lastMessage, Date lastMessageTime) {
         this.chatId = chatId;
         this.otherUserId = otherUserId;
         this.otherUsername = username;
@@ -22,7 +24,7 @@ public class ChatItem {
     public Long getChatId() { return chatId; }
     public String getUsername() { return otherUsername; }
     public String getLastMessage() { return lastMessage; }
-    public LocalDateTime getLastMessageTime() { return lastMessageTime; }
+    public Date getLastMessageTime() { return lastMessageTime; }
 
     public String getOtherUsername() {
         return otherUsername;
@@ -33,6 +35,9 @@ public class ChatItem {
     }
 
     public String getFormattedTime() {
-        return lastMessageTime != null ? lastMessageTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "";
+        return lastMessageTime != null
+                ? new SimpleDateFormat("HH:mm").format(lastMessageTime)
+                : "";
+
     }
 }

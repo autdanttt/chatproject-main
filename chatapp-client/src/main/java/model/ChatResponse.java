@@ -1,18 +1,26 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class ChatResponse {
+    @JsonProperty("chat_id")
     private Long chatId;
+    @JsonProperty("other_user_id")
     private Long otherUserId;
+    @JsonProperty("other_username")
     private String otherUsername;
+    @JsonProperty("last_message")
     private String lastMessage;
-    private LocalDateTime lastMessageTime;
+    @JsonProperty("last_message_time")
+    private Date lastMessageTime;
 
     public ChatResponse() {
     }
 
-    public ChatResponse(Long chatId,Long otherUserId, String otherUser, String lastMessage, LocalDateTime lastMessageTime) {
+    public ChatResponse(Long chatId, Long otherUserId, String otherUser, String lastMessage, Date lastMessageTime) {
         this.chatId = chatId;
         this.otherUserId = otherUserId;
         this.otherUsername = otherUser;
@@ -23,7 +31,7 @@ public class ChatResponse {
     public Long getChatId() { return chatId; }
     public String getOtherUsername() { return otherUsername; }
     public String getLastMessage() { return lastMessage; }
-    public LocalDateTime getLastMessageTime() { return lastMessageTime; }
+    public Date getLastMessageTime() { return lastMessageTime; }
 
     public Long getOtherUserId() {
         return otherUserId;
@@ -45,7 +53,7 @@ public class ChatResponse {
         this.lastMessage = lastMessage;
     }
 
-    public void setLastMessageTime(LocalDateTime lastMessageTime) {
+    public void setLastMessageTime(Date lastMessageTime) {
         this.lastMessageTime = lastMessageTime;
     }
 

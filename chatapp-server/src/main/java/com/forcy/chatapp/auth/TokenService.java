@@ -4,6 +4,8 @@ import com.forcy.chatapp.entity.RefreshToken;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.jwt.JwtUtility;
 import com.forcy.chatapp.token.RefreshTokenRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +17,7 @@ import java.util.UUID;
 
 @Service
 public class TokenService {
+    private final Logger log = LoggerFactory.getLogger(TokenService.class);
     @Value("${app.security.jwt.refresh-token.expiration}")
     private int refreshTokenExpiration;
     @Autowired
@@ -43,16 +46,20 @@ public class TokenService {
 
         return response;
     }
-    public AuthResponse refreshTokens(RefreshTokenRequest  request) throws RefreshTokenNotFoundException, RefreshTokenExpiredException {
+    public AuthResponse refreshTokens(RefreshTokenRequest  request) throws RefreshTokenExpiredException {
 
         String rawRefreshToken = request.getRefreshToken();
+        log.info("Refresh token: {}", rawRefreshToken);
 
-        List<RefreshToken> listRefreshToken = refreshTokenRepo.findByUsername(request.getRefreshToken());
+        List<RefreshToken> listRefreshToken = refreshTokenRepo.findByUsername(request.getUsername());
+        log.info("Refresh token found: {}", listRefreshToken);
 
         RefreshToken foundRefreshToken = null;
 
         for (RefreshToken token : listRefreshToken){
             if(passwordEncoder.matches(rawRefreshToken, token.getToken())){
+                log.info("Matched refresh token: " + token.getToken());
+
                 foundRefreshToken = token;
             }
         }

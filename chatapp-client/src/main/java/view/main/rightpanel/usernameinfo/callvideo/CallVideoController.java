@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import di.BaseController;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
+import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.chatlist.chatlist.ChatSelectedEvent;
 
@@ -30,7 +31,7 @@ public class CallVideoController extends BaseController {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + userToken.getJwtToken());
+        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
         this.userId = userToken.getUserId();
     }
 
