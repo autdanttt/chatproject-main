@@ -11,16 +11,16 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query("""
-        SELECT m FROM Message m
-        WHERE m.chat IN (
-            SELECT c FROM Chat c
-            WHERE :toUserId IN (
-                SELECT u.id FROM c.users u
-            )
-        ) AND m.deliveredAt IS NULL AND m.user.id != :toUserId
-""")
-    public List<Message> findUndeliveredMessagesForUser(@Param("toUserId") Long toUserId);
+//    @Query("""
+//        SELECT m FROM Message m
+//        WHERE m.chat IN (
+//            SELECT c FROM Chat c
+//            WHERE :toUserId IN (
+//                SELECT u.id FROM c.users u
+//            )
+//        ) AND m.deliveredAt IS NULL AND m.user.id != :toUserId
+//""")
+//    public List<Message> findUndeliveredMessagesForUser(@Param("toUserId") Long toUserId);
 
     public Message findTopByChatIdOrderBySentAtDesc(Long chatId);
 

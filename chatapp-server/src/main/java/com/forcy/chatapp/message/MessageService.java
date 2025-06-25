@@ -1,11 +1,9 @@
 package com.forcy.chatapp.message;
 
 import com.forcy.chatapp.chat.*;
-import com.forcy.chatapp.entity.Chat;
-import com.forcy.chatapp.entity.ChatGroup;
-import com.forcy.chatapp.entity.Message;
-import com.forcy.chatapp.entity.User;
+import com.forcy.chatapp.entity.*;
 import com.forcy.chatapp.group.ChatGroupRepository;
+import com.forcy.chatapp.group.GroupMemberRepository;
 import com.forcy.chatapp.group.GroupNotFoundException;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
@@ -17,11 +15,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
 
     private final ChatGroupRepository chatGroupRepository;
+    private final MessageDeliveryRepository messageDeliveryRepository;
+    private final GroupMemberRepository groupMemberRepository;
     private Logger logger = LoggerFactory.getLogger(MessageService.class);
 
 
@@ -35,16 +36,18 @@ public class MessageService {
 
     private ChatWebSocketHandler chatWebSocketHandler;
 
-    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer, @Lazy ChatWebSocketHandler chatWebSocketHandler, ChatGroupRepository chatGroupRepository) {
+    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer, @Lazy ChatWebSocketHandler chatWebSocketHandler, ChatGroupRepository chatGroupRepository, MessageDeliveryRepository messageDeliveryRepository, GroupMemberRepository groupMemberRepository) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.messageProducer = messageProducer;
         this.chatWebSocketHandler = chatWebSocketHandler;
         this.chatGroupRepository = chatGroupRepository;
+        this.messageDeliveryRepository = messageDeliveryRepository;
+        this.groupMemberRepository = groupMemberRepository;
     }
 
-    public Message storeGroupMessage(GroupMessageRequest groupMessageRequest) {
+    public MessageResponse storeGroupMessage(GroupMessageRequest groupMessageRequest) {
 
         User fromUser = userRepository.findById(groupMessageRequest.getFromUserId())
                 .orElseThrow(()->new UserNotFoundException(groupMessageRequest.getFromUserId()));
@@ -65,8 +68,39 @@ public class MessageService {
         messageRepository.save(message);
 
 
-        /// ////////////////
-        return null;
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setMessageId(message.getId());
+        messageResponse.setFromUserId(fromUser.getId());
+        messageResponse.setToUserId(null);
+        messageResponse.setChatId(null);
+        messageResponse.setGroupId(message.getGroup().getId());
+        messageResponse.setMessageType(message.getType());
+        messageResponse.setContent(message.getContent());
+        messageResponse.setSentAt(new Date());
+//        messageResponse.setDeliveredAt(message.getDeliveredAt());
+
+
+        List<GroupMember> members = groupMemberRepository.findByGroupId(groupMessageRequest.getToGroupId());
+        List<User> recipients = members.stream()
+                .map(GroupMember::getUser)
+                .filter(user -> !user.getId().equals(fromUser.getId()))
+                .toList();
+
+
+        List<MessageDelivery> deliveries = recipients.stream()
+                .map(user -> MessageDelivery.builder()
+                        .message(message)
+                        .user(user)
+                        .deliveredAt(null)
+                        .seenAt(null)
+                        .build())
+                .collect(Collectors.toList());
+
+        messageDeliveryRepository.saveAll(deliveries);
+
+        messageProducer.sendGroupMessage(messageResponse);
+
+        return messageResponse;
     }
 
 
@@ -93,9 +127,17 @@ public class MessageService {
         Message message = MessageMapper.toEntity(messageRequest,fromUser,chat);
         messageRepository.save(message);
 
+
+        // 2. Tạo MessageDelivery cho người nhận
+        MessageDelivery messageDelivery = new MessageDelivery();
+        messageDelivery.setMessage(message);
+        messageDelivery.setUser(toUser);
+
+        messageDeliveryRepository.save(messageDelivery);
+
         //Gui toi Kafka de consumer xy ly WebSocket
 
-        messageProducer.send(MessageMapper.toResponse(message,toUser.getId()));
+        messageProducer.sendPrivateMessage(MessageMapper.toResponse(message,toUser.getId()));
 
         logger.info("🚀 [storeMessage] Gửi message tới Kafka topic cho userId={}", toUserId);
 
@@ -114,6 +156,7 @@ public class MessageService {
 //        }
         return message;
     }
+
     public Message getLastMessageInChat(Long chatId) {
         return messageRepository.findTopByChatIdOrderBySentAtDesc(chatId);
     }

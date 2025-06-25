@@ -12,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class GroupMember {
 
     @Id
@@ -43,5 +44,15 @@ public class GroupMember {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-
+    @Override
+    public String toString() {
+        return "GroupMember{" +
+                "mutedUntil=" + mutedUntil +
+                ", id=" + id +
+                ", status=" + status +
+                ", isAdmin=" + isAdmin +
+                ", joinedAt=" + joinedAt +
+                ", userId=" + user.getId() +
+                '}';
+    }
 }

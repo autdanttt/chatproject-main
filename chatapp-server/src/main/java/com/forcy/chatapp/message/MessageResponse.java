@@ -17,6 +17,7 @@ public class MessageResponse {
     private Long fromUserId;
     private Long toUserId;
     private Long chatId;
+    private Long groupId;
     private MessageType messageType;
     private String content;
     private Date sentAt;
