@@ -1,6 +1,7 @@
 package view.main;
 
 import com.google.inject.Inject;
+import controllers.FooterLeftController;
 import view.main.leftPanel.chatlist.ChatListController;
 import view.main.leftPanel.chatlist.ChatListPanel;
 import view.main.leftPanel.LeftPanel;
@@ -18,7 +19,7 @@ public class MainChatView extends JFrame {
     private LeftPanel leftPanel;
 
     @Inject
-    public MainChatView(ChatListPanel chatListPanel, ChatListController chatListController, SearchPanel searchPanel, LeftPanel leftPanel, RightPanel rightPanel) {
+    public MainChatView(ChatListPanel chatListPanel, ChatListController chatListController, SearchPanel searchPanel, LeftPanel leftPanel, RightPanel rightPanel, FooterLeftController footerLeftController) {
         this.chatListPanel = chatListPanel;
         this.chatListController = chatListController;
         this.searchPanel = searchPanel;

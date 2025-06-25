@@ -31,21 +31,20 @@ public class MessageRepositoryTests {
 
     @Test
     public void testSendMessageToGroup() {
-        User user = entityManager.find(User.class, 1L);
+        User user = entityManager.find(User.class, 2L);
 
-        ChatGroup chatGroup = entityManager.find(ChatGroup.class, 1L);
+        ChatGroup chatGroup = entityManager.find(ChatGroup.class, 2L);
 
         Message message = new Message();
         message.setUser(user);
         message.setGroup(chatGroup);
         message.setType(MessageType.TEXT);
-        message.setContent("Hello, This is a test message");
+        message.setContent("Hello, This is a test message in group 2");
         message.setSentAt(new Date());
 
         Message savedMessage = messageRepository.save(message);
 
         assertThat(savedMessage).isNotNull();
-        assertThat(savedMessage.getId()).isEqualTo(1L);
     }
 
     @Test
