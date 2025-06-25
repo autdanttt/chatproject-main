@@ -32,11 +32,12 @@ public class MessagePanel extends JPanel {
         return messageItemPanel;
     }
 
-    public void addMessage(String content, boolean isSentByMe, String time, MessageType messageType) {
+    public void addMessage(String content,String fromUserName ,boolean isSentByMe, String time, MessageType messageType) {
         JPanel messageContainer = new JPanel();
         messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.X_AXIS));
         messageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
         messageContainer.setOpaque(false);
+
         messageContainer.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         JPanel messageBox = new RoundedPanel(15, isSentByMe ? Color.decode("#1F344D") : Color.WHITE, isSentByMe ? Color.decode("#426D9E") : Color.decode("#E9E9E9"), 2);
@@ -48,7 +49,7 @@ public class MessagePanel extends JPanel {
         JComponent messageComponent = null;
 
         JLabel username = new JLabel();
-        username.setText(isSentByMe ? "Bạn" : "Other");
+        username.setText(isSentByMe ? "Bạn" : fromUserName);
         username.setFont(new Font("Montserrat", Font.PLAIN, 10));
         username.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
 

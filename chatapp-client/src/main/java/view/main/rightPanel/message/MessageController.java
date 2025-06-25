@@ -63,7 +63,7 @@ public class MessageController extends BaseController {
         }else {
             messageType = MessageType.IMAGE;
         }
-        messagePanel.addMessage(message.getContent(), isSentByMe, time, messageType);
+        messagePanel.addMessage(message.getContent(),message.getFromUserName(),isSentByMe, time, messageType);
     }
 
     private void addListMessage(Long chatId, Long userId) {
@@ -87,7 +87,7 @@ public class MessageController extends BaseController {
             }else {
                 messageType = MessageType.IMAGE;
             }
-            messagePanel.addMessage(message.getContent(), isSentByMe, time, messageType);
+            messagePanel.addMessage(message.getContent(),message.getFromUserName(), isSentByMe, time, messageType);
         }
     }
 

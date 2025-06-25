@@ -32,7 +32,8 @@ public class ChatListController extends BaseController {
                 ChatItem selectedChat = chatListPanel.getChatList().getSelectedValue();
                 if(selectedChat != null) {
 //                    eventBus.post(selectedChat.getChatId());
-                    eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId()));
+                    String type = selectedChat.getOtherUserId() == null ? "GROUP": "CHAT";
+                    eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId(), type));
                     eventBus.post(new UsernameUpdateEvent(selectedChat.getUsername()));
                 }
             }

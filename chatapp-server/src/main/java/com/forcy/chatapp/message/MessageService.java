@@ -71,6 +71,7 @@ public class MessageService {
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setMessageId(message.getId());
         messageResponse.setFromUserId(fromUser.getId());
+        messageResponse.setFromUserName(fromUser.getUsername());
         messageResponse.setToUserId(null);
         messageResponse.setChatId(null);
         messageResponse.setGroupId(message.getGroup().getId());
@@ -136,8 +137,18 @@ public class MessageService {
         messageDeliveryRepository.save(messageDelivery);
 
         //Gui toi Kafka de consumer xy ly WebSocket
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setMessageId(message.getId());
+        messageResponse.setFromUserId(fromUser.getId());
+        messageResponse.setFromUserName(fromUser.getUsername());
+        messageResponse.setToUserId(toUserId);
+        messageResponse.setChatId(chat.getId());
+        messageResponse.setGroupId(null);
+        messageResponse.setMessageType(message.getType());
+        messageResponse.setContent(message.getContent());
+        messageResponse.setSentAt(new Date());
 
-        messageProducer.sendPrivateMessage(MessageMapper.toResponse(message,toUser.getId()));
+        messageProducer.sendPrivateMessage(messageResponse);
 
         logger.info("🚀 [storeMessage] Gửi message tới Kafka topic cho userId={}", toUserId);
 

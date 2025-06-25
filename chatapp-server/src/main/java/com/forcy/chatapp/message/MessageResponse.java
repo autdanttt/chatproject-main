@@ -15,6 +15,7 @@ import java.util.Date;
 public class MessageResponse {
     private Long messageId;
     private Long fromUserId;
+    private String fromUserName;
     private Long toUserId;
     private Long chatId;
     private Long groupId;
