@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import event.UsernameUpdateEvent;
+import model.ChatGroupResponse;
 import model.ChatItem;
 import model.ChatResponse;
 import org.slf4j.Logger;
@@ -36,7 +37,6 @@ public class ChatListController extends BaseController {
                 }
             }
         });
-
     }
 
     @Subscribe
@@ -48,7 +48,6 @@ public class ChatListController extends BaseController {
         chatListPanel.getChatListModel().clear();
 
         for (ChatResponse chat : list) {
-            LOGGER.info("Adding chat: " + chat);
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     chat.getChatId(),
                     chat.getOtherUserId(),
@@ -58,6 +57,16 @@ public class ChatListController extends BaseController {
             ));
         }
 
+        ChatGroupResponse[] listGroup = chatListService.getChatGroupList(TokenManager.getAccessToken());
+        for(ChatGroupResponse group : listGroup) {
+            chatListPanel.getChatListModel().addElement(new ChatItem(
+                    group.getGroupId(),
+                    null,
+                    group.getGroupName(),
+                    group.getLastMessageContent(),
+                    group.getLastMessageTime()
+            ));
+        }
     }
 
     private ChatResponse[] getListChat() {

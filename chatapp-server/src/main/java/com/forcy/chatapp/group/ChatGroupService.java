@@ -8,6 +8,8 @@ import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ChatGroupService {
     private MessageRepository messageRepository;
 
 
+    private final Logger logger = LoggerFactory.getLogger(ChatGroupService.class);
 
     public ChatGroupDTO createGroup(CreateGroupRequest request) {
 
@@ -127,6 +130,7 @@ public class ChatGroupService {
             String lastContent = lastMessage != null ? lastMessage.getContent() : null;
             String lastSender  = lastMessage != null ? lastMessage.getUser().getUsername() : null;
             Date lastSentAt    = lastMessage != null ? lastMessage.getSentAt() : null;
+
 
             return new GroupItemDTO(
                     group.getId(),
