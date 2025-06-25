@@ -3,8 +3,11 @@ package com.forcy.chatapp.group;
 import com.forcy.chatapp.entity.*;
 import com.forcy.chatapp.group.dto.ChatGroupDTO;
 import com.forcy.chatapp.group.dto.CreateGroupRequest;
+import com.forcy.chatapp.group.dto.GroupItemDTO;
+import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ChatGroupService {
     @Autowired
     private ChatGroupRepository chatGroupRepository;
@@ -22,6 +26,9 @@ public class ChatGroupService {
 
     @Autowired
     private GroupMemberRepository groupMemberRepository;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
 
 
@@ -95,5 +102,40 @@ public class ChatGroupService {
     }
 
 
+    public void deleteGroup(Long groupId, Long userId) {
+        ChatGroup group = chatGroupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException("Group not found with id: " + groupId));
+
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
+                .orElseThrow(() -> new AccessDeniedException("Bạn không phải thành viên nhóm"));
+
+        if(member.getRole() != MemberRole.ADMIN) {
+            throw new AccessDeniedException("Chỉ ADMIN mới được xóa nhóm");
+        }
+
+        chatGroupRepository.deleteById(group.getId());
+    }
+
+
+    public List<GroupItemDTO> getGroupsForSideBar(Long userId){
+        List<GroupMember> members = groupMemberRepository.findByUserIdAndStatus(userId,MemberStatus.ACTIVE);
+
+        return members.stream().map(member -> {
+            ChatGroup group = member.getGroup();
+            Message lastMessage = messageRepository.findTopByGroupIdOrderBySentAtDesc(group.getId());
+
+            String lastContent = lastMessage != null ? lastMessage.getContent() : null;
+            String lastSender  = lastMessage != null ? lastMessage.getUser().getUsername() : null;
+            Date lastSentAt    = lastMessage != null ? lastMessage.getSentAt() : null;
+
+            return new GroupItemDTO(
+                    group.getId(),
+                    group.getName(),
+                    lastContent,
+                    lastSender,
+                    lastSentAt
+            );
+        }).collect(Collectors.toList());
+    }
 
 }

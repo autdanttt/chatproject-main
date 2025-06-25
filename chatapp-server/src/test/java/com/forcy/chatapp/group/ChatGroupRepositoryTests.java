@@ -97,4 +97,25 @@ public class ChatGroupRepositoryTests {
 
 
     }
+
+
+    @Test
+    public void testDeleteGroupByIdNotFound(){
+        Long groupId = 100L;
+
+        chatGroupRepository.deleteById(groupId);
+
+        assertThat(groupMemberRepository.findById(groupId).isPresent()).isFalse();
+
+    }
+
+
+    @Test
+    public void testDeleteGroupById(){
+        Long groupId = 4L;
+
+        chatGroupRepository.deleteById(groupId);
+
+        assertThat(groupMemberRepository.findById(groupId).isPresent()).isFalse();
+    }
 }

@@ -24,9 +24,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     public Message findTopByChatIdOrderBySentAtDesc(Long chatId);
 
+    public Message findTopByGroupIdOrderBySentAtDesc(Long groupId);
+
 
     public List<Message> findByChatId(Long chatId);
-
 
 
 }

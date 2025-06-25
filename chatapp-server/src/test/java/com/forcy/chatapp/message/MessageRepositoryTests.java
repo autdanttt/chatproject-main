@@ -1,7 +1,9 @@
 package com.forcy.chatapp.message;
 
 
+import com.forcy.chatapp.entity.ChatGroup;
 import com.forcy.chatapp.entity.Message;
+import com.forcy.chatapp.entity.MessageType;
 import com.forcy.chatapp.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.Rollback;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +28,25 @@ public class MessageRepositoryTests {
 
     @Autowired
     private TestEntityManager entityManager;
+
+    @Test
+    public void testSendMessageToGroup() {
+        User user = entityManager.find(User.class, 1L);
+
+        ChatGroup chatGroup = entityManager.find(ChatGroup.class, 1L);
+
+        Message message = new Message();
+        message.setUser(user);
+        message.setGroup(chatGroup);
+        message.setType(MessageType.TEXT);
+        message.setContent("Hello, This is a test message");
+        message.setSentAt(new Date());
+
+        Message savedMessage = messageRepository.save(message);
+
+        assertThat(savedMessage).isNotNull();
+        assertThat(savedMessage.getId()).isEqualTo(1L);
+    }
 
     @Test
     public void testFindMessageUndeliveredByToUserId(){

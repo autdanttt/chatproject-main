@@ -2,8 +2,12 @@ package com.forcy.chatapp.message;
 
 import com.forcy.chatapp.chat.*;
 import com.forcy.chatapp.entity.Chat;
+import com.forcy.chatapp.entity.ChatGroup;
 import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
+import com.forcy.chatapp.group.ChatGroupRepository;
+import com.forcy.chatapp.group.GroupNotFoundException;
+import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -11,11 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class MessageService {
 
+    private final ChatGroupRepository chatGroupRepository;
     private Logger logger = LoggerFactory.getLogger(MessageService.class);
 
 
@@ -29,13 +35,38 @@ public class MessageService {
 
     private ChatWebSocketHandler chatWebSocketHandler;
 
-    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer,@Lazy ChatWebSocketHandler chatWebSocketHandler) {
+    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer, @Lazy ChatWebSocketHandler chatWebSocketHandler, ChatGroupRepository chatGroupRepository) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.messageProducer = messageProducer;
         this.chatWebSocketHandler = chatWebSocketHandler;
+        this.chatGroupRepository = chatGroupRepository;
+    }
 
+    public Message storeGroupMessage(GroupMessageRequest groupMessageRequest) {
+
+        User fromUser = userRepository.findById(groupMessageRequest.getFromUserId())
+                .orElseThrow(()->new UserNotFoundException(groupMessageRequest.getFromUserId()));
+
+        Long toGroupId = groupMessageRequest.getToGroupId();
+
+        ChatGroup chatGroup = chatGroupRepository.findById(toGroupId).orElseThrow(
+                ()-> new GroupNotFoundException("Group not found with id " + toGroupId)
+        );
+
+        Message message = new Message();
+        message.setUser(fromUser);
+        message.setGroup(chatGroup);
+        message.setType(groupMessageRequest.getMessageType());
+        message.setContent(groupMessageRequest.getContent());
+        message.setSentAt(new Date());
+
+        messageRepository.save(message);
+
+
+        /// ////////////////
+        return null;
     }
 
 

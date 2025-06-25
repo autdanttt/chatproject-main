@@ -3,6 +3,7 @@ package com.forcy.chatapp.group;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.group.dto.ChatGroupDTO;
 import com.forcy.chatapp.group.dto.CreateGroupRequest;
+import com.forcy.chatapp.group.dto.GroupItemDTO;
 import com.forcy.chatapp.group.dto.UpdateGroupRequest;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
@@ -16,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,7 +37,7 @@ public class ChatGroupController {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         ChatGroupDTO chatGroup = chatGroupService.createGroup(request);
 
@@ -48,7 +50,7 @@ public class ChatGroupController {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
 
         ChatGroupDTO chatGroupDTO = chatGroupService.updateGroupName(groupId, user.getId(), request.getName());
@@ -57,6 +59,29 @@ public class ChatGroupController {
     }
 
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteGroup(@PathVariable("id") Long groupId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        chatGroupService.deleteGroup(groupId, user.getId());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyGroups() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+        List<GroupItemDTO> list = chatGroupService.getGroupsForSideBar(user.getId());
+        if (list.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(list);
+    }
 
 
 }
