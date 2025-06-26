@@ -1,10 +1,13 @@
 package com.forcy.chatapp.group;
 
+import com.forcy.chatapp.entity.Message;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.group.dto.ChatGroupDTO;
 import com.forcy.chatapp.group.dto.CreateGroupRequest;
 import com.forcy.chatapp.group.dto.GroupItemDTO;
 import com.forcy.chatapp.group.dto.UpdateGroupRequest;
+import com.forcy.chatapp.message.MessageResponse;
+import com.forcy.chatapp.message.MessageService;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.validation.Valid;
@@ -16,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +34,8 @@ public class ChatGroupController {
 
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private MessageService messageService;
 
     @PostMapping
     public ResponseEntity<?> createGroup(@RequestBody @Valid CreateGroupRequest request) {
@@ -84,4 +89,42 @@ public class ChatGroupController {
     }
 
 
+    @GetMapping("/{groupId}/messages")
+    public ResponseEntity<?> getGroupMessages(@PathVariable("groupId") Long groupId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        chatGroupService.getGroupMember(groupId, user.getId());
+
+        List<Message> messages = messageService.findGroupMessagesByGroupId(groupId);
+
+
+        List<MessageResponse> responses = new ArrayList<>();
+        for (Message message : messages) {
+            MessageResponse messageResponse = getMessageResponse(groupId, message, user);
+
+            responses.add(messageResponse);
+
+        }
+
+        if (messages.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(responses);
+    }
+
+    private static MessageResponse getMessageResponse(Long groupId, Message message, User user) {
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setMessageId(message.getId());
+        messageResponse.setFromUserId(message.getUser().getId());
+        messageResponse.setMessageType(message.getType());
+        messageResponse.setContent(message.getContent());
+        messageResponse.setGroupId(groupId);
+        messageResponse.setSentAt(message.getSentAt());
+        messageResponse.setFromUserName(message.getUser().getUsername());
+        messageResponse.setToUserId(null);
+        messageResponse.setDeliveredAt(null);
+        return messageResponse;
+    }
 }

@@ -23,17 +23,18 @@ public class MessageMapper {
     }
 
     public static MessageResponse toResponse(Message message, Long toUserId) {
-
+        Long chatId = message.getChat() != null ? message.getChat().getId() : null;
+        Long groupId = message.getGroup() != null ? message.getGroup().getId() : null;
         MessageResponse response = new MessageResponse();
 
         response.setMessageId(message.getId());
         response.setFromUserId(message.getUser().getId());
         response.setToUserId(toUserId);
-        response.setChatId(message.getChat().getId());
-        response.setGroupId(null);
+        response.setChatId(chatId);
+        response.setGroupId(groupId);
         response.setMessageType(message.getType());
         response.setContent(message.getContent());
-        response.setSentAt(new Date());
+        response.setSentAt(message.getSentAt());
         response.setDeliveredAt(null);
 
 

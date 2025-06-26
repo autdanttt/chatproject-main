@@ -80,8 +80,7 @@ public class ChatGroupService {
         ChatGroup group = chatGroupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException("Group not found with id: " + groupId));
 
-        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-                .orElseThrow(() -> new AccessDeniedException("Bạn không phải thành viên nhóm"));
+        GroupMember member = getGroupMember(groupId, userId);
 
         if (member.getRole() != MemberRole.ADMIN) {
             throw new AccessDeniedException("Chỉ ADMIN mới được sửa tên nhóm");
@@ -104,13 +103,18 @@ public class ChatGroupService {
         return groupDTO;
     }
 
+     public GroupMember getGroupMember(Long groupId, Long userId) {
+        return groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
+                .orElseThrow(() -> new AccessDeniedException("Bạn không phải thành viên nhóm"));
+    }
+
+
 
     public void deleteGroup(Long groupId, Long userId) {
         ChatGroup group = chatGroupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException("Group not found with id: " + groupId));
 
-        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-                .orElseThrow(() -> new AccessDeniedException("Bạn không phải thành viên nhóm"));
+        GroupMember member = getGroupMember(groupId, userId);
 
         if(member.getRole() != MemberRole.ADMIN) {
             throw new AccessDeniedException("Chỉ ADMIN mới được xóa nhóm");

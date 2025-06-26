@@ -40,7 +40,7 @@ public class MessageController extends BaseController {
     @Subscribe
     public void onChatSelectedEvent(ChatSelectedEvent event) {
         Long chatId = event.getChatId();
-        addListMessage(chatId, userId);
+        addListMessage(chatId, userId, event.getType());
     }
     
     @Subscribe
@@ -66,10 +66,15 @@ public class MessageController extends BaseController {
         messagePanel.addMessage(message.getContent(),message.getFromUserName(),isSentByMe, time, messageType);
     }
 
-    private void addListMessage(Long chatId, Long userId) {
+    private void addListMessage(Long chatId, Long userId,String type) {
         messagePanel.clearMessages();
         LOGGER.info("Jwt token: " + jwtToken);
-        MessageResponse[] messages = messageService.getMessageByChatId(chatId, TokenManager.getAccessToken());
+        MessageResponse[] messages;
+        if(type.equals("GROUP")){
+            messages = messageService.getGroupMessageByGroupId(chatId,TokenManager.getAccessToken());
+        }else {
+            messages = messageService.getMessageByChatId(chatId, TokenManager.getAccessToken());
+        }
         for(int i = 0; i < messages.length; i++) {
             MessageResponse message = messages[i];
             boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);

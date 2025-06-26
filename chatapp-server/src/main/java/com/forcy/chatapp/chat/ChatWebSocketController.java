@@ -51,6 +51,8 @@ public class ChatWebSocketController {
         List<Message> undeliveredMessages = messageDeliveryRepository.findUndeliveredMessagesForUser(user.getId());
         logger.info("Found {} undelivered messages for user: {}", undeliveredMessages.size(), username);
 
+
+
         for (Message message : undeliveredMessages) {
             try {
                 MessageResponse response = MessageMapper.toResponse(message, user.getId());

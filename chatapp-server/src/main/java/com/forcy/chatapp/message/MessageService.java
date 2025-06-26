@@ -177,4 +177,8 @@ public class MessageService {
         return messageRepository.findByChatId(chatId);
     }
 
+    public List<Message> findGroupMessagesByGroupId(Long groupId) {
+        return messageRepository.findByGroupId(groupId);
+    }
+
 }
