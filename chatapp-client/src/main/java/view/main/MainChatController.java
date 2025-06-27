@@ -43,7 +43,7 @@ public class MainChatController extends BaseController {
         this.jwtToken = (String) params[2];
 
         if (mainChatView == null) {
-            setupDependencies(); // Chỉ setup lần đầu
+            setupDependencies();
         }
         mainChatView.setUsername(this.username);
         mainChatView.setVisible(true);
@@ -52,17 +52,10 @@ public class MainChatController extends BaseController {
         AutoRefreshScheduler.start();
 
         ApiResult<String> result = webSocketClientManager.setupWebSocket(TokenManager.getAccessToken(), username);
-
-        if (result.isSuccess()) {
-            JOptionPane.showMessageDialog(mainChatView, "Connected to server");
-        }else {
-            JOptionPane.showMessageDialog(mainChatView, result.getError().getErrors().indexOf(0));
-        }
     }
 
     @Override
     public void deactivate() {
         mainChatView.setVisible(false);
-
     }
 }

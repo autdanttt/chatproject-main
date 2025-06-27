@@ -64,6 +64,7 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<ChatResponse> createChat(@RequestBody CreateChatRequest request) {
+        log.info("Create chat request: {}", request);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));

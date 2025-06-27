@@ -10,11 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class UserService{
+public class UserService {
     @Autowired
     private UserRepository userRepository;
 
@@ -24,9 +26,8 @@ public class UserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User registerUser(AuthUserDTO dto){
-        log.info("Registering new user");
-        if(userRepository.findByUsername(dto.getUsername()).isPresent()){
+    public User registerUser(AuthUserDTO dto) {
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
         User user = new User();
@@ -45,7 +46,15 @@ public class UserService{
         return userRepository.save(user);
     }
 
-    public User getByUsername(String username){
+    public List<UserDTO> getAllUserExcept(String username) {
+        return userRepository.findAll().stream()
+                .filter(user -> !user.getUsername().equals(username))
+                .map(user -> new UserDTO(user.getId(), user.getUsername()))
+                .collect(Collectors.toList());
+    }
+
+    public User getByUsername(String username) {
         return userRepository.getUserByUsername(username);
     }
+
 }

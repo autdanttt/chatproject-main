@@ -1,4 +1,4 @@
-package view.main.popup;
+package view.main.dialog;
 
 import model.User;
 
@@ -20,14 +20,6 @@ public class UserItemRenderer extends DefaultListCellRenderer {
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         ImageIcon avatarIcon = new ImageIcon("D:/chatproject-main/images/default_avatar.png");
-//        if (user.getAvatarPath() != null && !user.getAvatarPath().isEmpty()) {
-//            avatarIcon = new ImageIcon(user.getAvatarPath());
-//        }
-//
-//        if (avatarIcon != null) {
-//            Image scaledImage = avatarIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-//            avatarLabel.setIcon(new ImageIcon(scaledImage));
-//        }
         Image scaledImage = avatarIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         avatarLabel.setIcon(new ImageIcon(scaledImage));
         JLabel usernameLabel = new JLabel(user.getUsername());

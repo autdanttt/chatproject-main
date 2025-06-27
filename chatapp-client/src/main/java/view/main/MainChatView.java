@@ -40,7 +40,6 @@ public class MainChatView extends JFrame {
         add(rightPanel, BorderLayout.CENTER);
 
         setResizable(false);
-        setVisible(true);
     }
 
     public void setUsername(String username) {

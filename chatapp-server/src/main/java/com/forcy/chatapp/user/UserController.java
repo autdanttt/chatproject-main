@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -21,5 +23,12 @@ public class UserController {
     public ResponseEntity<User> register(@RequestBody @Valid AuthUserDTO authUserDTO) {
         User user = userService.registerUser(authUserDTO);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/listother")
+    public ResponseEntity<?> getListOhters() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUser = authentication.getName();
+        return ResponseEntity.ok(userService.getAllUserExcept(currentUser));
     }
 }

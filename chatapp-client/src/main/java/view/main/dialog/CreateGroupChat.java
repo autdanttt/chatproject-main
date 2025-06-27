@@ -1,4 +1,4 @@
-package view.main.popup;
+package view.main.dialog;
 
 import custom.ModernScrollBarUI;
 import custom.RoundedButton;
@@ -88,6 +88,5 @@ public class CreateGroupChat extends JFrame {
         add(mainPanel, BorderLayout.CENTER);
 
         setResizable(false);
-        setVisible(true);
     }
 }
