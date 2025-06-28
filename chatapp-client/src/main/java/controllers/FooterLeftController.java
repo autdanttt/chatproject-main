@@ -14,15 +14,18 @@ import javax.swing.*;
 public class FooterLeftController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
     private FooterPanel footerPanel;
-    private CreateGroupChat createGroupChat;
+
     private CreateChatController createChatController;
+    private CreateChatGroupController createChatGroupController;
+
     private CreateChat chatDialog;
+    private CreateGroupChat chatGroupDialog;
 
     @Inject
-    public FooterLeftController(FooterPanel footerPanel, CreateGroupChat createGroupChat, CreateChatController createChatController) {
+    public FooterLeftController(FooterPanel footerPanel, CreateChatController createChatController, CreateChatGroupController createChatGroupController) {
         this.footerPanel = footerPanel;
-        this.createGroupChat = createGroupChat;
         this.createChatController = createChatController;
+        this.createChatGroupController = createChatGroupController;
 
         initializeListeners();
     }
@@ -33,6 +36,13 @@ public class FooterLeftController extends BaseController {
             createChatController.setCreateChat(chatDialog);
             createChatController.showDialogAndLoadUserList();
             chatDialog.dispose();
+        });
+
+        footerPanel.addGroupListener(e -> {
+            chatGroupDialog = new CreateGroupChat((JFrame) SwingUtilities.getWindowAncestor(footerPanel));
+            createChatGroupController.setCreateGroupChat(chatGroupDialog);
+            createChatGroupController.showDialogAndLoadUserList();
+            chatGroupDialog.dispose();
         });
     }
 

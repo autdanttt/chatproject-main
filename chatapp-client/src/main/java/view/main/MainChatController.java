@@ -42,6 +42,10 @@ public class MainChatController extends BaseController {
         this.username = (String) params[1];
         this.jwtToken = (String) params[2];
 
+        TokenManager.setUserId(this.userId);
+        TokenManager.setUsername(this.username);
+        TokenManager.setAccessToken(this.jwtToken);
+
         if (mainChatView == null) {
             setupDependencies();
         }

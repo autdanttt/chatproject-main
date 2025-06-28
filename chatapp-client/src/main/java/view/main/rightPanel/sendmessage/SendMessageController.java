@@ -50,7 +50,6 @@ public class SendMessageController extends BaseController {
 
     @Subscribe
     public void onChatSelected(ChatSelectedEvent event) {
-        LOGGER.info("Received chat selected: " + event.getChatId());
         this.chatId = event.getChatId();
         this.otherUserId = event.getUserId();
         this.type = event.getType();
@@ -93,8 +92,6 @@ public class SendMessageController extends BaseController {
     }
 
     private void sendEmoji(File file) {
-
-        LOGGER.info("Sending text message");
         String content = file.getName();
         LOGGER.info("Text message: " + content);
 
@@ -130,7 +127,6 @@ public class SendMessageController extends BaseController {
     }
 
     private void sendTextMessage() {
-        LOGGER.info("Sending text message");
         String content = footerPanel.getTextField().getText().trim();
         LOGGER.info("Text message: " + content);
         LOGGER.info("Other user: " + otherUserId);

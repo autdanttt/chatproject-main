@@ -13,12 +13,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateChat extends JDialog {
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-
     private JList<User> userList;
     private DefaultListModel<User> userListModel;
     private JButton addBtn;

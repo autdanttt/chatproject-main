@@ -70,7 +70,6 @@ public class CreateChatController extends BaseController {
             );
 
             for (User user : users) {
-                logger.info("Other id: " + user.getId());
                 createChat.getUserListModel().addElement(user);
             }
 

@@ -22,6 +22,7 @@ public class UserItemRenderer extends DefaultListCellRenderer {
         ImageIcon avatarIcon = new ImageIcon("D:/chatproject-main/images/default_avatar.png");
         Image scaledImage = avatarIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         avatarLabel.setIcon(new ImageIcon(scaledImage));
+
         JLabel usernameLabel = new JLabel(user.getUsername());
         usernameLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
 

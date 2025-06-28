@@ -1,9 +1,18 @@
 package view.login;
 
 public class TokenManager {
+    private static Long userId;
     private static String accessToken;
     private static String refreshToken;
     private static String username;
+
+    public static Long getUserId() {
+        return userId;
+    }
+
+    public static void setUserId(Long userId) {
+        TokenManager.userId = userId;
+    }
 
     public static String getAccessToken() {
         return accessToken;

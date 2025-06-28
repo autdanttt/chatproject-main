@@ -28,10 +28,21 @@ public class ChatResponse {
         this.lastMessageTime = lastMessageTime;
     }
 
-    public Long getChatId() { return chatId; }
-    public String getOtherUsername() { return otherUsername; }
-    public String getLastMessage() { return lastMessage; }
-    public Date getLastMessageTime() { return lastMessageTime; }
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public String getOtherUsername() {
+        return otherUsername;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public Date getLastMessageTime() {
+        return lastMessageTime;
+    }
 
     public Long getOtherUserId() {
         return otherUserId;

@@ -6,6 +6,8 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import controllers.CreateChatController;
+import controllers.CreateChatGroupController;
+import controllers.FooterLeftController;
 import service.*;
 import utility.WebRTCManager;
 import view.login.LoginController;
@@ -19,6 +21,7 @@ import view.main.leftPanel.chatlist.ChatListPanel;
 import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
+import view.main.rightPanel.components.FooterPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
@@ -53,6 +56,8 @@ public class AppModule extends AbstractModule {
         bind(SearchController.class);
         bind(ChatListController.class);
         bind(CreateChatController.class);
+        bind(CreateChatGroupController.class);
+        bind(FooterLeftController.class);
 
         //Controller Main
         bind(MainChatController.class);
@@ -65,6 +70,7 @@ public class AppModule extends AbstractModule {
         bind(SearchPanel.class).in(Singleton.class);
         bind(view.main.leftPanel.components.FooterPanel.class).in(Singleton.class);
         bind(ChatListPanel.class).in(Singleton.class);
+        bind(FooterPanel.class).in(Singleton.class);
 
         //View Right Pannel
         bind(InfoOtherAndFeature.class).in(Singleton.class);
