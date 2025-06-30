@@ -30,4 +30,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     public List<Message> findByChatId(Long chatId);
 
 
+    List<Message> findByGroupId(Long groupId);
 }

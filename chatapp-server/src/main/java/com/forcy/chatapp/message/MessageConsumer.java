@@ -95,7 +95,7 @@ public class MessageConsumer {
 //                messageRepository.save(message);
 //                logger.info("Message delivery time updated for message ID: {}" , message.getId());
 //            }
-            MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageId(messageResponse.getMessageId());
+            MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageIdAndUserId(messageResponse.getMessageId(), messageResponse.getToUserId());
             if (messageDelivery.getDeliveredAt() == null) {
                 messageDelivery.setDeliveredAt(new Date());
                 messageDeliveryRepository.save(messageDelivery);

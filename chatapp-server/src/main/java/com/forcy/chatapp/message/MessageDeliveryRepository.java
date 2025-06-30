@@ -5,6 +5,7 @@ import com.forcy.chatapp.entity.MessageDelivery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -47,4 +48,31 @@ public interface MessageDeliveryRepository extends JpaRepository<MessageDelivery
         AND md.user.id = :userId
 """)
     MessageDelivery findByMessageIdAndUserId(Long messageId, Long userId);
+
+    @Query("""
+        SELECT md FROM MessageDelivery md
+        WHERE md.user.id = :userId
+        AND md.message.chat.id = :chatId
+        AND md.message.id <= :messageId
+        AND md.seenAt IS NULL
+""")
+    List<MessageDelivery> findPrivateMessagesToUpdateSeenAt(
+            @Param("userId")Long userId,
+            @Param("chatId")Long chatId,
+            @Param("messageId") Long messageId
+    );
+
+
+    @Query("""
+        SELECT md FROM MessageDelivery md
+        WHERE md.user.id = :userId
+        AND md.message.group.id = :groupId
+        AND md.message.id <= :messageId
+        AND md.seenAt IS NULL
+""")
+    List<MessageDelivery> findGroupMessagesToUpdateSeenAt(
+           @Param("userId") Long userId,
+           @Param("groupId") Long groupId,
+           @Param("messageId") Long messageId
+    );
 }

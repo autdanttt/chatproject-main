@@ -58,7 +58,7 @@ public class ChatWebSocketController {
                 logger.info("Sent undelivered message to user {}: {}", username, response.getContent());
 
 //                message.setDeliveredAt(new Date());
-                MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageId(message.getId());
+                MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageIdAndUserId(message.getId(), response.getToUserId());
 //                messageRepository.save(message);
                 messageDelivery.setDeliveredAt(new Date());
                 messageDeliveryRepository.save(messageDelivery);

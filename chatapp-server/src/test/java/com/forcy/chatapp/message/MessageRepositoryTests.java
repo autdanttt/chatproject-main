@@ -71,6 +71,17 @@ public class MessageRepositoryTests {
 
         assertThat(list).isNotNull();
 
-     }
+    }
+
+    @Test
+    public void testGetGroupMessagesByGroupId(){
+        Long groupId = 5L;
+        List<Message> messages = messageRepository.findByGroupId(groupId);
+
+        for (Message message : messages) {
+            System.out.println("Message: " + message.getContent() + message.getSentAt());
+        }
+        assertThat(messages.size()).isGreaterThan(0);
+    }
 
 }
