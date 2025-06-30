@@ -3,7 +3,9 @@ package utility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import event.MessageSeenEvent;
 import model.ReadyMessage;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCSdpType;
@@ -21,11 +23,13 @@ import payload.IceCandidate;
 import payload.SdpPayload;
 import view.ApiResult;
 import view.ErrorDTO;
+import view.main.UserToken;
+import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -36,11 +40,79 @@ public class WebSocketClientManager {
     private StompSession stompSession;
     private final EventBus eventBus;
     private WebRTCManager webRTCManager;
+    private Long currentUserId;
+    private final Map<Long, Long> pendingSeenPrivate = new ConcurrentHashMap<>();
+    private final Map<Long, Long> pendingSeenGroup = new ConcurrentHashMap<>();
+    private Long chatId;
+    private boolean isGroup;
+
 
     @Inject
     public WebSocketClientManager(WebRTCManager webRTCManager,EventBus eventBus) {
         this.webRTCManager = webRTCManager;
         this.eventBus = eventBus;
+        eventBus.register(this);
+        startSeenSenderTimer();
+    }
+
+    @Subscribe
+    public void onJwtToken(UserToken userToken) {
+        currentUserId = userToken.getUserId();
+    }
+    @Subscribe
+    public void onSelectedEvent(ChatSelectedEvent chatSelectedEvent) {
+        chatId = chatSelectedEvent.getChatId();
+        if (chatSelectedEvent.getType().equals("GROUP")) {
+            pendingSeenGroup.put(chatId,0L);
+            isGroup = true;
+        }else {
+            pendingSeenPrivate.put(chatId,0L);
+            isGroup = false;
+        }
+    }
+
+    @Subscribe
+    public void onMessageSeenEvent(MessageSeenEvent messageSeenEvent) {
+        logger.info("Message seen from controller: {}", messageSeenEvent.getMessageId());
+        updatePendingSeen(messageSeenEvent.getMessageId());
+    }
+
+    public void updatePendingSeen(Long messageId) {
+        if(isGroup) {
+            pendingSeenGroup.put(chatId,messageId);
+            logger.info("Message seen from group: {}", pendingSeenGroup.get(chatId));
+            logger.info("Size " + pendingSeenGroup.size());
+        }else {
+            pendingSeenPrivate.put(chatId,messageId);
+            logger.info("Message seen for chat: {}",pendingSeenPrivate.get(chatId));
+            logger.info("Size " + pendingSeenPrivate.size());
+        }
+    }
+
+    private void startSeenSenderTimer() {
+        Timer timer = new Timer("SeenSender", true);
+
+        logger.info("Pending seen private: {}", pendingSeenPrivate);
+        logger.info("Pending seen group: {}", pendingSeenGroup);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("Running seen sender timer");
+                for (Map.Entry<Long, Long> entry : pendingSeenPrivate.entrySet()) {
+                    Long chatId = entry.getKey();
+                    Long messageId = entry.getValue();
+                    logger.info("Seen sender timer: chatId={}, messageId={}", chatId, messageId);
+                    sendSeenEvent(currentUserId, chatId, null, messageId);
+                }
+
+                for (Map.Entry<Long, Long> entry : pendingSeenGroup.entrySet()) {
+                    Long groupId = entry.getKey();
+                    Long messageId = entry.getValue();
+                    logger.info("Seen sender timer: groupId={}, messageId={}", groupId, messageId);
+                    sendSeenEvent(currentUserId, null, groupId, messageId);
+                }
+            }
+        }, 0, 3000); // Gửi mỗi 3 giây
     }
 
 
@@ -165,6 +237,24 @@ public class WebSocketClientManager {
 
             }
         });
+    }
+
+    public void sendSeenEvent(Long userId, Long chatId, Long groupId, Long messageId){
+        if(stompSession != null && stompSession.isConnected()){
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("user_id", userId);
+            payload.put("chat_id", chatId);
+            payload.put("group_id", groupId);
+            payload.put("message_id", messageId);
+
+            stompSession.send("/app/seen", payload);
+            logger.info("Sent seen event");
+        }else {
+            logger.info("Can't send seen event since stomp session is not connected");
+        }
+
+
+
     }
 //    public ConnectionResult setupWebSocket(String jwtToken, String username) {
 //        webSocketClient = new StandardWebSocketClient();

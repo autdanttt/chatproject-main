@@ -29,6 +29,7 @@ public class SendMessageController extends BaseController {
     private Long userId;
     private Long otherUserId;
     private Long chatId;
+    private String type;
 
     @Inject
     public SendMessageController(FooterPanel footerPanel, SendMessageService sendMessageService, EventBus eventBus) {
@@ -40,6 +41,21 @@ public class SendMessageController extends BaseController {
 
         initializeListeners();
     }
+    @Subscribe
+    public void onJwtToken(UserToken userToken) {
+        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
+        this.jwtToken = TokenManager.getAccessToken();
+        this.userId = userToken.getUserId();
+    }
+
+    @Subscribe
+    public void onChatSelected(ChatSelectedEvent event) {
+        LOGGER.info("Received chat selected: " + event.getChatId());
+        this.chatId = event.getChatId();
+        this.otherUserId = event.getUserId();
+        this.type = event.getType();
+    }
+
 
     private void sendImage(File file) {
         ResponseEntity<Map> responseUpload = sendMessageService.sendFile(jwtToken, userId, file);
@@ -48,8 +64,13 @@ public class SendMessageController extends BaseController {
 
             String messageContent = (String) responseUpload.getBody().get("mediaId");
 
-           if(!messageContent.isEmpty()   && chatId != null && otherUserId != null){
-               ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(jwtToken, userId, otherUserId, messageContent, MessageType.IMAGE);
+           if(!messageContent.isEmpty()   && chatId != null){
+               ApiResult<MessageResponse> result;
+               if(type.equals("CHAT")) {
+                   result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, messageContent, MessageType.IMAGE);
+               }else {
+                   result = sendMessageService.sendTextGroupMessage(TokenManager.getAccessToken(), userId,chatId,messageContent, MessageType.IMAGE);
+               }
 
                LOGGER.info("Result: " + result);
                if (result.isSuccess()) {
@@ -77,8 +98,16 @@ public class SendMessageController extends BaseController {
         String content = file.getName();
         LOGGER.info("Text message: " + content);
 
-        if(!content.isEmpty()   && chatId != null && otherUserId != null){
-            ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, content, MessageType.EMOJI);
+        if(!content.isEmpty() && chatId != null){
+
+            ApiResult<MessageResponse> result;
+            if(type.equals("CHAT")) {
+                result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, content, MessageType.EMOJI);
+            }else {
+                result = sendMessageService.sendTextGroupMessage(TokenManager.getAccessToken(), userId,chatId,content, MessageType.EMOJI);
+            }
+
+
             LOGGER.info("Result: " + result);
             if (result.isSuccess()) {
                 MessageResponse message = result.getData();
@@ -95,19 +124,6 @@ public class SendMessageController extends BaseController {
 
     }
 
-    @Subscribe
-    public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
-        this.jwtToken = TokenManager.getAccessToken();
-        this.userId = userToken.getUserId();
-    }
-
-    @Subscribe
-    public void onChatSelected(ChatSelectedEvent event) {
-        LOGGER.info("Received chat selected: " + event.getChatId());
-        this.chatId = event.getChatId();
-        this.otherUserId = event.getUserId();
-    }
 
     private void initializeListeners() {
         footerPanel.addSendButtonListener(e-> sendTextMessage());
@@ -117,9 +133,17 @@ public class SendMessageController extends BaseController {
         LOGGER.info("Sending text message");
         String content = footerPanel.getTextField().getText().trim();
         LOGGER.info("Text message: " + content);
+        LOGGER.info("Other user: " + otherUserId);
+        LOGGER.info("Chat ID: " + chatId);
 
-        if(!content.isEmpty() && chatId != null && otherUserId != null) {
-            ApiResult<MessageResponse> result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, content, MessageType.TEXT);
+        if(!content.isEmpty() && chatId != null) {
+            ApiResult<MessageResponse> result;
+            if(type.equals("CHAT")) {
+                result = sendMessageService.sendTextMessage(TokenManager.getAccessToken(), userId, otherUserId, content, MessageType.TEXT);
+            }else {
+                result = sendMessageService.sendTextGroupMessage(TokenManager.getAccessToken(), userId,chatId,content, MessageType.TEXT);
+            }
+
             LOGGER.info("Result: " + result);
             if (result.isSuccess()) {
                 MessageResponse message = result.getData();
@@ -130,7 +154,7 @@ public class SendMessageController extends BaseController {
                 LOGGER.info("Error: " + error);
             }
         }else {
-            JOptionPane.showMessageDialog(null, "Please select a chat or enter a valid message.");
+            JOptionPane.showMessageDialog(null, "Please select a chat or enter a valid message hihi.");
 
         }
         footerPanel.getTextField().setText("");

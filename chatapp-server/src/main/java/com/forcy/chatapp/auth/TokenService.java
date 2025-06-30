@@ -4,6 +4,7 @@ import com.forcy.chatapp.entity.RefreshToken;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.jwt.JwtUtility;
 import com.forcy.chatapp.token.RefreshTokenRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class TokenService {
     private final Logger log = LoggerFactory.getLogger(TokenService.class);
     @Value("${app.security.jwt.refresh-token.expiration}")
