@@ -1,7 +1,9 @@
 package com.forcy.chatapp.chat;
 
 import com.forcy.chatapp.entity.Message;
+import com.forcy.chatapp.entity.MessageDelivery;
 import com.forcy.chatapp.entity.User;
+import com.forcy.chatapp.message.MessageDeliveryRepository;
 import com.forcy.chatapp.message.MessageMapper;
 import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.message.MessageResponse;
@@ -26,13 +28,16 @@ public class ChatWebSocketController {
 
     private MessageRepository messageRepository;
 
+    private MessageDeliveryRepository messageDeliveryRepository;
+
 
     private UserRepository userRepository;
 
-    public ChatWebSocketController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, UserRepository userRepository) {
+    public ChatWebSocketController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, UserRepository userRepository, MessageDeliveryRepository messageDeliveryRepository) {
         this.messagingTemplate = messagingTemplate;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.messageDeliveryRepository = messageDeliveryRepository;
     }
 
     @MessageMapping("/ready")
@@ -43,7 +48,7 @@ public class ChatWebSocketController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
 
-        List<Message> undeliveredMessages = messageRepository.findUndeliveredMessagesForUser(user.getId());
+        List<Message> undeliveredMessages = messageDeliveryRepository.findUndeliveredMessagesForUser(user.getId());
         logger.info("Found {} undelivered messages for user: {}", undeliveredMessages.size(), username);
 
         for (Message message : undeliveredMessages) {
@@ -52,8 +57,11 @@ public class ChatWebSocketController {
                 messagingTemplate.convertAndSendToUser(username, "/queue/messages", response);
                 logger.info("Sent undelivered message to user {}: {}", username, response.getContent());
 
-                message.setDeliveredAt(new Date());
-                messageRepository.save(message);
+//                message.setDeliveredAt(new Date());
+                MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageIdAndUserId(message.getId(), response.getToUserId());
+//                messageRepository.save(message);
+                messageDelivery.setDeliveredAt(new Date());
+                messageDeliveryRepository.save(messageDelivery);
                 logger.info("Updated deliveredAt for message ID: {}", message.getId());
             } catch (Exception e) {
                 logger.error("Failed to send message to user {}: {}", username, e.getMessage(), e);

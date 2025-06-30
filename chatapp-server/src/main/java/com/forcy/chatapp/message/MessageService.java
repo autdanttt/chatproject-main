@@ -1,9 +1,11 @@
 package com.forcy.chatapp.message;
 
 import com.forcy.chatapp.chat.*;
-import com.forcy.chatapp.entity.Chat;
-import com.forcy.chatapp.entity.Message;
-import com.forcy.chatapp.entity.User;
+import com.forcy.chatapp.entity.*;
+import com.forcy.chatapp.group.ChatGroupRepository;
+import com.forcy.chatapp.group.GroupMemberRepository;
+import com.forcy.chatapp.group.GroupNotFoundException;
+import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -11,11 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
 
+    private final ChatGroupRepository chatGroupRepository;
+    private final MessageDeliveryRepository messageDeliveryRepository;
+    private final GroupMemberRepository groupMemberRepository;
     private Logger logger = LoggerFactory.getLogger(MessageService.class);
 
 
@@ -29,13 +36,72 @@ public class MessageService {
 
     private ChatWebSocketHandler chatWebSocketHandler;
 
-    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer,@Lazy ChatWebSocketHandler chatWebSocketHandler) {
+    public MessageService(MessageRepository messageRepository, UserRepository userRepository, ChatRepository chatRepository, MessageProducer messageProducer, @Lazy ChatWebSocketHandler chatWebSocketHandler, ChatGroupRepository chatGroupRepository, MessageDeliveryRepository messageDeliveryRepository, GroupMemberRepository groupMemberRepository) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.chatRepository = chatRepository;
         this.messageProducer = messageProducer;
         this.chatWebSocketHandler = chatWebSocketHandler;
+        this.chatGroupRepository = chatGroupRepository;
+        this.messageDeliveryRepository = messageDeliveryRepository;
+        this.groupMemberRepository = groupMemberRepository;
+    }
 
+    public MessageResponse storeGroupMessage(GroupMessageRequest groupMessageRequest) {
+
+        User fromUser = userRepository.findById(groupMessageRequest.getFromUserId())
+                .orElseThrow(()->new UserNotFoundException(groupMessageRequest.getFromUserId()));
+
+        Long toGroupId = groupMessageRequest.getToGroupId();
+
+        ChatGroup chatGroup = chatGroupRepository.findById(toGroupId).orElseThrow(
+                ()-> new GroupNotFoundException("Group not found with id " + toGroupId)
+        );
+
+        Message message = new Message();
+        message.setUser(fromUser);
+        message.setGroup(chatGroup);
+        message.setType(groupMessageRequest.getMessageType());
+        message.setContent(groupMessageRequest.getContent());
+        message.setSentAt(new Date());
+
+        messageRepository.save(message);
+
+
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setMessageId(message.getId());
+        messageResponse.setFromUserId(fromUser.getId());
+        messageResponse.setFromUserName(fromUser.getUsername());
+        messageResponse.setToUserId(null);
+        messageResponse.setChatId(null);
+        messageResponse.setGroupId(message.getGroup().getId());
+        messageResponse.setMessageType(message.getType());
+        messageResponse.setContent(message.getContent());
+        messageResponse.setSentAt(new Date());
+//        messageResponse.setDeliveredAt(message.getDeliveredAt());
+
+
+        List<GroupMember> members = groupMemberRepository.findByGroupId(groupMessageRequest.getToGroupId());
+        List<User> recipients = members.stream()
+                .map(GroupMember::getUser)
+                .filter(user -> !user.getId().equals(fromUser.getId()))
+                .toList();
+
+
+        List<MessageDelivery> deliveries = recipients.stream()
+                .map(user -> MessageDelivery.builder()
+                        .message(message)
+                        .user(user)
+                        .deliveredAt(null)
+                        .seenAt(null)
+                        .build())
+                .collect(Collectors.toList());
+
+        messageDeliveryRepository.saveAll(deliveries);
+
+        messageProducer.sendGroupMessage(messageResponse);
+
+        return messageResponse;
     }
 
 
@@ -62,9 +128,27 @@ public class MessageService {
         Message message = MessageMapper.toEntity(messageRequest,fromUser,chat);
         messageRepository.save(message);
 
-        //Gui toi Kafka de consumer xy ly WebSocket
 
-        messageProducer.send(MessageMapper.toResponse(message,toUser.getId()));
+        // 2. Tạo MessageDelivery cho người nhận
+        MessageDelivery messageDelivery = new MessageDelivery();
+        messageDelivery.setMessage(message);
+        messageDelivery.setUser(toUser);
+
+        messageDeliveryRepository.save(messageDelivery);
+
+        //Gui toi Kafka de consumer xy ly WebSocket
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setMessageId(message.getId());
+        messageResponse.setFromUserId(fromUser.getId());
+        messageResponse.setFromUserName(fromUser.getUsername());
+        messageResponse.setToUserId(toUserId);
+        messageResponse.setChatId(chat.getId());
+        messageResponse.setGroupId(null);
+        messageResponse.setMessageType(message.getType());
+        messageResponse.setContent(message.getContent());
+        messageResponse.setSentAt(new Date());
+
+        messageProducer.sendPrivateMessage(messageResponse);
 
         logger.info("🚀 [storeMessage] Gửi message tới Kafka topic cho userId={}", toUserId);
 
@@ -83,6 +167,7 @@ public class MessageService {
 //        }
         return message;
     }
+
     public Message getLastMessageInChat(Long chatId) {
         return messageRepository.findTopByChatIdOrderBySentAtDesc(chatId);
     }
@@ -90,6 +175,10 @@ public class MessageService {
 
     public List<Message> findMessagesByChatId(Long chatId) {
         return messageRepository.findByChatId(chatId);
+    }
+
+    public List<Message> findGroupMessagesByGroupId(Long groupId) {
+        return messageRepository.findByGroupId(groupId);
     }
 
 }

@@ -20,16 +20,16 @@ public class RoleRepositoryTests {
     @Test
     public void testCreateFirstRole(){
         Role role = new Role();
-        role.setName("USER");
+        role.setName("ROLE_USER");
         role.setDescription("Regular user who can send and receive messages");
         roleRepository.save(role);
     }
 
     @Test
     public void testCreateMultipleRoles(){
-        Role admin = Role.builder().name("ADMIN").description("	Admin who can manage users and rooms").build();
-        Role moderator = Role.builder().name("MODERATOR").description("	Moderator who can delete messages or mute users").build();
-        Role guest = Role.builder().name("GUEST").description("	Guest who can only view public chats").build();
+        Role admin = Role.builder().name("ROLE_ADMIN").description("Admin who can manage users and rooms").build();
+        Role moderator = Role.builder().name("ROLE_MODERATOR").description("Moderator who can delete messages or mute users").build();
+        Role guest = Role.builder().name("ROLE_GUEST").description("Guest who can only view public chats").build();
 
         roleRepository.saveAll(List.of(admin, moderator, guest));
 

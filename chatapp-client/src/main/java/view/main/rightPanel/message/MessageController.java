@@ -3,11 +3,14 @@ package view.main.rightPanel.message;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import event.LastMessageEvent;
+import event.MessageSeenEvent;
 import model.MessageResponse;
 import model.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
+import utility.WebSocketClientManager;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
@@ -40,7 +43,7 @@ public class MessageController extends BaseController {
     @Subscribe
     public void onChatSelectedEvent(ChatSelectedEvent event) {
         Long chatId = event.getChatId();
-        addListMessage(chatId, userId);
+        addListMessage(chatId, userId, event.getType());
     }
     
     @Subscribe
@@ -48,6 +51,12 @@ public class MessageController extends BaseController {
         addMessagePanel(response);
     }
 
+    @Subscribe
+    public void updateSeen(LastMessageEvent event) {
+        Long messageId = event.getLastVisibleId();
+        LOGGER.info("Received last seen message: {}", messageId);
+        eventBus.post( new MessageSeenEvent(messageId));
+    }
     private void addMessagePanel(MessageResponse message) {
         boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -63,13 +72,18 @@ public class MessageController extends BaseController {
         }else {
             messageType = MessageType.IMAGE;
         }
-        messagePanel.addMessage(message.getContent(), isSentByMe, time, messageType);
+        messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromUserName(),isSentByMe, time, messageType);
     }
 
-    private void addListMessage(Long chatId, Long userId) {
+    private void addListMessage(Long chatId, Long userId,String type) {
         messagePanel.clearMessages();
         LOGGER.info("Jwt token: " + jwtToken);
-        MessageResponse[] messages = messageService.getMessageByChatId(chatId, TokenManager.getAccessToken());
+        MessageResponse[] messages;
+        if(type.equals("GROUP")){
+            messages = messageService.getGroupMessageByGroupId(chatId,TokenManager.getAccessToken());
+        }else {
+            messages = messageService.getMessageByChatId(chatId, TokenManager.getAccessToken());
+        }
         for(int i = 0; i < messages.length; i++) {
             MessageResponse message = messages[i];
             boolean isSentByMe = message.getFromUserId() != null && message.getFromUserId().equals(userId);
@@ -87,7 +101,7 @@ public class MessageController extends BaseController {
             }else {
                 messageType = MessageType.IMAGE;
             }
-            messagePanel.addMessage(message.getContent(), isSentByMe, time, messageType);
+            messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromUserName(), isSentByMe, time, messageType);
         }
     }
 

@@ -3,10 +3,12 @@ package view.main.leftPanel.chatlist;
 public class ChatSelectedEvent {
     private Long chatId;
     private Long userId;
+    private String type;
 
-    public ChatSelectedEvent(Long chatId, Long userId) {
+    public ChatSelectedEvent(Long chatId, Long userId, String type) {
         this.chatId = chatId;
         this.userId = userId;
+        this.type = type;
     }
 
     public Long getChatId() {
@@ -17,4 +19,7 @@ public class ChatSelectedEvent {
         return userId;
     }
 
+    public String getType() {
+        return type;
+    }
 }

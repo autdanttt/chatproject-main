@@ -11,8 +11,12 @@ public class MessageResponse {
     private Long fromUserId;
     @JsonProperty("to_user_id")
     private Long toUserId;       // Thêm nếu cần (dùng để xác định chat 1-1)
+    @JsonProperty("from_user_name")
+    private String fromUserName;
     @JsonProperty("chat_id")
     private Long chatId;
+    @JsonProperty("group_id")
+    private Long groupId;
     @JsonProperty("message_type")
     private String messageType;  // Thêm nếu cần xử lý loại tin nhắn
     @JsonProperty("content")
@@ -67,6 +71,22 @@ public class MessageResponse {
 
     public void setChatId(Long chatId) {
         this.chatId = chatId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getFromUserName() {
+        return fromUserName;
+    }
+
+    public void setFromUserName(String fromUserName) {
+        this.fromUserName = fromUserName;
     }
 
     @Override

@@ -42,7 +42,5 @@ public class Message {
     private String content;
 
     private Date sentAt;
-    private Date deliveredAt;
-    private Date seenAt;
 
 }
