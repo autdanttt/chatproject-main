@@ -10,6 +10,7 @@ public class UserLogin {
     private Long userId;
     private String username;
     private String phoneNumber;
+    private String avatarUrl;
     private Set<RoleDTO> roles;
 
     public int getStatusCode() {
@@ -58,6 +59,14 @@ public class UserLogin {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     public Set<RoleDTO> getRoles() {

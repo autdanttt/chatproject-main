@@ -19,9 +19,10 @@ public class MediaController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadMedia(@RequestParam Long userId, @RequestParam("mediaFile")MultipartFile mediaFile) throws IOException {
-        String mediaId = assetService.uploadMedia(userId, mediaFile);
+//        String mediaId = assetService.uploadMedia(userId, mediaFile);
+        String mediaUrl = assetService.uploadToCloudinary(mediaFile, "media");
         Map<String, String> response = new HashMap<>();
-        response.put("mediaId", mediaId);
+        response.put("mediaId", mediaUrl);
         return ResponseEntity.ok(response);
     }
 

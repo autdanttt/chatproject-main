@@ -32,7 +32,7 @@ public class User {
     @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
-    private boolean online;
+    private String avatarUrl;
 
     @ManyToMany
     @JoinTable(

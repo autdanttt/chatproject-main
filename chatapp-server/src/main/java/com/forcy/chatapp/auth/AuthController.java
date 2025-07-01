@@ -4,24 +4,25 @@ import com.forcy.chatapp.entity.Role;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.CustomUserDetails;
 import com.forcy.chatapp.user.UserService;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -91,6 +92,7 @@ public class AuthController{
             loginDTO.setId(user.getId());
             loginDTO.setUsername(user.getUsername());
             loginDTO.setPhoneNumber(user.getPhoneNumber());
+            loginDTO.setAvatarUrl(user.getAvatarUrl());
             Set<RoleDTO> roleDTOS = new HashSet<>();
             for (Role role : user.getRoles()) {
                 RoleDTO roleDTO = new RoleDTO();
@@ -119,6 +121,17 @@ public class AuthController{
         }
 
     }
+
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> register(@RequestPart("user") @Valid UserRegisterDTO dto,
+                                      @RequestPart("image") @Nullable MultipartFile multipartFile){
+
+        AuthUserDTO authUserDTO = userService.registerUser(dto, multipartFile);
+
+        return new ResponseEntity<>(authUserDTO, CREATED);
+    }
+
+
     private AuthUserDTO entity2DTO(User user){
         return mapper.map(user, AuthUserDTO.class);
     }

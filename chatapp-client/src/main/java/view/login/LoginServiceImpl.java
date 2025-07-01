@@ -9,6 +9,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginServiceImpl implements LoginService {
+    private final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     @Override
     public UserLogin authenticate(String username, String password) throws IOException {
@@ -51,6 +54,8 @@ public class LoginServiceImpl implements LoginService {
             userLogin.setUserId(user.getId());
             userLogin.setUsername(user.getUsername());
             userLogin.setPhoneNumber(user.getPhoneNumber());
+            logger.info("Avatar url: " + user.getAvatarUrl());
+            userLogin.setAvatarUrl(user.getAvatarUrl());
             userLogin.setRoles(user.getRoles());
 
             TokenManager.setAccessToken(authResponse.getAccessToken());

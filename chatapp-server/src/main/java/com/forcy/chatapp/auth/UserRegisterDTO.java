@@ -1,22 +1,14 @@
 package com.forcy.chatapp.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @ToString
-public class AuthUserDTO {
-    private Long id;
+public class UserRegisterDTO {
     @Length(min = 5, max = 128, message = "Username must be between 5 - 128")
     @NotNull(message = "Username cannot be null")
     private String username;
@@ -25,12 +17,5 @@ public class AuthUserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String phoneNumber;
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String avatarUrl;
-    @Valid
-    private Set<RoleDTO> roles = new HashSet<>();
-
-    public void addRole(RoleDTO role) {
-        this.getRoles().add(role);
-    }
 }
+
