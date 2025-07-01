@@ -42,12 +42,40 @@ public class ChatApi {
             if (responseCode == 201) {
                 return mapper.readValue(conn.getInputStream(), ChatResponse.class);
             } else {
-                logger.error("Server response: " + responseCode);
+                logger.error("Server response: {}", responseCode);
             }
         } catch (Exception e) {
             logger.error("->>>>>>>>>>>>>>>>>>>> Error when you created chat: ", e);
         }
         return null;
+    }
+
+    public boolean deleteChat(Long chatID) {
+        try {
+            URL url = new URL("http://localhost:10000/chats/" + chatID);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+
+            conn.setRequestProperty("Authorization", "Bearer " + TokenManager.getAccessToken());
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200 || responseCode == 201 || responseCode == 204) {
+                return true;
+            } else {
+                logger.error("Failed to delete chat. Server responded with code: {}", responseCode);
+                try (InputStream errorStream = conn.getErrorStream()) {
+                    if (errorStream != null) {
+                        String errorResponse = new String(errorStream.readAllBytes(), StandardCharsets.UTF_8);
+                        logger.error("Lỗi body: {}", errorResponse);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error("Lỗi xóa chat với id {}: {}", chatID, e.getMessage(), e);
+        }
+
+        return false;
     }
 
     public ChatGroupResponse createGroupChat(String nameGroup, Long currentUserId, List<Long> memberIds) {
@@ -78,11 +106,11 @@ public class ChatApi {
             if (responseCode == 201 || responseCode == 200) {
                 return mapper.readValue(conn.getInputStream(), ChatGroupResponse.class);
             } else {
-                logger.error("Server response when creating group chat: " + responseCode);
+                logger.error("Server response when creating group chat: {}", responseCode);
                 try (InputStream errorStream = conn.getErrorStream()) {
                     if (errorStream != null) {
                         String errorResponse = new String(errorStream.readAllBytes(), StandardCharsets.UTF_8);
-                        logger.error("Error response body: " + errorResponse);
+                        logger.error("Error response body: {}", errorResponse);
                     }
                 }
             }
@@ -91,4 +119,32 @@ public class ChatApi {
         }
         return null;
     }
+
+    public boolean deleteGroupChat(Long groupId) {
+        try {
+            URL url = new URL("http://localhost:10000/api/groups/" + groupId);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("DELETE");
+
+            conn.setRequestProperty("Authorization", "Bearer " + TokenManager.getAccessToken());
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200 || responseCode == 201 || responseCode == 204) {
+                return true;
+            } else {
+                logger.error("Failed to delete group chat. Server responded with code: {}", responseCode);
+                try (InputStream errorStream = conn.getErrorStream()) {
+                    if (errorStream != null) {
+                        String errorResponse = new String(errorStream.readAllBytes(), StandardCharsets.UTF_8);
+                        logger.error("Lỗi body: {}", errorResponse);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Lỗi xóa group chat với id {}: {}", groupId, e.getMessage(), e);
+        }
+
+        return false;
+    }
+
 }

@@ -59,19 +59,6 @@ public class CreateChatGroupController extends BaseController {
     }
 
     public void initializeListeners() {
-//        createGroupChatChat.addBtnGroupListener(event -> {
-//            String name = createGroupChatChat.getNameGrouptxt().getText().trim();
-//            currentUserId = TokenManager.getUserId();
-//            List<User> selectedUsers = createGroupChatChat.getUserList().getSelectedValuesList();
-//            List<Long> memberIds = new ArrayList<>();
-//            memberIds.add(currentUserId);
-//            for (User user : selectedUsers) {
-//                memberIds.add(user.getId());
-//            }
-//            chatApi.createGroupChat(name, currentUserId, memberIds);
-//            eventBus.post(new ChatCreatedEvent());
-//            createGroupChatChat.dispose();
-//        });
         createGroupChatChat.addBtnGroupListener(e -> {
             String name = createGroupChatChat.getNameGrouptxt().getText().trim();
             currentUserId = TokenManager.getUserId();

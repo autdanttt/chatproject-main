@@ -54,7 +54,6 @@ public class MessageController extends BaseController {
     @Subscribe
     public void updateSeen(LastMessageEvent event) {
         Long messageId = event.getLastVisibleId();
-        LOGGER.info("Received last seen message: {}", messageId);
         eventBus.post( new MessageSeenEvent(messageId));
     }
     private void addMessagePanel(MessageResponse message) {
@@ -77,7 +76,6 @@ public class MessageController extends BaseController {
 
     private void addListMessage(Long chatId, Long userId,String type) {
         messagePanel.clearMessages();
-        LOGGER.info("Jwt token: " + jwtToken);
         MessageResponse[] messages;
         if(type.equals("GROUP")){
             messages = messageService.getGroupMessageByGroupId(chatId,TokenManager.getAccessToken());
