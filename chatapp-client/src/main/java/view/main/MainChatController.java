@@ -14,7 +14,8 @@ import javax.swing.*;
 
 public class MainChatController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainChatController.class);
-    private String username;
+    private String email;
+    private String fullName;
     private Long userId;
     private String avatarUrl;
     private String jwtToken;
@@ -40,21 +41,21 @@ public class MainChatController extends BaseController {
     @Override
     public void activate(Object... params) {
         this.userId = (Long) params[0];
-        this.username = (String) params[1];
-        this.avatarUrl = (String) params[2];
-        this.jwtToken = (String) params[3];
+        this.email = (String) params[1];
+        this.fullName = (String) params[2];
+        this.avatarUrl = (String) params[3];
+        this.jwtToken = (String) params[4];
 
         if (mainChatView == null) {
             setupDependencies(); // Chỉ setup lần đầu
         }
-        mainChatView.setUsername(this.username);
         mainChatView.setVisible(true);
 
         LOGGER.info("Avatar url: " + avatarUrl);
-        eventBus.post(new UserToken(TokenManager.getAccessToken(), userId, username, avatarUrl));
+        eventBus.post(new UserToken(TokenManager.getAccessToken(), userId, email, fullName, avatarUrl));
         AutoRefreshScheduler.start();
 
-        ApiResult<String> result = webSocketClientManager.setupWebSocket(TokenManager.getAccessToken(), username);
+        ApiResult<String> result = webSocketClientManager.setupWebSocket(TokenManager.getAccessToken(), email);
 
         if (result.isSuccess()) {
             JOptionPane.showMessageDialog(mainChatView, "Connected to server");

@@ -3,7 +3,7 @@ package view.main.leftPanel.chatlist;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import event.UsernameUpdateEvent;
+import event.FullNameUpdateEvent;
 import model.ChatGroupResponse;
 import model.ChatItem;
 import model.ChatResponse;
@@ -34,7 +34,7 @@ public class ChatListController extends BaseController {
 //                    eventBus.post(selectedChat.getChatId());
                     String type = selectedChat.getOtherUserId() == null ? "GROUP": "CHAT";
                     eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId(), type));
-                    eventBus.post(new UsernameUpdateEvent(selectedChat.getUsername()));
+                    eventBus.post(new FullNameUpdateEvent(selectedChat.getOtherUserFullName(), selectedChat.getAvatarUrl()));
                 }
             }
         });
@@ -49,23 +49,27 @@ public class ChatListController extends BaseController {
         chatListPanel.getChatListModel().clear();
 
         for (ChatResponse chat : list) {
+            LOGGER.info("received chat image " + chat.getImageUrl());
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     chat.getChatId(),
                     chat.getOtherUserId(),
-                    chat.getOtherUsername(),
+                    chat.getOtherUserFullName(),
                     chat.getLastMessage(),
-                    chat.getLastMessageTime()
+                    chat.getLastMessageTime(),
+                    chat.getImageUrl()
             ));
         }
 
         ChatGroupResponse[] listGroup = chatListService.getChatGroupList(TokenManager.getAccessToken());
         for(ChatGroupResponse group : listGroup) {
+            LOGGER.info("Received group image: " + group.getImageUrl());
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     group.getGroupId(),
                     null,
                     group.getGroupName(),
                     group.getLastMessageContent(),
-                    group.getLastMessageTime()
+                    group.getLastMessageTime(),
+                    group.getImageUrl()
             ));
         }
     }

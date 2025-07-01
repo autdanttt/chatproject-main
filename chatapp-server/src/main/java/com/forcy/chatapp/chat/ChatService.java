@@ -36,12 +36,12 @@ public class ChatService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        String username = user.getUsername();
+        String email = user.getEmail();
 
         return chatRepository.findByUserId(userId).stream()
                 .map(chat -> {
                     User otherUser = chat.getUsers().stream()
-                            .filter(u -> !u.getUsername().equals(username))
+                            .filter(u -> !u.getEmail().equals(email))
                             .findFirst()
                             .orElse(null);
 
@@ -50,7 +50,8 @@ public class ChatService {
                     return ChatResponse.builder()
                             .chatId(chat.getId())
                             .otherUserId(otherUser != null ? otherUser.getId() : null)
-                            .otherUsername(otherUser != null ? otherUser.getUsername() : "Unknown")
+                            .otherUserFullName(otherUser != null ? otherUser.getFullName() : "Unknown")
+                            .imageUrl(otherUser.getAvatarUrl())
                             .lastMessage(lastMessage != null ? lastMessage.getContent() : "")
                             .lastMessageTime(lastMessage != null ? lastMessage.getSentAt() : null)
                             .build();

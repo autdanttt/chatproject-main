@@ -1,9 +1,17 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageResponse {
     @JsonProperty("message_id")
     private Long messageId;      // Thêm để khớp với JSON
@@ -11,8 +19,8 @@ public class MessageResponse {
     private Long fromUserId;
     @JsonProperty("to_user_id")
     private Long toUserId;       // Thêm nếu cần (dùng để xác định chat 1-1)
-    @JsonProperty("from_user_name")
-    private String fromUserName;
+    @JsonProperty("from_full_name")
+    private String fromFullName;
     @JsonProperty("chat_id")
     private Long chatId;
     @JsonProperty("group_id")
@@ -25,69 +33,6 @@ public class MessageResponse {
     private Date sentAt;
     @JsonProperty("delivered_at")
     private Date deliveredAt;
-
-    public Long getFromUserId() { return fromUserId; }
-    public void setFromUserId(Long fromUserId) { this.fromUserId = fromUserId; }
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    public Date getSentAt() { return sentAt; }
-    public void setSentAt(Date sentAt) { this.sentAt = sentAt; }
-
-    public Long getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(Long messageId) {
-        this.messageId = messageId;
-    }
-
-    public Long getToUserId() {
-        return toUserId;
-    }
-
-    public void setToUserId(Long toUserId) {
-        this.toUserId = toUserId;
-    }
-
-    public String getMessageType() {
-        return messageType;
-    }
-
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
-    }
-
-    public Date getDeliveredAt() {
-        return deliveredAt;
-    }
-
-    public void setDeliveredAt(Date deliveredAt) {
-        this.deliveredAt = deliveredAt;
-    }
-
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getFromUserName() {
-        return fromUserName;
-    }
-
-    public void setFromUserName(String fromUserName) {
-        this.fromUserName = fromUserName;
-    }
 
     @Override
     public String toString() {

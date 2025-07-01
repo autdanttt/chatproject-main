@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,18 +31,19 @@ public class UserService{
 
     public AuthUserDTO registerUser(UserRegisterDTO dto, MultipartFile multipartFile){
         log.info("Registering user");
-        if(userRepository.findByUsername(dto.getUsername()).isPresent()){
-            throw new UserAlreadyExistsException("User already exists with username: " + dto.getUsername());
+        if(userRepository.findByEmail(dto.getEmail()).isPresent()){
+            throw new UserAlreadyExistsException("User already exists with email: " + dto.getEmail());
         }
         String avatar = "";
         if (multipartFile != null) {
+            log.info("Uploading avatar");
             avatar = assetService.uploadToCloudinary(multipartFile, "avatar");
         }
         User user = new User();
-        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        user.setPhoneNumber(String.valueOf(dto.getPhoneNumber()));
-
+        user.setFullName(dto.getFullName());
+        user.setCreateAt(new Date());
         if(!"".equals(avatar)){
             user.setAvatarUrl(avatar);
         }else {
@@ -55,10 +57,9 @@ public class UserService{
         User savedUser = userRepository.save(user);
 
         AuthUserDTO authUserDTO = new AuthUserDTO();
-        authUserDTO.setUsername(savedUser.getUsername());
-        authUserDTO.setPhoneNumber(savedUser.getPhoneNumber());
+        authUserDTO.setEmail(savedUser.getEmail());
+        authUserDTO.setFullName(savedUser.getFullName());
         authUserDTO.setAvatarUrl(savedUser.getAvatarUrl());
-
         Set<RoleDTO> roles = new HashSet<>();
         for (Role savedRole : savedUser.getRoles()){
             RoleDTO roleDTO = new RoleDTO();
@@ -67,7 +68,6 @@ public class UserService{
             roleDTO.setDescription(savedRole.getDescription());
             roles.add(roleDTO);
         }
-
         authUserDTO.setRoles(roles);
         authUserDTO.setId(savedUser.getId());
         return authUserDTO;
@@ -81,6 +81,7 @@ public class UserService{
             avatar = assetService.uploadToCloudinary(file, "avatar");
         }
 
+        user.setUpdateAt(new Date());
         user.setAvatarUrl(avatar);
         User savedUser = userRepository.save(user);
 
@@ -109,8 +110,8 @@ public class UserService{
 //        return userRepository.save(user);
 //    }
 
-    public User getByUsername(String username){
-        return userRepository.getUserByUsername(username);
+    public User getByEmail(String email){
+        return userRepository.getUserByEmail(email);
     }
 
 

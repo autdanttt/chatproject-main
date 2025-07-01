@@ -11,20 +11,20 @@ public class InMemorySessionManager{
 
     private final Map<String ,String> userSessionMap = new ConcurrentHashMap<>();
 
-    public void registerSession(String username, String sessionId) {
-        userSessionMap.put(username, sessionId);
+    public void registerSession(String email, String sessionId) {
+        userSessionMap.put(email, sessionId);
     }
 
-    public void removeSession(String username) {
-        userSessionMap.remove(username);
+    public void removeSession(String email) {
+        userSessionMap.remove(email);
     }
 
-    public boolean isUserOnline(String username) {
-        return userSessionMap.containsKey(username);
+    public boolean isUserOnline(String email) {
+        return userSessionMap.containsKey(email);
     }
 
-    public String getSessionId(String username) {
-        return userSessionMap.get(username);
+    public String getSessionId(String email) {
+        return userSessionMap.get(email);
     }
 
 }

@@ -1,12 +1,10 @@
 package com.forcy.chatapp.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -23,16 +21,20 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 64, nullable = false, unique = true)
-    private String username;
+    @Column(unique = true, nullable = false)
+    @Email
+    private String email;
+
+    @Column(name = "full_name", length = 30, nullable = false)
+    private String fullName;
 
     @Column(length = 64, nullable = false)
     private String password;
-
-    @Column(name = "phone_number", unique = true)
-    private String phoneNumber;
-
     private String avatarUrl;
+
+
+    private Date createAt;
+    private Date updateAt;
 
     @ManyToMany
     @JoinTable(

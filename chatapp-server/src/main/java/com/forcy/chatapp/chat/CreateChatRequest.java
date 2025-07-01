@@ -3,7 +3,7 @@ package com.forcy.chatapp.chat;
 import lombok.Data;
 @Data
 public class CreateChatRequest {
-    private String username;
+    private String email;
     private Long targetUserId;
 
 //    public String getUsername() {

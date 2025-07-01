@@ -60,10 +60,10 @@ public class MessageConsumer {
                 .toList();
 
         for (User member : members) {
-            if(chatWebSocketHandler.isOnline(member.getUsername())){
-                chatWebSocketHandler.sendMessageToUser(member.getUsername(), response);
+            if(chatWebSocketHandler.isOnline(member.getEmail())){
+                chatWebSocketHandler.sendMessageToUser(member.getEmail(), response);
 
-                logger.info("Message sent to WebSocket for user: " + member.getUsername());
+                logger.info("Message sent to WebSocket for user: " + member.getEmail());
                 logger.info("Message {} delivered",response);
 
                 MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageIdAndUserId(response.getMessageId(), member.getId());
@@ -73,7 +73,7 @@ public class MessageConsumer {
                     logger.info("Message {} delivered",response.getMessageId());
                 }
             }else {
-                logger.info("User {} is offline", member.getUsername());
+                logger.info("User {} is offline", member.getEmail());
             }
         }
     }
@@ -81,12 +81,12 @@ public class MessageConsumer {
     public void deliverMessage(MessageResponse messageResponse) {
         logger.info("📥 [deliverMessage] Nhận message từ Kafka: {}", messageResponse);
         User toUser = userRepository.findById(messageResponse.getToUserId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        String username = toUser.getUsername();
+        String email = toUser.getEmail();
 
-        logger.info("Delivering message to user: " + username);
-        if (chatWebSocketHandler.isOnline(username)) {
-            chatWebSocketHandler.sendMessageToUser(username, messageResponse);
-            logger.info("Message sent to WebSocket for user: " + username);
+        logger.info("Delivering message to user: " + email);
+        if (chatWebSocketHandler.isOnline(email)) {
+            chatWebSocketHandler.sendMessageToUser(email, messageResponse);
+            logger.info("Message sent to WebSocket for user: " + email);
             logger.info("Message {} delivered", messageResponse);
 
            // Message message = messageRepository.findById(messageResponse.getMessageId()).orElseThrow(() -> new RuntimeException("Message not found"));
@@ -102,7 +102,7 @@ public class MessageConsumer {
                 logger.info("Message {} delivered", messageResponse.getMessageId());
             }
         } else {
-            logger.info("User {} is offline, cannot deliver message now.", username);
+            logger.info("User {} is offline, cannot deliver message now.",email);
         }
     }
 }

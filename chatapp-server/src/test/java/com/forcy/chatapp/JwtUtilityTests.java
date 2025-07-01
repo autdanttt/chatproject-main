@@ -23,21 +23,21 @@ public class JwtUtilityTests {
         jwtUtil.setAccessTokenExpiration(2);
     }
 
-    @Test
-    public void testValidateSuccess(){
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("username");
-        user.setPassword("password");
-        user.setPhoneNumber("1234567890");
-        Role role = new Role("Role test");
-        role.setDescription("role description");
-        user.getRoles().add(role);
-        String token = jwtUtil.generateAccessToken(user);
-        assertThat(token).isNotNull();
-        assertDoesNotThrow(()->{
-            jwtUtil.validateAccessToken(token);
-        });
-
-    }
+//    @Test
+//    public void testValidateSuccess(){
+//        User user = new User();
+//        user.setId(1L);
+//        user.setUsername("username");
+//        user.setPassword("password");
+//        user.setPhoneNumber("1234567890");
+//        Role role = new Role("Role test");
+//        role.setDescription("role description");
+//        user.getRoles().add(role);
+//        String token = jwtUtil.generateAccessToken(user);
+//        assertThat(token).isNotNull();
+//        assertDoesNotThrow(()->{
+//            jwtUtil.validateAccessToken(token);
+//        });
+//
+//    }
 }

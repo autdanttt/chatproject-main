@@ -3,7 +3,7 @@ package view.login;
 public class TokenManager {
     private static String accessToken;
     private static String refreshToken;
-    private static String username;
+    private static String email;
 
     public static String getAccessToken() {
         return accessToken;
@@ -21,11 +21,11 @@ public class TokenManager {
         refreshToken = token;
     }
 
-    public static String getUsername() {
-        return username;
+    public static String getEmail() {
+        return email;
     }
 
-    public static void setUsername(String username) {
-        TokenManager.username = username;
+    public static void setEmail(String email) {
+        TokenManager.email = email;
     }
 }

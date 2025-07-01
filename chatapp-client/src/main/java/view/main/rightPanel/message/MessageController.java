@@ -10,14 +10,11 @@ import model.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
-import utility.WebSocketClientManager;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MessageController extends BaseController {
@@ -72,7 +69,7 @@ public class MessageController extends BaseController {
         }else {
             messageType = MessageType.IMAGE;
         }
-        messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromUserName(),isSentByMe, time, messageType);
+        messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromFullName(),isSentByMe, time, messageType);
     }
 
     private void addListMessage(Long chatId, Long userId,String type) {
@@ -101,7 +98,7 @@ public class MessageController extends BaseController {
             }else {
                 messageType = MessageType.IMAGE;
             }
-            messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromUserName(), isSentByMe, time, messageType);
+            messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromFullName(), isSentByMe, time, messageType);
         }
     }
 

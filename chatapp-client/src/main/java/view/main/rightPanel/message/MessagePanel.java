@@ -41,7 +41,7 @@ public class MessagePanel extends JPanel {
         return messageItemPanel;
     }
 
-    public void addMessage(Long messageId,String content,String fromUserName ,boolean isSentByMe, String time, MessageType messageType) {
+    public void addMessage(Long messageId,String content,String fromFullName ,boolean isSentByMe, String time, MessageType messageType) {
         JPanel messageContainer = new JPanel();
         messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.X_AXIS));
         messageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -61,7 +61,7 @@ public class MessagePanel extends JPanel {
         JComponent messageComponent = null;
 
         JLabel username = new JLabel();
-        username.setText(isSentByMe ? "Bạn" : fromUserName);
+        username.setText(isSentByMe ? "Bạn" : fromFullName);
         username.setFont(new Font("Montserrat", Font.PLAIN, 10));
         username.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
 

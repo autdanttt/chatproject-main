@@ -43,21 +43,21 @@ public class AuthController{
         this.mapper = mapper;
     }
 
-    @PostMapping("/token")
-    public ResponseEntity<?> getAccessToken(@RequestBody @Valid AuthRequest request){
-        String username = request.getUsername();
-        String password = request.getPassword();
-        try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-            AuthResponse response = tokenService.generateToken(userDetails.getUser());
-
-            return ResponseEntity.ok(response);
-        }catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
+//    @PostMapping("/token")
+//    public ResponseEntity<?> getAccessToken(@RequestBody @Valid AuthRequest request){
+//        String username = request.getUsername();
+//        String password = request.getPassword();
+//        try {
+//            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+//            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+//
+//            AuthResponse response = tokenService.generateToken(userDetails.getUser());
+//
+//            return ResponseEntity.ok(response);
+//        }catch (BadCredentialsException ex) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//    }
 
     @PostMapping("/token/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest request){
@@ -78,20 +78,20 @@ public class AuthController{
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid AuthRequest request){
-        String username = request.getUsername();
+        String email = request.getEmail();
         String password = request.getPassword();
 
 
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-            User user = userService.getByUsername(username);
+            User user = userService.getByEmail(email);
 
             AuthUserDTO loginDTO = new AuthUserDTO();
             loginDTO.setId(user.getId());
-            loginDTO.setUsername(user.getUsername());
-            loginDTO.setPhoneNumber(user.getPhoneNumber());
+            loginDTO.setEmail(user.getEmail());
+            loginDTO.setFullName(user.getFullName());
             loginDTO.setAvatarUrl(user.getAvatarUrl());
             Set<RoleDTO> roleDTOS = new HashSet<>();
             for (Role role : user.getRoles()) {
@@ -107,14 +107,6 @@ public class AuthController{
             AuthResponse response = tokenService.generateToken(userDetails.getUser());
             response.setUser(loginDTO);
 
-
-
-//            AuthUserDTO loginDTO = entity2DTO(user);
-//            AuthResponse response = tokenService.generateToken(userDetails.getUser());
-//            HttpHeaders jwtHeader = new HttpHeaders();
-//            jwtHeader.add("Jwt-Token", response.getAccessToken());
-
-
             return new ResponseEntity<>(response, OK);
         }catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -129,10 +121,5 @@ public class AuthController{
         AuthUserDTO authUserDTO = userService.registerUser(dto, multipartFile);
 
         return new ResponseEntity<>(authUserDTO, CREATED);
-    }
-
-
-    private AuthUserDTO entity2DTO(User user){
-        return mapper.map(user, AuthUserDTO.class);
     }
 }

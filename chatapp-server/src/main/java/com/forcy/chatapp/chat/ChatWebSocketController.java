@@ -7,6 +7,7 @@ import com.forcy.chatapp.message.MessageDeliveryRepository;
 import com.forcy.chatapp.message.MessageMapper;
 import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.message.MessageResponse;
+import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -42,21 +44,19 @@ public class ChatWebSocketController {
 
     @MessageMapping("/ready")
     public void handleReadyMessage(@Payload ChatMessage chatMessage) { // Sử dụng Principal nếu cần xác thực
-        String username = chatMessage.getSender(); // Hoặc dùng Principal nếu cấu hình
-        logger.info("Received READY message from user: {}", username);
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
+        logger.info("Received READY message from user: {}", email);
 
         List<Message> undeliveredMessages = messageDeliveryRepository.findUndeliveredMessagesForUser(user.getId());
-        logger.info("Found {} undelivered messages for user: {}", undeliveredMessages.size(), username);
+        logger.info("Found {} undelivered messages for user: {}", undeliveredMessages.size(), email);
 
         for (Message message : undeliveredMessages) {
             try {
                 MessageResponse response = MessageMapper.toResponse(message, user.getId());
-                messagingTemplate.convertAndSendToUser(username, "/queue/messages", response);
-                logger.info("Sent undelivered message to user {}: {}", username, response.getContent());
-
+                messagingTemplate.convertAndSendToUser(email, "/queue/messages", response);
+                logger.info("Sent undelivered message to user {}: {}", email, response.getContent());
 //                message.setDeliveredAt(new Date());
                 MessageDelivery messageDelivery = messageDeliveryRepository.findByMessageIdAndUserId(message.getId(), response.getToUserId());
 //                messageRepository.save(message);
@@ -64,7 +64,7 @@ public class ChatWebSocketController {
                 messageDeliveryRepository.save(messageDelivery);
                 logger.info("Updated deliveredAt for message ID: {}", message.getId());
             } catch (Exception e) {
-                logger.error("Failed to send message to user {}: {}", username, e.getMessage(), e);
+                logger.error("Failed to send message to user {}: {}", email, e.getMessage(), e);
             }
         }
     }

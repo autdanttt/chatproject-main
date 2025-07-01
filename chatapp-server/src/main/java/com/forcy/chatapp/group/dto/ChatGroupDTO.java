@@ -10,6 +10,7 @@ import java.util.List;
 public class ChatGroupDTO {
     private Long id;
     private String name;
+    private String image;
     private Long creatorId;
     private List<Long> memberIds;
 }

@@ -53,7 +53,7 @@ public class TokenService {
         String rawRefreshToken = request.getRefreshToken();
         log.info("Refresh token: {}", rawRefreshToken);
 
-        List<RefreshToken> listRefreshToken = refreshTokenRepo.findByUsername(request.getUsername());
+        List<RefreshToken> listRefreshToken = refreshTokenRepo.findByEmail(request.getEmail());
         log.info("Refresh token found: {}", listRefreshToken);
 
         RefreshToken foundRefreshToken = null;

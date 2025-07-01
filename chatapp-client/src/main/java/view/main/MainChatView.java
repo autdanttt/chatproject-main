@@ -43,7 +43,4 @@ public class MainChatView extends JFrame {
         setVisible(true);
     }
 
-    public void setUsername(String username) {
-        rightPanel.setUserName(username);
-    }
 }

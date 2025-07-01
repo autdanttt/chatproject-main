@@ -14,7 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RightPanel extends JPanel {
-    private final InfoOtherAndFeature usernameInfoPanel;
     private final MessagePanel messagePanel;
     private final MessageController messageController;
     private final SendMessageController sendMessageController;
@@ -24,8 +23,7 @@ public class RightPanel extends JPanel {
     private FooterPanel footerPanel;
 
     @Inject
-    public RightPanel(InfoOtherAndFeature usernameInfoPanel, MessagePanel messagePanel, MessageController messageController, SendMessageController sendMessageController,HeaderController headerController, HeaderPanel headerPanel, CenterPanel centerPanel, FooterPanel footerPanel) {
-        this.usernameInfoPanel = usernameInfoPanel;
+    public RightPanel(MessagePanel messagePanel, MessageController messageController, SendMessageController sendMessageController,HeaderController headerController, HeaderPanel headerPanel, CenterPanel centerPanel, FooterPanel footerPanel) {
         this.messagePanel = messagePanel;
         this.messageController = messageController;
         this.sendMessageController = sendMessageController;
@@ -43,7 +41,4 @@ public class RightPanel extends JPanel {
         add(footerPanel, BorderLayout.SOUTH);
     }
 
-    public void setUserName(String userName) {
-        headerPanel.setUserName(userName);
-    }
 }

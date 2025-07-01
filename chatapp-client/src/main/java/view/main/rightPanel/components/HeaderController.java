@@ -18,7 +18,6 @@ import java.net.URL;
 public class HeaderController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(HeaderController.class);
     private static HeaderPanel headerPanel;
-    private String avatarUrl;
 
     @Inject
     public HeaderController(HeaderPanel headerPanel,EventBus eventBus) {
@@ -29,9 +28,14 @@ public class HeaderController extends BaseController {
     @Subscribe
     public void onJwtToken(UserToken userToken) {
         log.info("onJwtToken: " + userToken.getJwtToken());
-        this.avatarUrl = userToken.getAvatarUrl();
+        setFullName(userToken.getFullName());
         setAvatarIcon(userToken.getAvatarUrl());
     }
+
+    private void setFullName(String fullName) {
+        headerPanel.getUserLabel().setText(fullName);
+    }
+
     public void setAvatarIcon(String avatarUrl) {
         log.info("Setting avatar icon to " + avatarUrl);
         try {

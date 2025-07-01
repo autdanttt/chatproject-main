@@ -1,7 +1,15 @@
 package view.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthResponse {
     @JsonProperty("access_token")
     private String accessToken;
@@ -10,30 +18,5 @@ public class AuthResponse {
     @JsonProperty("user")
     private AuthUserDTO user;
 
-    public AuthResponse() {
-    }
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public AuthUserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(AuthUserDTO user) {
-        this.user = user;
-    }
 }

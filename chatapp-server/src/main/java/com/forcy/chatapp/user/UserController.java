@@ -35,11 +35,11 @@ public class UserController {
 
 
     @PostMapping("/avatar")
-    public ResponseEntity<?> updateAvatar(@RequestParam("image") MultipartFile file) {
+    public ResponseEntity<?> updateAvatar(@RequestPart("image") MultipartFile file) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
 
         String image = userService.updateAvatar(user.getId(),file);
 

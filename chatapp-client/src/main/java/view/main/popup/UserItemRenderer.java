@@ -30,7 +30,7 @@ public class UserItemRenderer extends DefaultListCellRenderer {
 //        }
         Image scaledImage = avatarIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         avatarLabel.setIcon(new ImageIcon(scaledImage));
-        JLabel usernameLabel = new JLabel(user.getUsername());
+        JLabel usernameLabel = new JLabel(user.getEmail());
         usernameLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
         panel.add(avatarLabel, BorderLayout.WEST);

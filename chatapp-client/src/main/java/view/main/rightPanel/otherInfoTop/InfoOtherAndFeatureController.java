@@ -4,17 +4,23 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import di.BaseController;
-import event.UsernameUpdateEvent;
+import event.FullNameUpdateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
-import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.util.logging.Logger;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
 public class InfoOtherAndFeatureController extends BaseController {
+    private final Logger logger = LoggerFactory.getLogger(InfoOtherAndFeatureController.class);
     private final InfoOtherAndFeature infoOtherAndFeature;
     private final WebRTCManager webRTCManager;
 
@@ -41,11 +47,29 @@ public class InfoOtherAndFeatureController extends BaseController {
         this.chatId = event.getChatId();
         this.otherUserId = event.getUserId();
     }
+    @Subscribe
+    public void onFullNameUpdate(FullNameUpdateEvent event) {
+        logger.info("Received image " + event.getImageUrl());
+        infoOtherAndFeature.getUserOtherName().setText(event.getFullName());
+        setAvatarIcon(event.getImageUrl());
+    }
 
+    private void setAvatarIcon(String imageUrl) {
+        logger.info("Setting avatar icon to " + imageUrl);
+        try {
+            BufferedImage originalImage = ImageIO.read(new URL(imageUrl));
+            // Resize ảnh về đúng kích thước label (40x40)
+            Image scaledImage = originalImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+
+            ImageIcon icon = new ImageIcon(scaledImage);
+            infoOtherAndFeature.getAvatarOtherLabel().setIcon(icon);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     protected void setupDependencies() {
-
 
     }
 
@@ -71,8 +95,8 @@ public class InfoOtherAndFeatureController extends BaseController {
 
 
     @Subscribe
-    public void onUsernameUpdate(UsernameUpdateEvent event) {
-        infoOtherAndFeature.setUsername(event.getUsername());
+    public void onUsernameUpdate(FullNameUpdateEvent event) {
+        infoOtherAndFeature.setUsername(event.getFullName());
     }
 
     @Override

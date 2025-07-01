@@ -4,10 +4,9 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import custom.CreateButton;
-import event.UsernameUpdateEvent;
+import event.FullNameUpdateEvent;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
-import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import javax.swing.*;
@@ -19,6 +18,7 @@ public class InfoOtherAndFeature extends JPanel {
     private final JLabel userOtherName;
     private final JButton callVideoButton;
     private final JButton callPhoneButton;
+    private JLabel avatarOtherLabel;
 
     private final WebRTCManager webRTCManager;
     private Long chatId;
@@ -40,9 +40,9 @@ public class InfoOtherAndFeature extends JPanel {
 
         JPanel avatarOtherPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 11));
         avatarOtherPanel.setBackground(Color.WHITE);
-        JLabel avatarOtherLabel = new JLabel();
+        avatarOtherLabel = new JLabel();
         avatarOtherLabel.setPreferredSize(new Dimension(48, 48));
-        avatarOtherLabel.setIcon(new ImageIcon(basePath + "/images/Group 14.png"));
+//        avatarOtherLabel.setIcon(new ImageIcon(basePath + "/images/Group 14.png"));
         userOtherName = new JLabel("None");
         userOtherName.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
@@ -87,21 +87,26 @@ public class InfoOtherAndFeature extends JPanel {
         });
     }
 
-    @Subscribe
-    public void onJwtToken(UserToken userToken) {
-        this.userId = userToken.getUserId();
+    public JLabel getUserOtherName() {
+        return userOtherName;
     }
 
-    @Subscribe
-    public void onChatSelected(ChatSelectedEvent event) {
-        this.chatId = event.getChatId();
-        this.otherUserId = event.getUserId();
+    public JLabel getAvatarOtherLabel() {
+        return avatarOtherLabel;
     }
 
-    @Subscribe
-    public void onUsernameUpdate(UsernameUpdateEvent event) {
-        userOtherName.setText(event.getUsername());
-    }
+//
+//    @Subscribe
+//    public void onChatSelected(ChatSelectedEvent event) {
+//        this.chatId = event.getChatId();
+//        this.otherUserId = event.getUserId();
+//    }
+//
+
+//    @Subscribe
+//    public void onUsernameUpdate(FullNameUpdateEvent event) {
+//        userOtherName.setText(event.getFullName());
+//    }
 
     public void setUsername(String username) {
         userOtherName.setText(username);

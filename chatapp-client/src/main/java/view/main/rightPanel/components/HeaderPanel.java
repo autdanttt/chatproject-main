@@ -53,7 +53,7 @@ public class HeaderPanel extends JPanel {
         return avatarLabel;
     }
 
-    public void setUserName(String userName) {
-        userLabel.setText(userName);
+    public JLabel getUserLabel() {
+        return userLabel;
     }
 }

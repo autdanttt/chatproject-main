@@ -32,9 +32,9 @@ public class MessageController {
 
     @PostMapping
     public ResponseEntity<?> sendMessage(@RequestBody MessageRequest messageRequest) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found " + email));
 
         if(!messageRequest.getFromUserId().equals(user.getId())) {
             throw new AccessDeniedException("Your account is not allowed to send messages");
@@ -51,9 +51,9 @@ public class MessageController {
     @PostMapping("/group")
     public ResponseEntity<?> sendGroupMessage(@RequestBody @Valid GroupMessageRequest groupMessageRequest) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found " + email));
 
         if (!groupMessageRequest.getFromUserId().equals(user.getId())) {
             throw new AccessDeniedException("You are not user send this group message");

@@ -33,6 +33,9 @@ import view.main.rightPanel.otherInfoTop.InfoOtherAndFeature;
 import view.main.leftPanel.search.SearchController;
 import view.main.leftPanel.search.SearchPanel;
 import view.register.RegisterController;
+import view.register.RegisterService;
+import view.register.RegisterServiceImpl;
+//import view.register.RegisterController;
 
 public class AppModule extends AbstractModule {
 
@@ -40,7 +43,6 @@ public class AppModule extends AbstractModule {
     protected void configure() {
 
         bind(EventBus.class).toInstance(new EventBus());
-        bind(AuthService.class).to(AuthServiceImpl.class);
         bind(RegisterService.class).to(RegisterServiceImpl.class);
         bind(SearchService.class).to(SearchServiceImpl.class);
         bind(LoginService.class).to(LoginServiceImpl.class);

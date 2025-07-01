@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "messages")
@@ -33,6 +34,9 @@ public class Message {
     @JoinColumn(name = "group_id")
     private ChatGroup group;
 
+
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageDelivery> deliveries;
 
     @Enumerated(EnumType.STRING)
     private MessageType type;
