@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import di.BaseController;
 import event.ChatCreatedEvent;
+import event.TakeUserID;
 import model.ChatGroupResponse;
 import model.User;
 import model.UserOther;
@@ -29,9 +30,11 @@ public class CreateChatGroupController extends BaseController {
     private ChatApi chatApi;
 
     @Inject
-    public CreateChatGroupController(UserApi userApi, ChatApi chatApi) {
+    public CreateChatGroupController(UserApi userApi, ChatApi chatApi, EventBus eventBus) {
         this.userApi = userApi;
         this.chatApi = chatApi;
+        this.eventBus = eventBus;
+        eventBus.register(this);
     }
 
     public void setCreateGroupChat(CreateGroupChat createGroupChatChat) {
@@ -59,6 +62,7 @@ public class CreateChatGroupController extends BaseController {
     public void initializeListeners() {
         createGroupChatChat.addBtnGroupListener(e -> {
             String name = createGroupChatChat.getNameGrouptxt().getText().trim();
+
             currentUserId = TokenManager.getUserId();
             List<UserOther> selectedUsers = createGroupChatChat.getUserList().getSelectedValuesList();
 
@@ -84,7 +88,7 @@ public class CreateChatGroupController extends BaseController {
                 memberIds.add(user.getId());
             }
 
-            chatApi.createGroupChat(name, currentUserId, memberIds);
+            chatApi.createGroupChat(name, currentUserId, memberIds, null);
 
             eventBus.post(new ChatCreatedEvent());
             createGroupChatChat.dispose();
