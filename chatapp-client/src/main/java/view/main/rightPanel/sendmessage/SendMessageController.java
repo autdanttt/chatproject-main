@@ -43,7 +43,6 @@ public class SendMessageController extends BaseController {
     }
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
         this.jwtToken = TokenManager.getAccessToken();
         this.userId = userToken.getUserId();
     }
@@ -104,11 +103,8 @@ public class SendMessageController extends BaseController {
                 result = sendMessageService.sendTextGroupMessage(TokenManager.getAccessToken(), userId,chatId,content, MessageType.EMOJI);
             }
 
-
-            LOGGER.info("Result: " + result);
             if (result.isSuccess()) {
                 MessageResponse message = result.getData();
-                LOGGER.info("Message Response: " + message);
                 eventBus.post(message);
             } else {
                 ErrorDTO error = result.getError();
@@ -128,9 +124,6 @@ public class SendMessageController extends BaseController {
 
     private void sendTextMessage() {
         String content = footerPanel.getTextField().getText().trim();
-        LOGGER.info("Text message: " + content);
-        LOGGER.info("Other user: " + otherUserId);
-        LOGGER.info("Chat ID: " + chatId);
 
         if(!content.isEmpty() && chatId != null) {
             ApiResult<MessageResponse> result;
@@ -140,10 +133,8 @@ public class SendMessageController extends BaseController {
                 result = sendMessageService.sendTextGroupMessage(TokenManager.getAccessToken(), userId,chatId,content, MessageType.TEXT);
             }
 
-            LOGGER.info("Result: " + result);
             if (result.isSuccess()) {
                 MessageResponse message = result.getData();
-                LOGGER.info("Message Response: " + message);
                 eventBus.post(message);
             } else {
                 ErrorDTO error = result.getError();

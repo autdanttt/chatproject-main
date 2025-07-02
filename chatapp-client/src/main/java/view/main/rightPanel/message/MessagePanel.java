@@ -28,42 +28,36 @@ public class MessagePanel extends JPanel {
         messageItemPanel = new JPanel();
         messageItemPanel.setLayout(new BoxLayout(messageItemPanel, BoxLayout.Y_AXIS));
         messageItemPanel.setBackground(Color.WHITE);
+        messageItemPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         JScrollPane scrollPane = new JScrollPane(messageItemPanel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getVerticalScrollBar().setUI(new ModernScrollBarUI());
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> getLastVisibleMessageId());
-        add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane);
     }
 
-    public JPanel getMessageItemPanel() {
-        return messageItemPanel;
-    }
-
-    public void addMessage(Long messageId,String content,String fromUserName ,boolean isSentByMe, String time, MessageType messageType) {
+    public void addMessage(Long messageId, String content, String fromUserName, boolean isSentByMe, String time, MessageType messageType) {
         JPanel messageContainer = new JPanel();
         messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.X_AXIS));
-        messageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        messageContainer.putClientProperty("messageId", messageId);
         messageContainer.setOpaque(false);
 
-        messageContainer.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
-        // Gan messageId vao component
-        messageContainer.putClientProperty("messageId", messageId);
-
-        JPanel messageBox = new RoundedPanel(15, isSentByMe ? Color.decode("#1F344D") : Color.WHITE, isSentByMe ? Color.decode("#426D9E") : Color.decode("#E9E9E9"), 2);
-        ;
+        JPanel messageBox = new RoundedPanel(15,
+                isSentByMe ? Color.decode("#1F344D") : Color.WHITE,
+                isSentByMe ? Color.decode("#426D9E") : Color.decode("#E9E9E9"),
+                2);
         messageBox.setLayout(new BoxLayout(messageBox, BoxLayout.Y_AXIS));
         messageBox.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
-        messageBox.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
+        int maxWidth = 300;
+        messageBox.setMaximumSize(new Dimension(maxWidth, Integer.MAX_VALUE));
 
-        JComponent messageComponent = null;
-
-        JLabel username = new JLabel();
-        username.setText(isSentByMe ? "Bạn" : fromUserName);
+        JLabel username = new JLabel(isSentByMe ? "Bạn" : fromUserName);
         username.setFont(new Font("Montserrat", Font.PLAIN, 10));
         username.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
+
+        JComponent messageComponent;
 
         if (messageType == MessageType.EMOJI) {
             File emojiFile = new File(new File(System.getProperty("user.dir")).getParent() + "/twemoji/" + content);
@@ -83,17 +77,7 @@ public class MessagePanel extends JPanel {
             messageLabel.setOpaque(false);
             messageLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
             messageLabel.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
-
-            int maxWidth = 250;
-            FontMetrics fm = messageLabel.getFontMetrics(messageLabel.getFont());
-            int lineCount = (int) Math.ceil(fm.stringWidth(content) / (double) maxWidth);
-            int lineHeight = fm.getHeight();
-            int preferredHeight = lineCount * lineHeight;
-            int preferredWidth = preferredHeight <= 20 ? fm.stringWidth(content) + 2 : maxWidth;
-
-            messageLabel.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
-            messageLabel.setMinimumSize(new Dimension(preferredWidth, preferredHeight));
-
+            messageLabel.setMaximumSize(new Dimension(maxWidth, Integer.MAX_VALUE));
             messageComponent = messageLabel;
         } else if (messageType == MessageType.IMAGE) {
             File imageFile = new File(new File(System.getProperty("user.dir")).getParent() + "/uploads/" + content);
@@ -108,14 +92,12 @@ public class MessagePanel extends JPanel {
             messageComponent = new JLabel("[Unsupported type]");
         }
 
-        messageComponent.setAlignmentX(Component.LEFT_ALIGNMENT);
-        messageBox.add(username);
-        messageBox.add(messageComponent);
-
         JLabel timeLabel = new JLabel(time);
         timeLabel.setFont(new Font("Montserrat", Font.PLAIN, 10));
         timeLabel.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
-        timeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        messageBox.add(username);
+        messageBox.add(messageComponent);
         messageBox.add(Box.createVerticalStrut(4));
         messageBox.add(timeLabel);
 
@@ -132,7 +114,6 @@ public class MessagePanel extends JPanel {
         messageItemPanel.repaint();
 
         JScrollPane scrollPane = (JScrollPane) getComponent(0);
-
         JScrollBar vertical = scrollPane.getVerticalScrollBar();
         SwingUtilities.invokeLater(() -> vertical.setValue(vertical.getMaximum()));
     }
@@ -142,16 +123,17 @@ public class MessagePanel extends JPanel {
         messageItemPanel.revalidate();
         messageItemPanel.repaint();
     }
+
     public void getLastVisibleMessageId() {
         Rectangle visibleRect = messageItemPanel.getVisibleRect();
         Long lastVisibleId = null;
         for (Component comp : messageItemPanel.getComponents()) {
-            if(comp instanceof JComponent jComp){
+            if (comp instanceof JComponent jComp) {
                 Rectangle compBounds = jComp.getBounds();
-                if(visibleRect.intersects(compBounds)){
+                if (visibleRect.intersects(compBounds)) {
                     Object messageId = jComp.getClientProperty("messageId");
-                    if(messageId instanceof  Long id){
-                        lastVisibleId = (Long) id;
+                    if (messageId instanceof Long id) {
+                        lastVisibleId = id;
                         logger.info("Last visible message id: {}", lastVisibleId);
                     }
                 }
@@ -161,5 +143,9 @@ public class MessagePanel extends JPanel {
             logger.info("Sending last visible message id: {}", lastVisibleId);
             eventBus.post(new LastMessageEvent(lastVisibleId));
         }
+    }
+
+    public JPanel getMessageItemPanel() {
+        return messageItemPanel;
     }
 }
