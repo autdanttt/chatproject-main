@@ -4,7 +4,8 @@ import custom.ModernScrollBarUI;
 import custom.RoundedButton;
 import custom.RoundedPanel;
 import custom.RoundedTextField;
-import model.User;
+import model.UserOther;
+import model.UserOther;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.login.LoginController;
@@ -16,8 +17,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CreateChat extends JDialog {
-    private JList<User> userList;
-    private DefaultListModel<User> userListModel;
+    private JList<UserOther> userList;
+    private DefaultListModel<UserOther> userListModel;
     private JButton addBtn;
 
     public CreateChat(JFrame parent) {
@@ -70,11 +71,11 @@ public class CreateChat extends JDialog {
         setResizable(false);
     }
 
-    public JList<User> getUserList() {
+    public JList<UserOther> getUserList() {
         return userList;
     }
 
-    public DefaultListModel<User> getUserListModel() {
+    public DefaultListModel<UserOther> getUserListModel() {
         return userListModel;
     }
 

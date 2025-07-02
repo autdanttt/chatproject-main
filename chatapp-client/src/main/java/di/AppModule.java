@@ -21,9 +21,9 @@ import view.main.leftPanel.chatlist.ChatListPanel;
 import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
-import view.main.rightPanel.components.FooterPanel;
-import view.main.rightPanel.components.HeaderController;
-import view.main.rightPanel.components.HeaderPanel;
+import view.main.rightPanel.components.FooterRightPanel;
+import controllers.HeaderRightController;
+import view.main.rightPanel.components.HeaderRightPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
@@ -67,7 +67,7 @@ public class AppModule extends AbstractModule {
         bind(MainChatController.class);
 
         //Controller Right Panel
-        bind(HeaderController.class);
+        bind(HeaderRightController.class);
         bind(SendMessageController.class);
         bind(MessageController.class);
 
@@ -75,12 +75,12 @@ public class AppModule extends AbstractModule {
         bind(SearchPanel.class).in(Singleton.class);
         bind(view.main.leftPanel.components.FooterPanel.class).in(Singleton.class);
         bind(ChatListPanel.class).in(Singleton.class);
-        bind(FooterPanel.class).in(Singleton.class);
+        bind(FooterRightPanel.class).in(Singleton.class);
 
         //View Right Pannel
         bind(InfoOtherAndFeature.class).in(Singleton.class);
         bind(RightPanel.class).in(Singleton.class);
-        bind(HeaderPanel.class).in(Singleton.class);
+        bind(HeaderRightPanel.class).in(Singleton.class);
         bind(MessagePanel.class).in(Singleton.class);
         bind(MainChatView.class).in(Singleton.class);
         bind(WebRTCManager.class).in(Singleton.class);

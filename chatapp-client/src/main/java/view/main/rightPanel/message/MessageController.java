@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MessageController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
     private final MessagePanel messagePanel;
     private final MessageService messageService;
     private String jwtToken;

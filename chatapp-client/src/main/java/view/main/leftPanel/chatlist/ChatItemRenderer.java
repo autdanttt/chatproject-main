@@ -1,13 +1,10 @@
 package view.main.leftPanel.chatlist;
 
+import custom.RoundedImageUtil;
 import model.ChatItem;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
 public class ChatItemRenderer extends DefaultListCellRenderer {
     @Override
@@ -20,17 +17,11 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
         JLabel avatarLabel = new JLabel();
         avatarLabel.setPreferredSize(new Dimension(40, 40));
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        try{
-            BufferedImage originalImage = ImageIO.read(new URL(item.getAvatarUrl()));
-
-            Image scaledImage = originalImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-
-            ImageIcon icon = new ImageIcon(scaledImage);
-
-            avatarLabel.setIcon(icon);
-        }catch (IOException e){
-            throw new RuntimeException(e);
+        if (item.getAvatarUrl() != null) {
+            ImageIcon avatar = RoundedImageUtil.loadRoundedAvatarFromURL(item.getAvatarUrl(), 40);
+            avatarLabel.setIcon(avatar);
+        }else {
+            avatarLabel.setIcon(null);
         }
 
         JPanel centerPanel = new JPanel(new GridLayout(2, 1));
@@ -39,7 +30,7 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
         fullNameLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
 
         String lastMessage = item.getLastMessage() != null ? item.getLastMessage() : "";
-        lastMessage = shortenText(lastMessage, 40);
+        lastMessage = shortenText(lastMessage);
 
         JLabel lastMessageLabel = new JLabel(lastMessage);
         lastMessageLabel.setFont(new Font("Montserrat", Font.PLAIN, 12));
@@ -71,9 +62,9 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
         return panel;
     }
 
-    private String shortenText(String text, int maxLength) {
-        if (text.length() <= maxLength) return text;
-        return text.substring(0, maxLength - 3) + "...";
+    private String shortenText(String text) {
+        if (text.length() <= 30) return text;
+        return text.substring(0, 30 - 3) + "...";
     }
 
 }

@@ -88,7 +88,6 @@ public class ChatApi {
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
-            // Tạo JSON body
             ObjectMapper mapper = new ObjectMapper();
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("name", nameGroup);
@@ -97,7 +96,6 @@ public class ChatApi {
 
             String jsonBody = mapper.writeValueAsString(requestBody);
 
-            // Gửi request body
             try (OutputStream os = conn.getOutputStream()) {
                 os.write(jsonBody.getBytes(StandardCharsets.UTF_8));
             }

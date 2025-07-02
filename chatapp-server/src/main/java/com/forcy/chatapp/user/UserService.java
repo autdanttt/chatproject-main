@@ -12,7 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -92,5 +94,10 @@ public class UserService{
         return userRepository.getUserByEmail(email);
     }
 
-
+    public List<UserDTO> getAllUserExcept(Long userId) {
+        return userRepository.findAll().stream()
+                .filter(user -> !user.getId().equals(userId))
+                .map(user -> new UserDTO(user.getId(), user.getFullName(), user.getAvatarUrl()))
+                .collect(Collectors.toList());
+    }
 }

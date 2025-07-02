@@ -4,7 +4,7 @@ import custom.ModernScrollBarUI;
 import custom.RoundedButton;
 import custom.RoundedPanel;
 import custom.RoundedTextField;
-import model.User;
+import model.UserOther;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,8 +13,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CreateGroupChat extends JDialog {
-    private DefaultListModel<User> userListModel;
-    private JList<User> userList;
+    private DefaultListModel<UserOther> userListModel;
+    private JList<UserOther> userList;
     private JButton addBtnGroup;
     private JTextField nameGrouptxt;
 
@@ -62,11 +62,6 @@ public class CreateGroupChat extends JDialog {
 
         JPanel contentPanel = new RoundedPanel(20, Color.WHITE, Color.decode("#33333"), 2);
         userListModel = new DefaultListModel<>();
-        userListModel.addElement(new User("Nguyễn Văn A", "token1"));
-        userListModel.addElement(new User("Trần Thị B", "token2"));
-        userListModel.addElement(new User("Lê Văn C", "token3"));
-        userListModel.addElement(new User("Phạm Thị D", "token4"));
-        userListModel.addElement(new User("Đỗ Văn E", "token5"));
 
         userList = new JList<>(userListModel);
         userList.setCellRenderer(new UserItemRenderer());
@@ -96,7 +91,7 @@ public class CreateGroupChat extends JDialog {
         setResizable(false);
     }
 
-    public DefaultListModel<User> getUserListModel() {
+    public DefaultListModel<UserOther> getUserListModel() {
         return userListModel;
     }
 
@@ -108,7 +103,7 @@ public class CreateGroupChat extends JDialog {
         userList.addListSelectionListener(e);
     }
 
-    public JList<User> getUserList() {
+    public JList<UserOther> getUserList() {
         return userList;
     }
 

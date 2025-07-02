@@ -58,7 +58,7 @@ public class MainChatController extends BaseController {
         ApiResult<String> result = webSocketClientManager.setupWebSocket(TokenManager.getAccessToken(), email);
 
         if (result.isSuccess()) {
-            JOptionPane.showMessageDialog(mainChatView, "Connected to server");
+//            JOptionPane.showMessageDialog(mainChatView, "Connected to server");
         }else {
             JOptionPane.showMessageDialog(mainChatView, result.getError().getErrors().indexOf(0));
         }

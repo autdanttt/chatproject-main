@@ -24,13 +24,4 @@ public class ChatResponse {
     @JsonProperty("last_message_time")
     private Date lastMessageTime;
 
-    @Override
-    public String toString() {
-        return "ChatResponse{" +
-                "chatId=" + chatId +
-                ", otherUsername='" + otherUsername + '\'' +
-                ", lastMessage='" + lastMessage + '\'' +
-                ", lastMessageTime=" + lastMessageTime +
-                '}';
-    }
 }

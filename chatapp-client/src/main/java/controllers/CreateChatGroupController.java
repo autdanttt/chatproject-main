@@ -8,6 +8,7 @@ import di.BaseController;
 import event.ChatCreatedEvent;
 import model.ChatGroupResponse;
 import model.User;
+import model.UserOther;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.login.TokenManager;
@@ -43,12 +44,9 @@ public class CreateChatGroupController extends BaseController {
         createGroupChatChat.getUserListModel().clear();
 
         try {
-            List<User> users = userApi.getAllOtherUsers(
-                    TokenManager.getUsername(),
-                    TokenManager.getAccessToken()
-            );
+            List<UserOther> users = userApi.getAllOtherUsers(TokenManager.getAccessToken());
 
-            for (User user : users) {
+            for (UserOther user : users) {
                 createGroupChatChat.getUserListModel().addElement(user);
             }
 
@@ -62,7 +60,7 @@ public class CreateChatGroupController extends BaseController {
         createGroupChatChat.addBtnGroupListener(e -> {
             String name = createGroupChatChat.getNameGrouptxt().getText().trim();
             currentUserId = TokenManager.getUserId();
-            List<User> selectedUsers = createGroupChatChat.getUserList().getSelectedValuesList();
+            List<UserOther> selectedUsers = createGroupChatChat.getUserList().getSelectedValuesList();
 
             if (name.isEmpty()) {
                 JOptionPane.showMessageDialog(createGroupChatChat,
@@ -82,7 +80,7 @@ public class CreateChatGroupController extends BaseController {
 
             List<Long> memberIds = new ArrayList<>();
             memberIds.add(currentUserId);
-            for (User user : selectedUsers) {
+            for (UserOther user : selectedUsers) {
                 memberIds.add(user.getId());
             }
 

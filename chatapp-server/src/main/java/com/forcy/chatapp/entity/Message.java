@@ -47,8 +47,4 @@ public class Message {
     private String content;
 
     private Date sentAt;
-
-    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MessageDelivery> deliveries = new ArrayList<>();
-
 }

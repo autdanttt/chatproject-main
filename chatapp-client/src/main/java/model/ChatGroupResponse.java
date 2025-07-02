@@ -26,15 +26,4 @@ public class ChatGroupResponse {
     private String lastMessageSenderName;
     @JsonProperty("last_message_time")
     private Date lastMessageTime;
-
-    @Override
-    public String toString() {
-        return "ChatGroupResponse{" +
-                "groupId=" + groupId +
-                ", groupName='" + groupName + '\'' +
-                ", lastMessageContent='" + lastMessageContent + '\'' +
-                ", lastMessageSenderName='" + lastMessageSenderName + '\'' +
-                ", lastMessageTime=" + lastMessageTime +
-                '}';
-    }
 }

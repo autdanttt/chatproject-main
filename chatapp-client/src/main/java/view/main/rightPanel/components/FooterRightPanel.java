@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FooterPanel extends JPanel {
+public class FooterRightPanel extends JPanel {
     private JButton sendImage, sendBtn, sendEmoji;
     private JTextField sendMessage;
     private Consumer<File> emojiSelectedListener;
     private Consumer<File> imageSelectedListener;
     private String basePath = new File(System.getProperty("user.dir")).getParent();
 
-    public FooterPanel() {
+    public FooterRightPanel() {
         setLayout(new FlowLayout(FlowLayout.LEFT, 5, 11));
         setBackground(Color.WHITE);
 

@@ -14,7 +14,7 @@ import view.ErrorDTO;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
-import view.main.rightPanel.components.FooterPanel;
+import view.main.rightPanel.components.FooterRightPanel;
 
 import javax.swing.*;
 import java.io.File;
@@ -23,7 +23,7 @@ import java.util.Map;
 public class SendMessageController extends BaseController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendMessageController.class);
-    private FooterPanel footerPanel;
+    private FooterRightPanel footerRightPanel;
     private final SendMessageService sendMessageService;
     private String jwtToken;
     private Long userId;
@@ -32,11 +32,12 @@ public class SendMessageController extends BaseController {
     private String type;
 
     @Inject
-    public SendMessageController(FooterPanel footerPanel, SendMessageService sendMessageService, EventBus eventBus) {
-        this.footerPanel = footerPanel;
+    public SendMessageController(FooterRightPanel footerRightPanel, SendMessageService sendMessageService, EventBus eventBus) {
+        this.footerRightPanel = footerRightPanel;
         this.sendMessageService = sendMessageService;
-        footerPanel.setEmojiSelectedListener(this::sendEmoji);
-        footerPanel.setImageSelectedListener(this::sendImage);
+
+        footerRightPanel.setEmojiSelectedListener(this::sendEmoji);
+        footerRightPanel.setImageSelectedListener(this::sendImage);
         eventBus.register(this);
 
         initializeListeners();
@@ -113,17 +114,17 @@ public class SendMessageController extends BaseController {
         }else {
             JOptionPane.showMessageDialog(null, "Please select a chat or enter a valid emoji.");
         }
-        footerPanel.getTextField().setText("");
+        footerRightPanel.getTextField().setText("");
 
     }
 
 
     private void initializeListeners() {
-        footerPanel.addSendButtonListener(e-> sendTextMessage());
+        footerRightPanel.addSendButtonListener(e-> sendTextMessage());
     }
 
     private void sendTextMessage() {
-        String content = footerPanel.getTextField().getText().trim();
+        String content = footerRightPanel.getTextField().getText().trim();
 
         if(!content.isEmpty() && chatId != null) {
             ApiResult<MessageResponse> result;
@@ -144,7 +145,7 @@ public class SendMessageController extends BaseController {
             JOptionPane.showMessageDialog(null, "Please select a chat or enter a valid message hihi.");
 
         }
-        footerPanel.getTextField().setText("");
+        footerRightPanel.getTextField().setText("");
     }
 
     @Override

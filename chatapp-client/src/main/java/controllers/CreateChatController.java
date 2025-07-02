@@ -6,6 +6,7 @@ import com.google.common.eventbus.EventBus;
 import di.BaseController;
 import event.ChatCreatedEvent;
 import model.User;
+import model.UserOther;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.login.TokenManager;
@@ -40,7 +41,7 @@ public class CreateChatController extends BaseController {
         createChat.handlerAddChat(e -> handlerAddChatUser());
         createChat.selectItemListUser(e -> {
             if (!e.getValueIsAdjusting()) {
-                User selected = createChat.getUserList().getSelectedValue();
+                UserOther selected = createChat.getUserList().getSelectedValue();
                 id = selected.getId();
             }
         });
@@ -64,12 +65,10 @@ public class CreateChatController extends BaseController {
         createChat.getUserListModel().clear();
 
         try {
-            List<User> users = userApi.getAllOtherUsers(
-                    TokenManager.getUsername(),
+            List<UserOther> users = userApi.getAllOtherUsers(
                     TokenManager.getAccessToken()
             );
-
-            for (User user : users) {
+            for (UserOther user : users) {
                 createChat.getUserListModel().addElement(user);
             }
 

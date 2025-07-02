@@ -29,8 +29,8 @@ public class SearchPanel extends JPanel {
         JPanel pn1 = new JPanel(new BorderLayout());
         pn1.setBackground(Color.WHITE);
 
-        searchTextField = new RoundedTextField(20);
-        searchTextField.setPreferredSize(new Dimension(250, 40));
+        searchTextField = new RoundedTextField(15);
+        searchTextField.setPreferredSize(new Dimension(200, 35));
 
         searchButton = new CreateButton(basePath + "/images/SEARCH.png");
 

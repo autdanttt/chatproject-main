@@ -32,7 +32,7 @@ public class InfoOtherAndFeature extends JPanel {
         this.webRTCManager = webRTCManager;
 
         setLayout(new GridLayout(1, 2));
-        setPreferredSize(new Dimension(700, 70));
+        setPreferredSize(new Dimension(600, 70));
         setBackground(Color.WHITE);
 
         JPanel usernamePanel = new JPanel(new BorderLayout());
@@ -42,7 +42,6 @@ public class InfoOtherAndFeature extends JPanel {
         avatarOtherPanel.setBackground(Color.WHITE);
         avatarOtherLabel = new JLabel();
         avatarOtherLabel.setPreferredSize(new Dimension(48, 48));
-//        avatarOtherLabel.setIcon(new ImageIcon(basePath + "/images/Group 14.png"));
         userOtherName = new JLabel("None");
         userOtherName.setFont(new Font("Montserrat", Font.PLAIN, 14));
 

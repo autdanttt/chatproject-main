@@ -65,13 +65,13 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<ChatResponse> createChat(@RequestBody CreateChatRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
 
-        Chat chat = chatService.createChat(currentUser.getId(), request.getTargetUserId());
+        Chat chat = chatService.createChat(user.getId(), request.getTargetUserId());
 
         User otherUser = chat.getUsers().stream()
-                .filter(u -> !u.getId().equals(currentUser.getId()))
+                .filter(u -> !u.getId().equals(user.getId()))
                 .findFirst()
                 .orElse(null);
 

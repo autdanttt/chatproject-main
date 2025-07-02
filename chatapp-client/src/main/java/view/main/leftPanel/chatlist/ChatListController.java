@@ -14,7 +14,7 @@ import view.login.TokenManager;
 import view.main.UserToken;
 
 public class ChatListController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChatListController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChatListController.class);
     private final ChatListService chatListService;
     private final ChatListPanel chatListPanel;
 
@@ -41,14 +41,10 @@ public class ChatListController extends BaseController {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
-        LOGGER.info("Received JWT token: " + TokenManager.getAccessToken());
-
         ChatResponse[] list = getListChat();
-
         chatListPanel.getChatListModel().clear();
 
         for (ChatResponse chat : list) {
-            LOGGER.info("received chat image " + chat.getImageUrl());
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     chat.getChatId(),
                     chat.getOtherUserId(),
@@ -61,7 +57,6 @@ public class ChatListController extends BaseController {
 
         ChatGroupResponse[] listGroup = chatListService.getChatGroupList(TokenManager.getAccessToken());
         for(ChatGroupResponse group : listGroup) {
-            LOGGER.info("Received group image: " + group.getImageUrl());
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     group.getGroupId(),
                     null,

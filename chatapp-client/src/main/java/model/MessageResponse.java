@@ -14,11 +14,11 @@ import java.util.Date;
 @NoArgsConstructor
 public class MessageResponse {
     @JsonProperty("message_id")
-    private Long messageId;      // Thêm để khớp với JSON
+    private Long messageId;
     @JsonProperty("from_user_id")
     private Long fromUserId;
     @JsonProperty("to_user_id")
-    private Long toUserId;       // Thêm nếu cần (dùng để xác định chat 1-1)
+    private Long toUserId;
     @JsonProperty("from_full_name")
     private String fromFullName;
     @JsonProperty("chat_id")
@@ -26,7 +26,7 @@ public class MessageResponse {
     @JsonProperty("group_id")
     private Long groupId;
     @JsonProperty("message_type")
-    private String messageType;  // Thêm nếu cần xử lý loại tin nhắn
+    private String messageType;
     @JsonProperty("content")
     private String content;
     @JsonProperty("sent_at")
