@@ -17,7 +17,7 @@ public class JwtTokenProvider {
     private JwtUtility jwtUtility;
 
     public Authentication getAuthentication(String token) throws JwtValidationException {
-        Claims claims  = jwtUtility.validateAccessToken(token);
+        Claims claims  = jwtUtility.validateToken(token);
 
         if(claims == null) return null;
 
