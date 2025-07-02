@@ -1,7 +1,5 @@
 package view.login;
 
-
-
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ public class LoginController extends BaseController {
         loginView.addLoginButtonListener(e -> {
             String username = loginView.getUsername().trim();
             String password = loginView.getPassword().trim();
-            logger.info("username : " + username + " password : " + password);
 
             if (username.isEmpty() || password.isEmpty()) {
                 JOptionPane.showMessageDialog(loginView, "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
@@ -39,9 +36,8 @@ public class LoginController extends BaseController {
             try {
                 UserLogin userLogin = loginService.authenticate(username, password);
                 if(userLogin.getStatusCode() == 200) {
-                    navigator.navigateTo("MainChat",userLogin.getUserId(), userLogin.getUsername(), TokenManager.getAccessToken());
+                    navigator.navigateTo("MainChat",userLogin.getUserId(), userLogin.getEmail(),userLogin.getFullName(), userLogin.getAvatarUrl(),TokenManager.getAccessToken());
                 }
-
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }

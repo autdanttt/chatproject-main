@@ -17,7 +17,7 @@ public class JwtTokenProvider {
     private JwtUtility jwtUtility;
 
     public Authentication getAuthentication(String token) throws JwtValidationException {
-        Claims claims  = jwtUtility.validateAccessToken(token);
+        Claims claims  = jwtUtility.validateToken(token);
 
         if(claims == null) return null;
 
@@ -32,11 +32,11 @@ public class JwtTokenProvider {
 
 
         Long userId = Long.valueOf(array[0]);
-        String username = array[1];
+        String email = array[1];
 
         User user = new User();
         user.setId(userId);
-        user.setUsername(username);
+        user.setEmail(email);
         String roles = (String) claims.get("roles");
         roles = roles.replace("[", "").replace("]", "");
         String[] rolesName = roles.split(",");

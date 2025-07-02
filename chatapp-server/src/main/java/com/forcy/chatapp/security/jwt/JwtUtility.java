@@ -22,6 +22,15 @@ public class JwtUtility {
     @Value("${app.security.jwt.access-token.expiration}")
     private int accessTokenExpiration;
 
+    public String generateEmailVerificationToken(User user) {
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .claim("type", "email_verification")
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 3600_000)) // 1 giờ
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS512)
+                .compact();
+    }
 
     public String generateAccessToken(User user){
         if(user== null || user.getId() == null || user.getRoles().isEmpty()){
@@ -30,7 +39,7 @@ public class JwtUtility {
         long expirationTimeMillis = System.currentTimeMillis() + accessTokenExpiration * 60000L;
         logger.info("System time miliis: " +System.currentTimeMillis() );
         System.out.println("System time miliis: " +System.currentTimeMillis());
-        String subject = String.format("%s,%s", user.getId(), user.getUsername());
+        String subject = String.format("%s,%s", user.getId(), user.getEmail());
         Date now = new Date();
         logger.info("Date now is {}", now);
         Date expiration = new Date(expirationTimeMillis);
@@ -44,7 +53,7 @@ public class JwtUtility {
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS512)
                 .compact();
     }
-    public Claims validateAccessToken(String token) throws JwtValidationException {
+    public Claims validateToken(String token) throws JwtValidationException {
         try {
             SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), SECRET_KEY_ALGORIHM);
             return Jwts.parser()
@@ -52,19 +61,38 @@ public class JwtUtility {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        }catch (ExpiredJwtException ex){
-            Date now = new Date();
-            System.out.println("Now: " + now);
-            System.out.println("Token Expiration: " + ex.getClaims().getExpiration());
-            throw new JwtValidationException("Access token expired", ex);
-        }catch (IllegalArgumentException ex){
-            throw new JwtValidationException("Access token illegal", ex);
-        }catch (MalformedJwtException ex){
-            throw new JwtValidationException("Access token is not well formed", ex);
-        }catch (UnsupportedJwtException ex){
-            throw new JwtValidationException("Access token is not supported", ex);
+        } catch (ExpiredJwtException ex) {
+            throw new JwtValidationException("Token expired", ex);
+        } catch (IllegalArgumentException ex) {
+            throw new JwtValidationException("Token illegal", ex);
+        } catch (MalformedJwtException ex) {
+            throw new JwtValidationException("Token not well formed", ex);
+        } catch (UnsupportedJwtException ex) {
+            throw new JwtValidationException("Token not supported", ex);
         }
     }
+
+//    public Claims validateAccessToken(String token) throws JwtValidationException {
+//        try {
+//            SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(), SECRET_KEY_ALGORIHM);
+//            return Jwts.parser()
+//                    .verifyWith(keySpec)
+//                    .build()
+//                    .parseSignedClaims(token)
+//                    .getPayload();
+//        }catch (ExpiredJwtException ex){
+//            Date now = new Date();
+//            System.out.println("Now: " + now);
+//            System.out.println("Token Expiration: " + ex.getClaims().getExpiration());
+//            throw new JwtValidationException("Access token expired", ex);
+//        }catch (IllegalArgumentException ex){
+//            throw new JwtValidationException("Access token illegal", ex);
+//        }catch (MalformedJwtException ex){
+//            throw new JwtValidationException("Access token is not well formed", ex);
+//        }catch (UnsupportedJwtException ex){
+//            throw new JwtValidationException("Access token is not supported", ex);
+//        }
+//    }
 
     public String getIssuerName() {
         return issuerName;

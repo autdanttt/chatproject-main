@@ -1,5 +1,6 @@
 package view.main.leftPanel.chatlist;
 
+import custom.RoundedImageUtil;
 import model.ChatItem;
 
 import javax.swing.*;
@@ -16,33 +17,26 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
         JLabel avatarLabel = new JLabel();
         avatarLabel.setPreferredSize(new Dimension(40, 40));
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-        ImageIcon avatarIcon = new ImageIcon("D:/chatproject-main/images/Group 16.png");
-        if (item.getAvatar() != null && !item.getAvatar().isEmpty()) {
-            avatarIcon = new ImageIcon(item.getAvatar());
-        }
-
-        if (avatarIcon != null) {
-            Image scaledImage = avatarIcon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-            avatarLabel.setIcon(new ImageIcon(scaledImage));
-        } else {
-            avatarLabel.setText(" ");
-            avatarLabel.setFont(new Font("Montserrat", Font.PLAIN, 24));
+        if (item.getAvatarUrl() != null) {
+            ImageIcon avatar = RoundedImageUtil.loadRoundedAvatarFromURL(item.getAvatarUrl(), 40);
+            avatarLabel.setIcon(avatar);
+        }else {
+            avatarLabel.setIcon(null);
         }
 
         JPanel centerPanel = new JPanel(new GridLayout(2, 1));
         centerPanel.setOpaque(false);
-        JLabel usernameLabel = new JLabel(item.getUsername());
-        usernameLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
+        JLabel fullNameLabel = new JLabel(item.getOtherUserFullName());
+        fullNameLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
 
         String lastMessage = item.getLastMessage() != null ? item.getLastMessage() : "";
-        lastMessage = shortenText(lastMessage, 40);
+        lastMessage = shortenText(lastMessage);
 
         JLabel lastMessageLabel = new JLabel(lastMessage);
         lastMessageLabel.setFont(new Font("Montserrat", Font.PLAIN, 12));
         lastMessageLabel.setForeground(Color.decode("#E9E9E9"));
 
-        centerPanel.add(usernameLabel);
+        centerPanel.add(fullNameLabel);
         centerPanel.add(lastMessageLabel);
 
         JLabel timeLabel = new JLabel(item.getFormattedTime());
@@ -56,21 +50,21 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
 
         if (isSelected) {
             panel.setBackground(list.getSelectionBackground());
-            usernameLabel.setForeground(list.getSelectionForeground());
+            fullNameLabel.setForeground(list.getSelectionForeground());
             lastMessageLabel.setForeground(list.getSelectionForeground());
             timeLabel.setForeground(list.getSelectionForeground());
         } else {
             panel.setBackground(list.getBackground());
-            usernameLabel.setForeground(list.getForeground());
+            fullNameLabel.setForeground(list.getForeground());
             lastMessageLabel.setForeground(Color.GRAY);
             timeLabel.setForeground(Color.GRAY);
         }
         return panel;
     }
 
-    private String shortenText(String text, int maxLength) {
-        if (text.length() <= maxLength) return text;
-        return text.substring(0, maxLength - 3) + "...";
+    private String shortenText(String text) {
+        if (text.length() <= 30) return text;
+        return text.substring(0, 30 - 3) + "...";
     }
 
 }

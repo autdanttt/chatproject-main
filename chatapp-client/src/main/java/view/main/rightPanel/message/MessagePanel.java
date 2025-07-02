@@ -9,9 +9,13 @@ import model.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class MessagePanel extends JPanel {
     private final Logger logger = LoggerFactory.getLogger(MessagePanel.class);
@@ -22,7 +26,7 @@ public class MessagePanel extends JPanel {
     public MessagePanel(EventBus eventBus) {
         this.eventBus = eventBus;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setPreferredSize(new Dimension(700, 470));
+        setPreferredSize(new Dimension(600, 470));
         setBackground(Color.WHITE);
 
         messageItemPanel = new JPanel();
@@ -41,7 +45,7 @@ public class MessagePanel extends JPanel {
         return messageItemPanel;
     }
 
-    public void addMessage(Long messageId,String content,String fromUserName ,boolean isSentByMe, String time, MessageType messageType) {
+    public void addMessage(Long messageId,String content,String fromFullName ,boolean isSentByMe, String time, MessageType messageType) {
         JPanel messageContainer = new JPanel();
         messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.X_AXIS));
         messageContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -61,7 +65,7 @@ public class MessagePanel extends JPanel {
         JComponent messageComponent = null;
 
         JLabel username = new JLabel();
-        username.setText(isSentByMe ? "Bạn" : fromUserName);
+        username.setText(isSentByMe ? "Bạn" : fromFullName);
         username.setFont(new Font("Montserrat", Font.PLAIN, 10));
         username.setForeground(isSentByMe ? Color.WHITE : Color.BLACK);
 
@@ -96,13 +100,19 @@ public class MessagePanel extends JPanel {
 
             messageComponent = messageLabel;
         } else if (messageType == MessageType.IMAGE) {
-            File imageFile = new File(new File(System.getProperty("user.dir")).getParent() + "/uploads/" + content);
-            if (imageFile.exists()) {
-                ImageIcon icon = new ImageIcon(imageFile.getAbsolutePath());
-                Image scaled = icon.getImage().getScaledInstance(160, 160, Image.SCALE_SMOOTH);
-                messageComponent = new JLabel(new ImageIcon(scaled));
-            } else {
-                messageComponent = new JLabel("[Image not found]");
+            try {
+                BufferedImage originalImage = ImageIO.read(new URL(content));
+                if (originalImage != null) {
+                    int displayWidth = 160;
+                    int displayHeight = 160;
+                    Image scaledImage = originalImage.getScaledInstance(displayWidth, displayHeight, Image.SCALE_SMOOTH);
+                    messageComponent = new JLabel(new ImageIcon(scaledImage));
+                } else {
+                    messageComponent = new JLabel("[Image not available]");
+                }
+            } catch (IOException e) {
+                logger.error("Error loading image from URL: {}", content, e);
+                messageComponent = new JLabel("[Image load error]");
             }
         } else {
             messageComponent = new JLabel("[Unsupported type]");

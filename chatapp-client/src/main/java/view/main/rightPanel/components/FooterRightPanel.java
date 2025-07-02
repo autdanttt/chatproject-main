@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FooterPanel extends JPanel {
+public class FooterRightPanel extends JPanel {
     private JButton sendImage, sendBtn, sendEmoji;
     private JTextField sendMessage;
     private Consumer<File> emojiSelectedListener;
     private Consumer<File> imageSelectedListener;
     private String basePath = new File(System.getProperty("user.dir")).getParent();
 
-    public FooterPanel() {
-        setLayout(new FlowLayout(FlowLayout.CENTER, 5, 11));
+    public FooterRightPanel() {
+        setLayout(new FlowLayout(FlowLayout.LEFT, 5, 11));
         setBackground(Color.WHITE);
 
         sendEmoji = new CreateButton(basePath + "/images/EMOJI.png");
@@ -33,8 +33,8 @@ public class FooterPanel extends JPanel {
 
         sendImage.addActionListener(e -> showFileChooser());
 
-        sendMessage = new RoundedTextField(40);
-        sendMessage.setPreferredSize(new Dimension(450, 48));
+        sendMessage = new RoundedTextField(30);
+        sendMessage.setPreferredSize(new Dimension(400, 48));
 
         sendBtn = new CreateButton(basePath + "/images/SEND.png");
         sendBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));

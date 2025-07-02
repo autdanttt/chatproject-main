@@ -30,12 +30,12 @@ public class MessageMapper {
         response.setMessageId(message.getId());
         response.setFromUserId(message.getUser().getId());
         response.setToUserId(toUserId);
+        response.setFromFullName(message.getUser().getFullName());
         response.setChatId(chatId);
         response.setGroupId(groupId);
         response.setMessageType(message.getType());
         response.setContent(message.getContent());
         response.setSentAt(message.getSentAt());
-        response.setDeliveredAt(null);
 
 
         return response;

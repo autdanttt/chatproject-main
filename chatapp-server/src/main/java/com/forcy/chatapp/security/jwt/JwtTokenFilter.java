@@ -45,7 +45,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = getBearerToken(request);
         LOGGER.info("Token: "+ token);
         try {
-            Claims claims = jwtUtil.validateAccessToken(token);
+            Claims claims = jwtUtil.validateToken(token);
 
             LOGGER.info("ROLE TOKEN" + claims.get("roles"));
             UserDetails userDetails = getUserDetails(claims);
@@ -78,11 +78,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         getUserId(array);
 
         Long userId = Long.valueOf(array[0]);
-        String username = array[1];
+        String email = array[1];
 
         User user = new User();
         user.setId(userId);
-        user.setUsername(username);
+        user.setEmail(email);
         String roles = (String) claims.get("roles");
         roles = roles.replace("[", "").replace("]", "");
         String[] rolesName = roles.split(",");
@@ -90,7 +90,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             user.addRole(new Role(aRoleName));
         }
 
-        LOGGER.info("User parsed from JWT: "+ user.getId() + ", " + user.getUsername() + ", ");
+        LOGGER.info("User parsed from JWT: "+ user.getId() + ", " + user.getEmail() + ", ");
         LOGGER.info("ROLE: "+ user.getRoles());
         return new CustomUserDetails(user);
     }

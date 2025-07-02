@@ -26,7 +26,6 @@ public class RoundedPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Tô nền
         g2.setColor(backgroundColor);
         g2.fillRoundRect(
                 borderThickness / 2,
@@ -37,7 +36,6 @@ public class RoundedPanel extends JPanel {
                 cornerRadius
         );
 
-        // Vẽ viền bo góc
         if (borderThickness > 0) {
             g2.setStroke(new BasicStroke(borderThickness));
             g2.setColor(borderColor);
@@ -52,7 +50,7 @@ public class RoundedPanel extends JPanel {
         }
 
         g2.dispose();
-        super.paintComponent(g); // Đặt sau để đảm bảo child components vẫn hiển thị
+        super.paintComponent(g);
     }
 }
 

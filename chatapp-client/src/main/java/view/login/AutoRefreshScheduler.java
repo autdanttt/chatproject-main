@@ -35,7 +35,7 @@ public class AutoRefreshScheduler {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             RefreshTokenRequest refreshRequest = new RefreshTokenRequest();
-            refreshRequest.setUsername(TokenManager.getUsername());
+            refreshRequest.setEmail(TokenManager.getEmail());
             refreshRequest.setRefreshToken(TokenManager.getRefreshToken());
 
             HttpEntity<?> entity = new HttpEntity<>(refreshRequest, headers);

@@ -20,7 +20,7 @@ public class LeftPanel extends JPanel {
         this.footerPanel = footerPanel;
 
         setLayout(new BorderLayout());
-
+        setPreferredSize(new Dimension(300, 800));
         JPanel leftMain = new JPanel();
         leftMain.setLayout(new BorderLayout());
 

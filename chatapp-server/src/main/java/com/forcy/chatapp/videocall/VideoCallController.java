@@ -29,9 +29,9 @@ public class VideoCallController {
 
     @PostMapping("/sdp")
     public ResponseEntity<?> sendSdp(@RequestBody SdpPayload sdpPayload) {
-        String fromUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User fromUser = userRepository.findByUsername(fromUsername)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + fromUsername));
+        String fromEmailUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        User fromUser = userRepository.findByEmail(fromEmailUser)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + fromEmailUser));
 
         User toUser = userRepository.findById(sdpPayload.getToUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + sdpPayload.getToUserId()));
@@ -47,18 +47,18 @@ public class VideoCallController {
         responsePayload.setSdp(sdpPayload.getSdp());
         responsePayload.setType(sdpPayload.getType());
 
-        messagingTemplate.convertAndSendToUser(toUser.getUsername(), "/queue/sdp", responsePayload);
+        messagingTemplate.convertAndSendToUser(toUser.getEmail(), "/queue/sdp", responsePayload);
 
-        return ResponseEntity.ok("SDP sent to " + toUser.getUsername());
+        return ResponseEntity.ok("SDP sent to " + toUser.getEmail());
 
     }
 
 
     @PostMapping("/candidate")
     public ResponseEntity<?> handleCandidate(@RequestBody CandidatePayload candidatePayload) {
-        String fromUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User fromUser = userRepository.findByUsername(fromUsername)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + fromUsername));
+        String fromEmailUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        User fromUser = userRepository.findByEmail(fromEmailUser)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " +fromEmailUser));
         User toUser = userRepository.findById(candidatePayload.getToUserId())
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + candidatePayload.getToUserId()));
 
@@ -74,10 +74,9 @@ public class VideoCallController {
         responsePayload.setType("candidate");
         responsePayload.setCandidate(candidatePayload.getCandidate());
 
+        messagingTemplate.convertAndSendToUser(toUser.getEmail(), "/queue/candidate",responsePayload);
 
-        messagingTemplate.convertAndSendToUser(toUser.getUsername(), "/queue/candidate",responsePayload);
-
-        return ResponseEntity.ok("Candidate sent to " + toUser.getUsername());
+        return ResponseEntity.ok("Candidate sent to " + toUser.getEmail());
 
     }
 }

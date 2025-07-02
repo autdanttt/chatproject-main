@@ -5,6 +5,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import controllers.CreateChatController;
+import controllers.CreateChatGroupController;
 import controllers.FooterLeftController;
 import service.*;
 import utility.WebRTCManager;
@@ -19,7 +21,9 @@ import view.main.leftPanel.chatlist.ChatListPanel;
 import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
-import view.main.rightPanel.components.FooterPanel;
+import view.main.rightPanel.components.FooterRightPanel;
+import controllers.HeaderRightController;
+import view.main.rightPanel.components.HeaderRightPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
@@ -31,6 +35,9 @@ import view.main.rightPanel.otherInfoTop.InfoOtherAndFeature;
 import view.main.leftPanel.search.SearchController;
 import view.main.leftPanel.search.SearchPanel;
 import view.register.RegisterController;
+import view.register.RegisterService;
+import view.register.RegisterServiceImpl;
+//import view.register.RegisterController;
 
 public class AppModule extends AbstractModule {
 
@@ -38,7 +45,6 @@ public class AppModule extends AbstractModule {
     protected void configure() {
 
         bind(EventBus.class).toInstance(new EventBus());
-        bind(AuthService.class).to(AuthServiceImpl.class);
         bind(RegisterService.class).to(RegisterServiceImpl.class);
         bind(SearchService.class).to(SearchServiceImpl.class);
         bind(LoginService.class).to(LoginServiceImpl.class);
@@ -53,12 +59,15 @@ public class AppModule extends AbstractModule {
         // Controller Left Panel
         bind(SearchController.class);
         bind(ChatListController.class);
+        bind(CreateChatController.class);
+        bind(CreateChatGroupController.class);
         bind(FooterLeftController.class);
 
         //Controller Main
         bind(MainChatController.class);
 
         //Controller Right Panel
+        bind(HeaderRightController.class);
         bind(SendMessageController.class);
         bind(MessageController.class);
 
@@ -66,14 +75,14 @@ public class AppModule extends AbstractModule {
         bind(SearchPanel.class).in(Singleton.class);
         bind(view.main.leftPanel.components.FooterPanel.class).in(Singleton.class);
         bind(ChatListPanel.class).in(Singleton.class);
+        bind(FooterRightPanel.class).in(Singleton.class);
 
         //View Right Pannel
         bind(InfoOtherAndFeature.class).in(Singleton.class);
-        bind(FooterPanel.class).in(Singleton.class);
         bind(RightPanel.class).in(Singleton.class);
+        bind(HeaderRightPanel.class).in(Singleton.class);
         bind(MessagePanel.class).in(Singleton.class);
         bind(MainChatView.class).in(Singleton.class);
-
         bind(WebRTCManager.class).in(Singleton.class);
         bind(WebSocketClientManager.class).in(Singleton.class);
     }

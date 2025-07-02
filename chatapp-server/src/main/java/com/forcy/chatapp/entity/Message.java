@@ -3,7 +3,9 @@ package com.forcy.chatapp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "messages")
@@ -34,6 +36,9 @@ public class Message {
     private ChatGroup group;
 
 
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageDelivery> deliveries;
+
     @Enumerated(EnumType.STRING)
     private MessageType type;
 
@@ -42,5 +47,4 @@ public class Message {
     private String content;
 
     private Date sentAt;
-
 }

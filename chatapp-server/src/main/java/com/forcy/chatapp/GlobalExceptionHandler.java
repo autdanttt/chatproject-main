@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -63,6 +64,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         LOGGER.error(ex.getMessage(), ex);
         return error;
     }
+    @ExceptionHandler(DisabledException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorDTO handleDisableException(HttpServletRequest request, Exception ex){
+        ErrorDTO error = new ErrorDTO();
+
+        error.setTimestamp(new Date());
+        error.setStatus(HttpStatus.FORBIDDEN.value());
+        // Ghi đè message nếu muốn
+        String customMessage = "Tài khoản chưa xác thực. Vui lòng kiểm tra email.";
+        error.addError(customMessage);
+        error.setPath(request.getServletPath());
+
+        LOGGER.error(ex.getMessage(), ex);
+        return error;
+    }
+
+
 
     @ExceptionHandler(JwtValidationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

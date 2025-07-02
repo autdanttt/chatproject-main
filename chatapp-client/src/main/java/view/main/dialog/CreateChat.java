@@ -1,21 +1,29 @@
-package view.main.popup;
+package view.main.dialog;
 
 import custom.ModernScrollBarUI;
 import custom.RoundedButton;
 import custom.RoundedPanel;
 import custom.RoundedTextField;
-import model.User;
+import model.UserOther;
+import model.UserOther;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import view.login.LoginController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
-public class CreateChat extends JFrame {
+public class CreateChat extends JDialog {
+    private JList<UserOther> userList;
+    private DefaultListModel<UserOther> userListModel;
+    private JButton addBtn;
 
-    public CreateChat() {
-        setTitle("Nhắn tin với người dùng");
+    public CreateChat(JFrame parent) {
+        super(parent, "Nhắn tin với người dùng", true);
         setSize(500, 600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -25,7 +33,7 @@ public class CreateChat extends JFrame {
 
         JPanel headerPanel = new JPanel();
         headerPanel.setBackground(Color.WHITE);
-        headerPanel.setLayout(new GridLayout(2,1));
+        headerPanel.setLayout(new GridLayout(2, 1));
         JLabel title = new JLabel("Danh sách người dùng");
         title.setFont(new Font("Montserrat", Font.BOLD, 20));
         JTextField searchtxt = new RoundedTextField(20);
@@ -34,14 +42,9 @@ public class CreateChat extends JFrame {
         headerPanel.add(searchtxt);
 
         JPanel contentPanel = new RoundedPanel(20, Color.WHITE, Color.decode("#33333"), 2);
-        DefaultListModel<User> userListModel = new DefaultListModel<>();
-        userListModel.addElement(new User("Nguyễn Văn A", "token1"));
-        userListModel.addElement(new User("Trần Thị B", "token2"));
-        userListModel.addElement(new User("Lê Văn C", "token3"));
-        userListModel.addElement(new User("Phạm Thị D", "token4"));
-        userListModel.addElement(new User("Đỗ Văn E", "token5"));
+        userListModel = new DefaultListModel<>();
 
-        JList<User> userList = new JList<>(userListModel);
+        userList = new JList<>(userListModel);
         userList.setCellRenderer(new UserItemRenderer());
 
         JScrollPane chatScrollPane = new JScrollPane(userList);
@@ -55,26 +58,32 @@ public class CreateChat extends JFrame {
         footerPanel.setBackground(Color.WHITE);
         footerPanel.setLayout(new BorderLayout(5, 0));
         footerPanel.setPreferredSize(new Dimension(500, 50));
-        JButton addBtn = new RoundedButton("Thêm");
+        addBtn = new RoundedButton("Thêm");
 
         footerPanel.add(addBtn, BorderLayout.CENTER);
 
-        mainPanel.setBorder(new EmptyBorder(30 , 30, 30, 30));
+        mainPanel.setBorder(new EmptyBorder(30, 30, 30, 30));
         mainPanel.add(headerPanel, BorderLayout.NORTH);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         mainPanel.add(footerPanel, BorderLayout.SOUTH);
 
         add(mainPanel, BorderLayout.CENTER);
-
         setResizable(false);
-        setVisible(true);
     }
 
-    public DefaultListModel<User> userListModel() {
-        return userListModel();
+    public JList<UserOther> getUserList() {
+        return userList;
     }
 
-    public JList<User> userList() {
-        return userList();
+    public DefaultListModel<UserOther> getUserListModel() {
+        return userListModel;
+    }
+
+    public void handlerAddChat(ActionListener e) {
+        addBtn.addActionListener(e);
+    }
+
+    public void selectItemListUser(ListSelectionListener e) {
+        userList.addListSelectionListener(e);
     }
 }

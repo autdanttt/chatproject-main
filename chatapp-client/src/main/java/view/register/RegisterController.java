@@ -3,17 +3,15 @@ package view.register;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import service.RegisterService;
 import di.BaseController;
 
 import javax.swing.*;
 
 public class RegisterController extends BaseController {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterController.class);
     private final RegisterService registerService;
     private RegisterView registerView;
-    private String username;
+    private String email;
 
     @Inject
     public RegisterController(RegisterService registerService) {
@@ -47,13 +45,13 @@ public class RegisterController extends BaseController {
     }
     @Override
     public void activate(Object... params) {
-        this.username = (String) params[0];
+        this.email = (String) params[0];
 
         if (registerView == null) {
             setupDependencies(); // Chỉ setup lần đầu
         }
 
-        registerView.setUsername(this.username);
+        registerView.setUsername(this.email);
 
         registerView.setVisible(true);
     }

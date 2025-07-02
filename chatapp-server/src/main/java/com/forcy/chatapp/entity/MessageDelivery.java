@@ -26,5 +26,4 @@ public class MessageDelivery {
     private Date deliveredAt;
 
     private Date seenAt;
-
 }

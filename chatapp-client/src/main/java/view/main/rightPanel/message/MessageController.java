@@ -10,18 +10,15 @@ import model.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
-import utility.WebSocketClientManager;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class MessageController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageController.class);
     private final MessagePanel messagePanel;
     private final MessageService messageService;
     private String jwtToken;
@@ -54,7 +51,6 @@ public class MessageController extends BaseController {
     @Subscribe
     public void updateSeen(LastMessageEvent event) {
         Long messageId = event.getLastVisibleId();
-        LOGGER.info("Received last seen message: {}", messageId);
         eventBus.post( new MessageSeenEvent(messageId));
     }
     private void addMessagePanel(MessageResponse message) {
@@ -72,12 +68,11 @@ public class MessageController extends BaseController {
         }else {
             messageType = MessageType.IMAGE;
         }
-        messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromUserName(),isSentByMe, time, messageType);
+        messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromFullName(),isSentByMe, time, messageType);
     }
 
     private void addListMessage(Long chatId, Long userId,String type) {
         messagePanel.clearMessages();
-        LOGGER.info("Jwt token: " + jwtToken);
         MessageResponse[] messages;
         if(type.equals("GROUP")){
             messages = messageService.getGroupMessageByGroupId(chatId,TokenManager.getAccessToken());
@@ -101,7 +96,7 @@ public class MessageController extends BaseController {
             }else {
                 messageType = MessageType.IMAGE;
             }
-            messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromUserName(), isSentByMe, time, messageType);
+            messagePanel.addMessage(message.getMessageId(),message.getContent(),message.getFromFullName(), isSentByMe, time, messageType);
         }
     }
 

@@ -17,16 +17,16 @@ public class ChatWebSocketHandler{
         this.sessionManager = sessionManager;
     }
 
-    public void sendMessageToUser(String username, Object response) {
-        if(sessionManager.isUserOnline(username)){
-            String destination = "/user/" + username + "/queue/messages";
-            messagingTemplate.convertAndSendToUser(username, "/queue/messages", response);
+    public void sendMessageToUser(String email, Object response) {
+        if(sessionManager.isUserOnline(email)){
+            String destination = "/user/" + email + "/queue/messages";
+            messagingTemplate.convertAndSendToUser(email, "/queue/messages", response);
 
         }
     }
 
-    public boolean isOnline(String username) {
-        return sessionManager.isUserOnline(username);
+    public boolean isOnline(String email) {
+        return sessionManager.isUserOnline(email);
     }
 
 
