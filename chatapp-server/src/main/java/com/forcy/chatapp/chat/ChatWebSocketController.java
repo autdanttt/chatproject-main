@@ -18,6 +18,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -44,7 +45,8 @@ public class ChatWebSocketController {
 
     @MessageMapping("/ready")
     public void handleReadyMessage(@Payload ChatMessage chatMessage) { // Sử dụng Principal nếu cần xác thực
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email =chatMessage.getSender();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
         logger.info("Received READY message from user: {}", email);
