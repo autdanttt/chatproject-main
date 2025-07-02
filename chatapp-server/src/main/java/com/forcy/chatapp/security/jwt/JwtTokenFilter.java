@@ -45,7 +45,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = getBearerToken(request);
         LOGGER.info("Token: "+ token);
         try {
-            Claims claims = jwtUtil.validateAccessToken(token);
+            Claims claims = jwtUtil.validateToken(token);
 
             LOGGER.info("ROLE TOKEN" + claims.get("roles"));
             UserDetails userDetails = getUserDetails(claims);

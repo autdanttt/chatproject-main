@@ -9,6 +9,7 @@ import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.message.MessageResponse;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,6 +18,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -41,8 +44,9 @@ public class ChatWebSocketController {
     }
 
     @MessageMapping("/ready")
-    public void handleReadyMessage(@Payload ChatMessage chatMessage) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public void handleReadyMessage(@Payload ChatMessage chatMessage) { // Sử dụng Principal nếu cần xác thực
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        String email =chatMessage.getSender();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
         logger.info("Received READY message from user: {}", email);

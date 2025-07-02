@@ -32,7 +32,8 @@ public class User {
     private String password;
     private String avatarUrl;
 
-
+    @Column(name = "is_verified", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isVerified = false;
     private Date createAt;
     private Date updateAt;
 

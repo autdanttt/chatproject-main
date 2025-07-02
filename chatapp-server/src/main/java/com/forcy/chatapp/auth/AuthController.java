@@ -3,6 +3,7 @@ package com.forcy.chatapp.auth;
 import com.forcy.chatapp.entity.Role;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.CustomUserDetails;
+import com.forcy.chatapp.security.jwt.JwtValidationException;
 import com.forcy.chatapp.user.UserService;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -35,11 +37,13 @@ public class AuthController{
     TokenService tokenService;
     UserService userService;
     ModelMapper mapper;
+    EmailService emailService;
 
-    public AuthController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService, ModelMapper mapper) {
+    public AuthController(AuthenticationManager authenticationManager, TokenService tokenService, UserService userService, ModelMapper mapper, EmailService emailService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.userService = userService;
+        this.emailService = emailService;
         this.mapper = mapper;
     }
 
@@ -118,8 +122,23 @@ public class AuthController{
     public ResponseEntity<?> register(@RequestPart("user") @Valid UserRegisterDTO dto,
                                       @RequestPart("image") @Nullable MultipartFile multipartFile){
 
-        AuthUserDTO authUserDTO = userService.registerUser(dto, multipartFile);
+        userService.registerUser(dto, multipartFile);
 
-        return new ResponseEntity<>(authUserDTO, CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of(
+                        "message", "Đăng ký thành công. Vui lòng kiểm tra email để xác thực.",
+                        "email", dto.getEmail()
+                ));
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestParam("token") String token) {
+        try {
+            emailService.verifyEmail(token);
+            return ResponseEntity.ok("Xác thực tài khoản thành công!");
+        } catch (JwtValidationException | IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

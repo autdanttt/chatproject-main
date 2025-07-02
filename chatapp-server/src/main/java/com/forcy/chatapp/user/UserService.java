@@ -4,6 +4,7 @@ import com.forcy.chatapp.auth.*;
 import com.forcy.chatapp.entity.Role;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.media.AssetService;
+import com.forcy.chatapp.security.jwt.JwtUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,8 +31,13 @@ public class UserService{
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
-    public AuthUserDTO registerUser(UserRegisterDTO dto, MultipartFile multipartFile){
+    @Autowired
+    private JwtUtility jwtUtility;
+
+    public void registerUser(UserRegisterDTO dto, MultipartFile multipartFile){
         log.info("Registering user");
         if(userRepository.findByEmail(dto.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("User already exists with email: " + dto.getEmail());
@@ -58,21 +64,25 @@ public class UserService{
         user.setRoles(Set.of(role));
         User savedUser = userRepository.save(user);
 
-        AuthUserDTO authUserDTO = new AuthUserDTO();
-        authUserDTO.setEmail(savedUser.getEmail());
-        authUserDTO.setFullName(savedUser.getFullName());
-        authUserDTO.setAvatarUrl(savedUser.getAvatarUrl());
-        Set<RoleDTO> roles = new HashSet<>();
-        for (Role savedRole : savedUser.getRoles()){
-            RoleDTO roleDTO = new RoleDTO();
-            roleDTO.setId(savedRole.getId());
-            roleDTO.setName(savedRole.getName());
-            roleDTO.setDescription(savedRole.getDescription());
-            roles.add(roleDTO);
-        }
-        authUserDTO.setRoles(roles);
-        authUserDTO.setId(savedUser.getId());
-        return authUserDTO;
+        String token = jwtUtility.generateEmailVerificationToken(savedUser);
+
+        emailService.sendVerificationEmail2(savedUser.getEmail(), token);
+
+//        AuthUserDTO authUserDTO = new AuthUserDTO();
+//        authUserDTO.setEmail(savedUser.getEmail());
+//        authUserDTO.setFullName(savedUser.getFullName());
+//        authUserDTO.setAvatarUrl(savedUser.getAvatarUrl());
+//        Set<RoleDTO> roles = new HashSet<>();
+//        for (Role savedRole : savedUser.getRoles()){
+//            RoleDTO roleDTO = new RoleDTO();
+//            roleDTO.setId(savedRole.getId());
+//            roleDTO.setName(savedRole.getName());
+//            roleDTO.setDescription(savedRole.getDescription());
+//            roles.add(roleDTO);
+//        }
+//        authUserDTO.setRoles(roles);
+//        authUserDTO.setId(savedUser.getId());
+//        return authUserDTO;
     }
     public String updateAvatar(Long id, MultipartFile file) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("User not found: " + id));
