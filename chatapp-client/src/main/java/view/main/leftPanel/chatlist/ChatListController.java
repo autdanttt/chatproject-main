@@ -3,6 +3,8 @@ package view.main.leftPanel.chatlist;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import event.ChatCreatedEvent;
+import event.ChatDeletedEvent;
 import event.FullNameUpdateEvent;
 import model.ChatGroupResponse;
 import model.ChatItem;
@@ -28,10 +30,10 @@ public class ChatListController extends BaseController {
 
     private void initializeListeners() {
         chatListPanel.getChatList().addListSelectionListener(e -> {
-            if(!e.getValueIsAdjusting()) {
+            if (!e.getValueIsAdjusting()) {
                 ChatItem selectedChat = chatListPanel.getChatList().getSelectedValue();
-                if(selectedChat != null) {
-                    String type = selectedChat.getOtherUserId() == null ? "GROUP": "CHAT";
+                if (selectedChat != null) {
+                    String type = selectedChat.getOtherUserId() == null ? "GROUP" : "CHAT";
                     eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId(), type));
                     eventBus.post(new FullNameUpdateEvent(selectedChat.getOtherUserFullName(), selectedChat.getAvatarUrl()));
                 }
@@ -41,6 +43,20 @@ public class ChatListController extends BaseController {
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {
+        reloadChatList();
+    }
+
+    @Subscribe
+    public void OnChatDelete(ChatDeletedEvent chatDeletedEvent) {
+        reloadChatList();
+    }
+
+    @Subscribe
+    public void onCreateChat(ChatCreatedEvent chatCreatedEvent) {
+        reloadChatList();
+    }
+
+    public void reloadChatList() {
         ChatResponse[] list = getListChat();
         chatListPanel.getChatListModel().clear();
 
@@ -56,7 +72,7 @@ public class ChatListController extends BaseController {
         }
 
         ChatGroupResponse[] listGroup = chatListService.getChatGroupList(TokenManager.getAccessToken());
-        for(ChatGroupResponse group : listGroup) {
+        for (ChatGroupResponse group : listGroup) {
             chatListPanel.getChatListModel().addElement(new ChatItem(
                     group.getGroupId(),
                     null,
