@@ -1,5 +1,9 @@
 package com.forcy.chatapp.auth;
 
+import com.forcy.chatapp.auth.dto.AuthResponse;
+import com.forcy.chatapp.auth.dto.RefreshTokenRequest;
+import com.forcy.chatapp.auth.exception.RefreshTokenExpiredException;
+import com.forcy.chatapp.auth.exception.RefreshTokenNotFoundException;
 import com.forcy.chatapp.entity.RefreshToken;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.security.jwt.JwtUtility;
@@ -48,7 +52,7 @@ public class TokenService {
 
         return response;
     }
-    public AuthResponse refreshTokens(RefreshTokenRequest  request) throws RefreshTokenExpiredException {
+    public AuthResponse refreshTokens(RefreshTokenRequest request) throws RefreshTokenExpiredException {
 
         String rawRefreshToken = request.getRefreshToken();
         log.info("Refresh token: {}", rawRefreshToken);

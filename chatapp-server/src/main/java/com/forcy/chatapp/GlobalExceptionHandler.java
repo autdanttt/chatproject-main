@@ -1,6 +1,8 @@
 package com.forcy.chatapp;
 
-import com.forcy.chatapp.auth.RefreshTokenNotFoundException;
+import com.forcy.chatapp.auth.exception.OtpInvalidOrExpiredException;
+import com.forcy.chatapp.auth.exception.PasswordResetTokenNotFoundException;
+import com.forcy.chatapp.auth.exception.RefreshTokenNotFoundException;
 import com.forcy.chatapp.group.GroupNotFoundException;
 import com.forcy.chatapp.security.jwt.JwtValidationException;
 import com.forcy.chatapp.user.UserNotFoundException;
@@ -120,6 +122,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         error.setTimestamp(new Date());
         error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.addError(ex.getMessage());
+        error.setPath(request.getServletPath());
+
+        LOGGER.error(ex.getMessage(), ex);
+        return error;
+    }
+    @ExceptionHandler(PasswordResetTokenNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorDTO handlePasswordResetTokenNotFoundException(HttpServletRequest request, Exception ex){
+        ErrorDTO error = new ErrorDTO();
+
+        error.setTimestamp(new Date());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.addError(ex.getMessage());
+        error.setPath(request.getServletPath());
+
+        LOGGER.error(ex.getMessage(), ex);
+        return error;
+    }
+    @ExceptionHandler(OtpInvalidOrExpiredException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorDTO handleOtpException(HttpServletRequest request, Exception ex){
+        ErrorDTO error = new ErrorDTO();
+
+        error.setTimestamp(new Date());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.addError(ex.getMessage());
         error.setPath(request.getServletPath());
 
