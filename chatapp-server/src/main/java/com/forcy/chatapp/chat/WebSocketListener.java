@@ -20,7 +20,7 @@ public class WebSocketListener {
 
     @Autowired private InMemorySessionManager sessionManager;
 
-    private final Map<String,String> sessionIdToUsername = new ConcurrentHashMap<>();
+    private final Map<String,String> sessionIdToEmail = new ConcurrentHashMap<>();
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
@@ -28,10 +28,10 @@ public class WebSocketListener {
         String sessionId = accessor.getSessionId();
 
         if (accessor.getUser() != null) {
-            String username = accessor.getUser().getName();
-            sessionManager.registerSession(username, sessionId);
-            sessionIdToUsername.put(sessionId, username);
-            logger.info("🔗 [WebSocket Connect] User '{}' connected with sessionId={}", username, sessionId);
+            String email = accessor.getUser().getName();
+            sessionManager.registerSession(email, sessionId);
+            sessionIdToEmail.put(sessionId,email);
+            logger.info("🔗 [WebSocket Connect] User '{}' connected with sessionId={}", email, sessionId);
         } else {
             logger.warn("⚠️ [WebSocket Connect] Không xác định được user cho sessionId={}", sessionId);
         }
@@ -42,10 +42,10 @@ public class WebSocketListener {
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        String username = sessionIdToUsername.remove(sessionId);
-        if(username != null){
-            sessionManager.removeSession(username);
-            logger.info("❌ [WebSocket Disconnect] User '{}' disconnected from sessionId={}", username, sessionId);
+        String email = sessionIdToEmail.remove(sessionId);
+        if(email != null){
+            sessionManager.removeSession(email);
+            logger.info("❌ [WebSocket Disconnect] User '{}' disconnected from sessionId={}", email, sessionId);
         }else {
             logger.warn("⚠️ [WebSocket Disconnect] Không tìm thấy username cho sessionId={}", sessionId);
         }

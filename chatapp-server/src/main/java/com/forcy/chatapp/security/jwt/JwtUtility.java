@@ -30,7 +30,7 @@ public class JwtUtility {
         long expirationTimeMillis = System.currentTimeMillis() + accessTokenExpiration * 60000L;
         logger.info("System time miliis: " +System.currentTimeMillis() );
         System.out.println("System time miliis: " +System.currentTimeMillis());
-        String subject = String.format("%s,%s", user.getId(), user.getUsername());
+        String subject = String.format("%s,%s", user.getId(), user.getEmail());
         Date now = new Date();
         logger.info("Date now is {}", now);
         Date expiration = new Date(expirationTimeMillis);

@@ -42,7 +42,4 @@ public class MainChatView extends JFrame {
         setResizable(false);
     }
 
-    public void setUsername(String username) {
-        rightPanel.setUserName(username);
-    }
 }

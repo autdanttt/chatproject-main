@@ -22,6 +22,8 @@ import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
 import view.main.rightPanel.components.FooterPanel;
+import view.main.rightPanel.components.HeaderController;
+import view.main.rightPanel.components.HeaderPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
@@ -33,6 +35,9 @@ import view.main.rightPanel.otherInfoTop.InfoOtherAndFeature;
 import view.main.leftPanel.search.SearchController;
 import view.main.leftPanel.search.SearchPanel;
 import view.register.RegisterController;
+import view.register.RegisterService;
+import view.register.RegisterServiceImpl;
+//import view.register.RegisterController;
 
 public class AppModule extends AbstractModule {
 
@@ -40,7 +45,6 @@ public class AppModule extends AbstractModule {
     protected void configure() {
 
         bind(EventBus.class).toInstance(new EventBus());
-        bind(AuthService.class).to(AuthServiceImpl.class);
         bind(RegisterService.class).to(RegisterServiceImpl.class);
         bind(SearchService.class).to(SearchServiceImpl.class);
         bind(LoginService.class).to(LoginServiceImpl.class);
@@ -63,6 +67,7 @@ public class AppModule extends AbstractModule {
         bind(MainChatController.class);
 
         //Controller Right Panel
+        bind(HeaderController.class);
         bind(SendMessageController.class);
         bind(MessageController.class);
 
@@ -75,9 +80,9 @@ public class AppModule extends AbstractModule {
         //View Right Pannel
         bind(InfoOtherAndFeature.class).in(Singleton.class);
         bind(RightPanel.class).in(Singleton.class);
+        bind(HeaderPanel.class).in(Singleton.class);
         bind(MessagePanel.class).in(Singleton.class);
         bind(MainChatView.class).in(Singleton.class);
-
         bind(WebRTCManager.class).in(Singleton.class);
         bind(WebSocketClientManager.class).in(Singleton.class);
     }

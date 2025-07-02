@@ -13,7 +13,8 @@ import java.util.Date;
 public class ChatResponse {
     private Long chatId;
     private Long otherUserId;
-    private String otherUsername;
+    private String otherUserFullName;
+    private String imageUrl;
     private String lastMessage;
     private Date lastMessageTime;
 }

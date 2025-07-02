@@ -36,6 +36,9 @@ public class Message {
     private ChatGroup group;
 
 
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageDelivery> deliveries;
+
     @Enumerated(EnumType.STRING)
     private MessageType type;
 

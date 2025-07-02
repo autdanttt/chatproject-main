@@ -71,7 +71,8 @@ public class MessageService {
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setMessageId(message.getId());
         messageResponse.setFromUserId(fromUser.getId());
-        messageResponse.setFromUserName(fromUser.getUsername());
+//        messageResponse.setFromEmail(fromUser.getEmail());
+        messageResponse.setFromFullName(fromUser.getFullName());
         messageResponse.setToUserId(null);
         messageResponse.setChatId(null);
         messageResponse.setGroupId(message.getGroup().getId());
@@ -110,15 +111,15 @@ public class MessageService {
         User fromUser = userRepository.findById(messageRequest.getFromUserId()).orElseThrow();
 
         Long toUserId = messageRequest.getToUserId();
-        logger.info("✅ [storeMessage] Tìm thấy 2 user: from={}, to={}", fromUser.getUsername(), toUserId);
+        logger.info("✅ [storeMessage] Tìm thấy 2 user: from={}, to={}", fromUser.getEmail(), toUserId);
         if (toUserId == null) {
             throw new IllegalArgumentException("toUserId must not be null");
         }
-        User toUser = userRepository.findById(toUserId).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User toUser = userRepository.findById(toUserId).orElseThrow(() -> new UserNotFoundException(toUserId));
 
         Chat chat = chatRepository.findChatByTwoUserIds(fromUser.getId(), toUser.getId())
                 .orElseGet(() -> {
-                    logger.info("💬 [storeMessage] Tạo mới Chat giữa {} và {}", fromUser.getUsername(), toUser.getUsername());
+                    logger.info("💬 [storeMessage] Tạo mới Chat giữa {} và {}", fromUser.getEmail(), toUser.getEmail());
                     Chat newChat = new Chat();
 
                     newChat.setUsers(List.of(fromUser, toUser));
@@ -127,7 +128,6 @@ public class MessageService {
 
         Message message = MessageMapper.toEntity(messageRequest,fromUser,chat);
         messageRepository.save(message);
-
 
         // 2. Tạo MessageDelivery cho người nhận
         MessageDelivery messageDelivery = new MessageDelivery();
@@ -140,7 +140,8 @@ public class MessageService {
         MessageResponse messageResponse = new MessageResponse();
         messageResponse.setMessageId(message.getId());
         messageResponse.setFromUserId(fromUser.getId());
-        messageResponse.setFromUserName(fromUser.getUsername());
+//        messageResponse.setFromEmail(fromUser.getEmail());
+        messageResponse.setFromFullName(fromUser.getFullName());
         messageResponse.setToUserId(toUserId);
         messageResponse.setChatId(chat.getId());
         messageResponse.setGroupId(null);

@@ -15,8 +15,8 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
 
     @Query("""
-        SELECT c FROM Chat c 
-        JOIN c.users u1 
+        SELECT c FROM Chat c
+        JOIN c.users u1
         JOIN c.users u2
         WHERE u1.id = :user1Id AND u2.id = :user2Id
 """)

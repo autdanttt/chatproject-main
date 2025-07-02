@@ -116,7 +116,7 @@ public class WebSocketClientManager {
     }
 
 
-    public ApiResult<String> setupWebSocket(String jwtToken, String username) {
+    public ApiResult<String> setupWebSocket(String jwtToken, String email) {
         try {
             webSocketClient = new StandardWebSocketClient();
             WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
@@ -154,7 +154,7 @@ public class WebSocketClientManager {
 
                     // Gửi ready
                     ReadyMessage readyMessage = new ReadyMessage();
-                    readyMessage.setSender(username);
+                    readyMessage.setSender(email);
                     readyMessage.setMessage("READY");
                     session.send("/app/ready", readyMessage);
 

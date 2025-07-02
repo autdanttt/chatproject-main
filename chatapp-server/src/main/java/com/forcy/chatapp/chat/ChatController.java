@@ -40,17 +40,17 @@ public class ChatController {
 
     @GetMapping
     public List<ChatResponse> getChats(@RequestHeader("Authorization") String token) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
         return chatService.getListChat(user.getId());
     }
 
     @GetMapping("/{chatId}/messages")
     public ResponseEntity<?> getChatMessages(@PathVariable Long chatId) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
         if(!chatService.isUserInChat(chatId, user.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -64,9 +64,8 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<ChatResponse> createChat(@RequestBody CreateChatRequest request) {
-        log.info("Create chat request: {}", request);
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByUsername(username)
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         Chat chat = chatService.createChat(currentUser.getId(), request.getTargetUserId());
@@ -81,7 +80,8 @@ public class ChatController {
         ChatResponse response = ChatResponse.builder()
                 .chatId(chat.getId())
                 .otherUserId(otherUser != null ? otherUser.getId() : null)
-                .otherUsername(otherUser != null ? otherUser.getUsername() : "Unknown")
+                .otherUserFullName(otherUser != null ? otherUser.getFullName() : "Unknown")
+                .imageUrl(otherUser.getAvatarUrl())
                 .lastMessage(lastMessage != null ? lastMessage.getContent() : "")
                 .lastMessageTime(lastMessage != null ? lastMessage.getSentAt() : null)
                 .build();
@@ -91,9 +91,9 @@ public class ChatController {
 
     @DeleteMapping("/{chatId}")
     public ResponseEntity<?> deleteChat(@PathVariable Long chatId, HttpServletRequest request) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User currentUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found " + email));
 
         try {
             chatService.deleteChat(chatId, currentUser.getId());

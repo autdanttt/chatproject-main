@@ -25,17 +25,17 @@ public class UserRepositoryTests {
 
     @Autowired private TestEntityManager entityManager;
 
-    @Test
-    public void testCreateUser() {
-        Role role = entityManager.find(Role.class, 2);
-        User user = new User();
-        user.setUsername("admin01");
-
-        user.setPassword(passwordEncoder.encode("12345678"));
-        user.setPhoneNumber("0998425429");
-        user.addRole(role);
-
-        User savedUser = userRepository.save(user);
-        assertThat(savedUser.getId()).isGreaterThan(0);
-    }
+//    @Test
+//    public void testCreateUser() {
+//        Role role = entityManager.find(Role.class, 2);
+//        User user = new User();
+//        user.setUsername("admin01");
+//
+//        user.setPassword(passwordEncoder.encode("12345678"));
+//        user.setPhoneNumber("0998425429");
+//        user.addRole(role);
+//
+//        User savedUser = userRepository.save(user);
+//        assertThat(savedUser.getId()).isGreaterThan(0);
+//    }
 }

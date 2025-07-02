@@ -115,6 +115,12 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<version>4.0.3</version> <!-- hoặc phiên bản phù hợp -->
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44 -->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.39.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

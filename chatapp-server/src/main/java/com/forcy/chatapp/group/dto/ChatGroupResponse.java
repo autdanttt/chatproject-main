@@ -1,6 +1,5 @@
 package com.forcy.chatapp.group.dto;
 
-import com.forcy.chatapp.entity.MemberRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,10 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupItemDTO {
-
+public class ChatGroupResponse {
     private Long groupId;
     private String groupName;
+    private String imageUrl;
     private String lastMessageContent;
     private String lastMessageSenderName;
     private Date lastMessageTime;
