@@ -20,7 +20,6 @@ public class FooterLeftController extends BaseController {
     private final FooterPanel footerPanel;
 
     private final CreateChatController createChatController;
-
     private final CreateChatGroupController createChatGroupController;
 
     private CreateChat chatDialog;
