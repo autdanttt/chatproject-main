@@ -20,6 +20,7 @@ public class EditProfileUserController extends BaseController {
     }
 
     private void initializeListeners() {
+        editProfileUser.addCacelActionListener(e -> editProfileUser.dispose());
 
     }
 

@@ -7,6 +7,7 @@ import custom.RoundedTextField;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class EditProfileUser extends JDialog {
     private JTextField usernameField;
@@ -20,9 +21,9 @@ public class EditProfileUser extends JDialog {
         setSize(600, 500);
         setLocationRelativeTo(parent);
         setResizable(false);
+//        setUndecorated(true);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.GREEN);
 
         JPanel p1 = new JPanel(new BorderLayout());
         p1.setPreferredSize(new Dimension(600, 100));
@@ -145,5 +146,9 @@ public class EditProfileUser extends JDialog {
 
     public JButton getSubmitButton() {
         return submitButton;
+    }
+
+    public void addCacelActionListener(ActionListener e) {
+        cancelButton.addActionListener(e);
     }
 }

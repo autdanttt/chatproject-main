@@ -7,6 +7,8 @@ import custom.RoundedImageUtil;
 import di.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.login.LoginView;
+import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.dialog.AvatarPopupMenu;
 import view.main.dialog.EditProfileUser;
@@ -42,12 +44,24 @@ public class HeaderRightController extends BaseController {
                         editProfileEvent -> {
                             editProfileUser = new EditProfileUser((JFrame) SwingUtilities.getWindowAncestor(headerRightPanel));
                             editProfileUserController.setEditProfileUser(editProfileUser);
-//                            editProfileUser.dispose();
                             editProfileUser.setVisible(true);
-                            logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>Edit Profile selected");
                         },
                         logoutEvent -> {
-                            logger.info("Logout selected");
+                            JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(headerRightPanel);
+                            int confirm = JOptionPane.showConfirmDialog(
+                                    mainFrame,
+                                    "Bạn có chắc chắn muốn đăng xuất không?",
+                                    "Xác nhận đăng xuất",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE
+                            );
+
+                            if (confirm == JOptionPane.YES_OPTION) {
+                                TokenManager.clear();
+                                JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(headerRightPanel);
+                                currentFrame.dispose();
+                                navigator.navigateTo("Login");
+                            }
                         }
                 );
 
