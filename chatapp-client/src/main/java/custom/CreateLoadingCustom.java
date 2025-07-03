@@ -3,7 +3,7 @@ package custom;
 import javax.swing.*;
 import java.awt.*;
 
-public class CreateLoadingDialog {
+public class CreateLoadingCustom {
 
     public static JDialog create(JFrame parent) {
         JDialog dialog = new JDialog(parent, "Đang xử lý...", true);

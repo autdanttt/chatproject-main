@@ -3,11 +3,11 @@ package controllers;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import custom.ConfirmCustom;
 import custom.RoundedImageUtil;
 import di.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.login.LoginView;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.dialog.AvatarPopupMenu;
@@ -48,15 +48,18 @@ public class HeaderRightController extends BaseController {
                         },
                         logoutEvent -> {
                             JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(headerRightPanel);
-                            int confirm = JOptionPane.showConfirmDialog(
+                            ImageIcon imageIcon = new ImageIcon(basePath + "/images/QUESTION.png");
+
+                            boolean confirm = ConfirmCustom.showConfirmDialog(
                                     mainFrame,
                                     "Bạn có chắc chắn muốn đăng xuất không?",
                                     "Xác nhận đăng xuất",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE
+                                    imageIcon,
+                                    "Hủy",
+                                    "Đăng xuất"
                             );
 
-                            if (confirm == JOptionPane.YES_OPTION) {
+                            if (confirm) {
                                 TokenManager.clear();
                                 JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(headerRightPanel);
                                 currentFrame.dispose();

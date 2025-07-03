@@ -1,14 +1,12 @@
 package view.register;
 
 import com.google.inject.Inject;
-import custom.CreateLoadingDialog;
+import custom.CreateLoadingCustom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
 
 import javax.swing.*;
-import java.awt.*;
-import java.net.URI;
 
 public class RegisterController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
@@ -47,7 +45,7 @@ public class RegisterController extends BaseController {
                 return;
             }
 
-            JDialog loadingDialog = CreateLoadingDialog.create(registerView);
+            JDialog loadingDialog = CreateLoadingCustom.create(registerView);
 
             SwingWorker<Void, Void> worker = new SwingWorker<>() {
                 @Override
