@@ -130,37 +130,30 @@ public class ChatApi {
 
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
-
-            // 1️⃣ Chuẩn bị JSON cho phần 'group'
             Map<String, Object> groupMap = new HashMap<>();
+
             groupMap.put("name", nameGroup);
             groupMap.put("creator_id", currentUserId);
             groupMap.put("member_ids", memberIds);
             String jsonGroup = objectMapper.writeValueAsString(groupMap);
 
-            // 2️⃣ Tạo MultiValueMap cho multipart
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-
-            // 2.1 Thêm 'group' dưới dạng HttpEntity text/plain
             HttpHeaders jsonHeader = new HttpHeaders();
             jsonHeader.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> jsonPart = new HttpEntity<>(jsonGroup, jsonHeader);
             body.add("group", jsonPart);
 
-            // 2.2 Thêm 'image' nếu có
             if (imageFile != null) {
                 FileSystemResource fileResource = new FileSystemResource(imageFile);
                 body.add("image", fileResource);
             }
 
-            // 3️⃣ Tạo HttpHeaders chính
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             headers.setBearerAuth(TokenManager.getAccessToken());
 
             HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            // 4️⃣ Gửi POST
             ResponseEntity<ChatGroupResponse> response = restTemplate.postForEntity(
                     url,
                     requestEntity,
