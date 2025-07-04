@@ -276,7 +276,7 @@ public class WebRTCManager {
                         String payload;
                         try {
                             payload = objectMapper.writeValueAsString(candidatePayload);
-                            logger.info("Candidate Payload: " + payload);
+//                            logger.info("Candidate Payload: " + payload);
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
                         }
@@ -292,9 +292,9 @@ public class WebRTCManager {
 
                         String response = restTemplate.postForObject(url, entity, String.class);
 
-                        logger.info("Candidate payload {} " + payload);
-                        logger.info("Response from send candidate " + response);
-                        logger.info("Sent ICE candidate: " + candidate.sdp);
+//                        logger.info("Candidate payload {} " + payload);
+//                        logger.info("Response from send candidate " + response);
+//                        logger.info("Sent ICE candidate: " + candidate.sdp);
                 }
 
                 @Override
@@ -528,7 +528,7 @@ public class WebRTCManager {
 
             try {
                 payload = objectMapper.writeValueAsString(sdpPayload);
-                logger.info("Sending SDP To Peer : " + payload);
+//                logger.info("Sending SDP To Peer : " + payload);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -544,12 +544,12 @@ public class WebRTCManager {
 
             String response = restTemplate.postForObject(url, entity, String.class);
 
-            logger.info("Sending SDP To Server : " +payload);
+//            logger.info("Sending SDP To Server : " +payload);
+//
+//            logger.info("Received SDP To Server : " + response);
 
-            logger.info("Received SDP To Server : " + response);
 
-
-            logger.info("Sent SDP ({}): {}" + type + sdp.sdp);
+//            logger.info("Sent SDP ({}): {}" + type + sdp.sdp);
 
     }
 
@@ -630,7 +630,7 @@ public class WebRTCManager {
     public void handleCandidate(RTCIceCandidate candidate){
         if(peerConnection != null){
             peerConnection.addIceCandidate(candidate);
-            logger.info("Added remote ICE candidate: " + candidate.sdp);
+//            logger.info("Added remote ICE candidate: " + candidate.sdp);
         }else {
             logger.info("PeerConnection is null, cannot add ICE candidate");
         }

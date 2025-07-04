@@ -425,7 +425,7 @@ public class WebSocketClientManager {
             payload.put("message_id", messageId);
 
             stompSession.send("/app/seen", payload);
-            logger.info("Sent seen event");
+//            logger.info("Sent seen event");
         }else {
             logger.info("Can't send seen event since stomp session is not connected");
         }
