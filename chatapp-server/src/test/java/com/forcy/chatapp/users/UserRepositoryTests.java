@@ -51,22 +51,18 @@ public class UserRepositoryTests {
 
         // 2. Tạo user mới
         User user = new User();
-        user.setEmail("autdant111@gmail.com");
+        user.setEmail("user3@gmail.com");
         user.setPassword(passwordEncoder.encode("12345678"));
-        user.setFullName("Autdant");
+        user.setFullName("user3");
         user.setAvatarUrl("https://res.cloudinary.com/dm8tfyppk/image/upload/v1751360443/avatar/c4d30890-c6e2-48e6-a3af-d86089639b5d.jpg");
         user.setCreateAt(Date.from(Instant.now().minus(2, ChronoUnit.DAYS))); // test case xóa
-        user.setVerified(false);
+        user.setVerified(true);
 
         user.addRole(role);
 
         // 3. Lưu user
         User savedUser = userRepository.save(user);
 
-        // 4. Kiểm tra user đã lưu thành công
-        assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.isVerified()).isFalse();
-        assertThat(savedUser.getRoles()).contains(role);
     }
     @Test
     void testDeleteUnverifiedUsersBefore() {

@@ -1,6 +1,7 @@
 package view.main.rightPanel;
 
 import com.google.inject.Inject;
+import view.main.rightPanel.components.CenterPanelController;
 import view.main.rightPanel.components.CenterRightPanel;
 import view.main.rightPanel.components.FooterRightPanel;
 import controllers.HeaderRightController;
@@ -17,16 +18,19 @@ public class RightPanel extends JPanel {
     private final MessageController messageController;
     private final SendMessageController sendMessageController;
     private final HeaderRightController headerRightController;
+    private final CenterPanelController centerPanelController;
     private HeaderRightPanel headerRightPanel;
     private CenterRightPanel centerRightPanel;
     private FooterRightPanel footerRightPanel;
 
+
     @Inject
-    public RightPanel(MessagePanel messagePanel, MessageController messageController, SendMessageController sendMessageController, HeaderRightController headerRightController, HeaderRightPanel headerRightPanel, CenterRightPanel centerRightPanel, FooterRightPanel footerRightPanel) {
+    public RightPanel(CenterPanelController centerPanelController, MessagePanel messagePanel, MessageController messageController, SendMessageController sendMessageController, HeaderRightController headerRightController, HeaderRightPanel headerRightPanel, CenterRightPanel centerRightPanel, FooterRightPanel footerRightPanel) {
         this.messagePanel = messagePanel;
         this.messageController = messageController;
         this.sendMessageController = sendMessageController;
         this.headerRightController = headerRightController;
+        this.centerPanelController = centerPanelController;
         this.headerRightPanel = headerRightPanel;
         this.centerRightPanel = centerRightPanel;
         this.footerRightPanel = footerRightPanel;
@@ -40,4 +44,8 @@ public class RightPanel extends JPanel {
         add(footerRightPanel, BorderLayout.SOUTH);
     }
 
+    public void reload() {
+        revalidate();         // Cập nhật lại layout nếu cần
+        repaint();            // Vẽ lại
+    }
 }

@@ -93,6 +93,9 @@ public class InfoOtherAndFeatureController extends BaseController {
         });
     }
 
+    public void loadInfo(Long chatId){
+
+    }
 
     @Subscribe
     public void onUsernameUpdate(FullNameUpdateEvent event) {

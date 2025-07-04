@@ -21,6 +21,7 @@ import view.main.leftPanel.chatlist.ChatListPanel;
 import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
+import view.main.rightPanel.components.CenterPanelController;
 import view.main.rightPanel.components.FooterRightPanel;
 import controllers.HeaderRightController;
 import view.main.rightPanel.components.HeaderRightPanel;
@@ -70,6 +71,7 @@ public class AppModule extends AbstractModule {
         bind(HeaderRightController.class);
         bind(SendMessageController.class);
         bind(MessageController.class);
+        bind(CenterPanelController.class);
 
         //View Left Panel
         bind(SearchPanel.class).in(Singleton.class);

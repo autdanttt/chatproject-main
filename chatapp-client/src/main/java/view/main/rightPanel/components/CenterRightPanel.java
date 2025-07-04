@@ -32,5 +32,6 @@ public class CenterRightPanel extends JPanel {
         mainChatPanel.add(messagePanel, BorderLayout.CENTER);
 
         add(mainChatPanel, BorderLayout.CENTER);
+        setVisible(false);
     }
 }

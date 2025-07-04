@@ -60,7 +60,7 @@ public class MessagePanel extends JPanel {
         ;
         messageBox.setLayout(new BoxLayout(messageBox, BoxLayout.Y_AXIS));
         messageBox.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
-        messageBox.setMaximumSize(new Dimension(300, Integer.MAX_VALUE));
+        //messageBox.setMaximumSize(new Dimension(300, 250));
 
         JComponent messageComponent = null;
 
@@ -92,8 +92,13 @@ public class MessagePanel extends JPanel {
             FontMetrics fm = messageLabel.getFontMetrics(messageLabel.getFont());
             int lineCount = (int) Math.ceil(fm.stringWidth(content) / (double) maxWidth);
             int lineHeight = fm.getHeight();
+            logger.info("StringWidth content: " + fm.stringWidth(content) );
+            logger.info("lineCount: " + lineCount);
+            logger.info("lineHeight: " + lineHeight);
             int preferredHeight = lineCount * lineHeight;
             int preferredWidth = preferredHeight <= 20 ? fm.stringWidth(content) + 2 : maxWidth;
+            logger.info("preferredWidth: " + preferredWidth);
+            logger.info("preferredHeight: " + preferredHeight);
 
             messageLabel.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
             messageLabel.setMinimumSize(new Dimension(preferredWidth, preferredHeight));
@@ -128,6 +133,28 @@ public class MessagePanel extends JPanel {
         timeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         messageBox.add(Box.createVerticalStrut(4));
         messageBox.add(timeLabel);
+
+        // Tính kích thước cho messageBox dựa trên các thành phần bên trong
+        int boxPaddingHorizontal = 12 + 12; // Padding left + right
+        int boxPaddingVertical = 8 + 8; // Padding top + bottom
+        int messageComponentWidth = messageComponent.getPreferredSize().width;
+        int timeLabelWidth = timeLabel.getPreferredSize().width;
+        int nameWidth = username.getPreferredSize().width;
+
+
+        int boxWidth = Math.max(messageComponentWidth,Math.max(timeLabelWidth,nameWidth)) + boxPaddingHorizontal;
+        int usernameHeight = username.getPreferredSize().height;
+        int messageComponentHeight = messageComponent.getPreferredSize().height;
+        int timeLabelHeight = timeLabel.getPreferredSize().height;
+
+        int boxHeight = usernameHeight + 3 + messageComponentHeight + 4 + timeLabelHeight + boxPaddingVertical;
+        logger.info("messageComponentWidth: " + messageComponentWidth);
+        logger.info("timeLabelWidth: " + timeLabelWidth);
+        logger.info("boxWidth: " + boxWidth);
+        logger.info("boxHeight: " + boxHeight);
+        messageBox.setPreferredSize(new Dimension(boxWidth, boxHeight));
+        messageBox.setMinimumSize(new Dimension(boxWidth, boxHeight));
+        messageBox.setMaximumSize(new Dimension(300, boxHeight)); // Giới hạn chiều rộng tối đa là 300
 
         if (isSentByMe) {
             messageContainer.add(Box.createHorizontalGlue());
