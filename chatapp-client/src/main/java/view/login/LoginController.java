@@ -1,6 +1,8 @@
 package view.login;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import event.TakeUserID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
@@ -35,20 +37,23 @@ public class LoginController extends BaseController {
 
             try {
                 UserLogin userLogin = loginService.authenticate(username, password);
-                if(userLogin.getStatusCode() == 200) {
-                    navigator.navigateTo("MainChat",userLogin.getUserId(), userLogin.getEmail(),userLogin.getFullName(), userLogin.getAvatarUrl(),TokenManager.getAccessToken());
+                TokenManager.setUserId(userLogin.getUserId());
+                if (userLogin.getStatusCode() == 200) {
+                    navigator.navigateTo("MainChat", userLogin.getUserId(), userLogin.getEmail(), userLogin.getFullName(), userLogin.getAvatarUrl(), TokenManager.getAccessToken());
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         });
 
-        loginView.addSignupButtonListener(e->{
+        loginView.addSignupButtonListener(e -> {
             String username = loginView.getUsername();
             loginView.setVisible(false);
             navigator.navigateTo("Register", username);
         });
-    };
+    }
+
+    ;
 
     @Override
     public void activate(Object... params) {

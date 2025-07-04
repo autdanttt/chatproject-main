@@ -10,6 +10,7 @@ import com.forcy.chatapp.message.MessageResponse;
 import com.forcy.chatapp.message.MessageService;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class ChatGroupController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createGroup(@RequestPart("group") @Valid CreateGroupRequest request,
-                                         @RequestPart("image") MultipartFile multipartFile) {
+                                         @RequestPart("image") @Nullable MultipartFile multipartFile) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found " + email));

@@ -1,4 +1,4 @@
-package com.forcy.chatapp.auth;
+package com.forcy.chatapp.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;

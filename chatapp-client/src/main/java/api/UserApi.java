@@ -1,12 +1,7 @@
 package api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.User;
 import model.UserOther;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import view.login.LoginController;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class UserApi {
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
-
     public List<UserOther> getAllOtherUsers(String accessToken) throws IOException {
         URL url = new URL("http://localhost:10000/api/users/listother");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

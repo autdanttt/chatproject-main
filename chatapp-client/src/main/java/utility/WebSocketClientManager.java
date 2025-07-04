@@ -5,6 +5,9 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import dev.onvoid.webrtc.media.audio.AudioDevice;
+import dev.onvoid.webrtc.media.video.VideoDevice;
 import event.MessageSeenEvent;
 import model.ReadyMessage;
 import dev.onvoid.webrtc.RTCIceCandidate;
@@ -13,21 +16,24 @@ import dev.onvoid.webrtc.RTCSessionDescription;
 import model.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import payload.CandidatePayload;
-import payload.IceCandidate;
-import payload.SdpPayload;
-import view.ApiResult;
-import view.ErrorDTO;
+import payload.*;
+import view.*;
+import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
+import javax.swing.*;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.Timer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -40,11 +46,18 @@ public class WebSocketClientManager {
     private StompSession stompSession;
     private final EventBus eventBus;
     private WebRTCManager webRTCManager;
+    private MainVideoFrame videoFrame;
     private Long currentUserId;
     private final Map<Long, Long> pendingSeenPrivate = new ConcurrentHashMap<>();
     private final Map<Long, Long> pendingSeenGroup = new ConcurrentHashMap<>();
     private Long chatId;
     private boolean isGroup;
+    private Long otherUserId;
+    private VideoDevice selectedCamera;
+    private AudioDevice selectedMic;
+
+    @Inject
+    private Provider<MainVideoFrameController> videoFrameControllerProvider;
 
 
     @Inject
@@ -68,8 +81,18 @@ public class WebSocketClientManager {
         }else {
             pendingSeenPrivate.put(chatId,0L);
             isGroup = false;
+            otherUserId = chatSelectedEvent.getUserId();
         }
     }
+
+    @Subscribe
+    public void onCallEndedEvent(CallEndedEvent callEndedEvent) {
+        logger.info("Received CallEndedEvent");
+        sendHangupEvent(currentUserId, otherUserId);
+        webRTCManager.endCall();
+        videoFrame.closeFrame();
+    }
+
 
     @Subscribe
     public void onMessageSeenEvent(MessageSeenEvent messageSeenEvent) {
@@ -97,18 +120,18 @@ public class WebSocketClientManager {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                logger.info("Running seen sender timer");
+//                logger.info("Running seen sender timer");
                 for (Map.Entry<Long, Long> entry : pendingSeenPrivate.entrySet()) {
                     Long chatId = entry.getKey();
                     Long messageId = entry.getValue();
-                    logger.info("Seen sender timer: chatId={}, messageId={}", chatId, messageId);
+//                    logger.info("Seen sender timer: chatId={}, messageId={}", chatId, messageId);
                     sendSeenEvent(currentUserId, chatId, null, messageId);
                 }
 
                 for (Map.Entry<Long, Long> entry : pendingSeenGroup.entrySet()) {
                     Long groupId = entry.getKey();
                     Long messageId = entry.getValue();
-                    logger.info("Seen sender timer: groupId={}, messageId={}", groupId, messageId);
+//                    logger.info("Seen sender timer: groupId={}, messageId={}", groupId, messageId);
                     sendSeenEvent(currentUserId, null, groupId, messageId);
                 }
             }
@@ -152,6 +175,13 @@ public class WebSocketClientManager {
                         }
                     });
 
+
+                    // Subscription cho call-request
+                    logger.info("Subscribing to call request");
+                    subscribeToCallRequest();
+                    logger.info("Subscribing to call response");
+                    subscribeToCallResponse();
+
                     // Gửi ready
                     ReadyMessage readyMessage = new ReadyMessage();
                     readyMessage.setSender(email);
@@ -160,6 +190,8 @@ public class WebSocketClientManager {
 
                     subscribeToSdp();
                     subscribeToCandidate();
+
+                    subscribeToEndedCall();
                 }
 
                 @Override
@@ -190,6 +222,151 @@ public class WebSocketClientManager {
             logger.error("Exception during WebSocket setup", ex);
             return ApiResult.fail(new ErrorDTO(new Date(), 500, url, List.of(ex.getMessage())));
         }
+    }
+
+    private void subscribeToEndedCall() {
+        stompSession.subscribe("/user/queue/video-call/peer", new StompFrameHandler() {
+
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return HangupMessage.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                HangupMessage message = (HangupMessage) payload;
+                logger.info("The call has been ended due to a peer"  + message.getFromUserId());
+                webRTCManager.endCall();
+                videoFrame.closeFrame();
+            }
+        });
+    }
+
+    private void subscribeToCallResponse() {
+        stompSession.subscribe("/user/queue/call-response", new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return CallResponsePayload.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                CallResponsePayload response = (CallResponsePayload) payload;
+                logger.info("Call response received from {}: {}", response.getFromUserId(), response.isAccepted());
+                SwingUtilities.invokeLater(() -> {
+                    if (response.isAccepted()) {
+                        //Hien thi chon phan cung
+                        HardwareSelectionDialog hardwareSelectionDialog = new HardwareSelectionDialog(null);
+                        hardwareSelectionDialog.setVisible(true);
+                        if(hardwareSelectionDialog.isConfirmed()){
+                            selectedCamera = hardwareSelectionDialog.getSelectedCamera();
+                            selectedMic = hardwareSelectionDialog.getSelectedMic();
+
+                            MainVideoFrameController mainVideoFrameController = videoFrameControllerProvider.get();
+                            videoFrame = mainVideoFrameController.getMainVideoFrame();
+                            // Khởi tạo WebRTC
+//                            videoFrame = new MainVideoFrame();
+                            videoFrame.setVisible(true);
+                            webRTCManager.setVideoPanel(videoFrame.localPanel, videoFrame.remotePanel);
+                            webRTCManager.initialize(response.getFromUserId());
+                            webRTCManager.addMediaStream(selectedCamera, selectedMic);
+                            webRTCManager.createOffer(response.getFromUserId());
+                            videoFrame.showActiveState(); // Giả định MainVideoFrame có phương thức cập nhật trạng thái
+                        }
+                    } else {
+                        // Đóng MainVideoFrame hoặc hiển thị thông báo từ chối
+                        videoFrame.dispose(); // Đóng form
+                        videoFrame = null;
+                        JOptionPane.showMessageDialog(null,
+                                "Call rejected by user " + response.getToUserId(),
+                                "Call Rejected",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                });
+            }
+        });
+    }
+
+    private void subscribeToCallRequest() {
+        stompSession.subscribe("/user/queue/call-request", new StompFrameHandler() {
+
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return CallRequestPayload.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                CallRequestPayload callRequestPayload = (CallRequestPayload) payload;
+                logger.info("Call request received from {}", callRequestPayload.getCallerName());
+                showCallConfirmation(callRequestPayload.getFromUserId(), callRequestPayload.getCallerName());
+            }
+        });
+
+    }
+
+    private void showCallConfirmation(Long callerId, String callerName) {
+        SwingUtilities.invokeLater(() -> {
+            int response = JOptionPane.showConfirmDialog(
+                    null,
+                    "Incoming call from " + callerName + " (ID: " + callerId + "). Accept?",
+                    "Incoming Call",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            try {
+                RestTemplate restTemplate = new RestTemplate();
+                String url = "http://localhost:10000/video-call/call-response";
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.set("Authorization", "Bearer " + TokenManager.getAccessToken());
+
+                // Sử dụng CallResponsePayload
+                CallResponsePayload payload = new CallResponsePayload();
+                payload.setFromUserId(TokenManager.getUserId());
+                payload.setToUserId(callerId);
+                payload.setAccepted(response == JOptionPane.YES_OPTION);
+
+                HttpEntity<CallResponsePayload> request = new HttpEntity<>(payload, headers);
+                ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, request, Map.class);
+
+                if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                    if (response == JOptionPane.YES_OPTION) {
+
+                        HardwareSelectionDialog hardwareSelectionDialog = new HardwareSelectionDialog(null);
+                        hardwareSelectionDialog.setVisible(true);
+                        if(hardwareSelectionDialog.isConfirmed()){
+                            selectedCamera = hardwareSelectionDialog.getSelectedCamera();
+                            selectedMic = hardwareSelectionDialog.getSelectedMic();
+
+                            MainVideoFrameController mainVideoFrameController = videoFrameControllerProvider.get();
+                            videoFrame = mainVideoFrameController.getMainVideoFrame();
+                            videoFrame.setVisible(true);
+                            webRTCManager.setVideoPanel(videoFrame.localPanel, videoFrame.remotePanel);
+                            webRTCManager.initialize(callerId);
+                            webRTCManager.addMediaStream(selectedCamera, selectedMic);
+                            videoFrame.showActiveState();
+                        }
+                    }
+                    // Hiển thị thông báo từ response
+                    String message = (String) responseEntity.getBody().get("message");
+                    JOptionPane.showMessageDialog(null, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error sending call response", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+
+                } else {
+                    logger.error("Error sending call response: {}", e.getMessage(), e);
+                    JOptionPane.showMessageDialog(null, "Error sending call response: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                logger.error("Error sending call response: {}", e.getMessage(), e);
+                JOptionPane.showMessageDialog(null, "Error sending call response", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
     private void subscribeToSdp() {
         stompSession.subscribe("/user/queue/sdp", new StompFrameHandler() {
@@ -248,13 +425,24 @@ public class WebSocketClientManager {
             payload.put("message_id", messageId);
 
             stompSession.send("/app/seen", payload);
-            logger.info("Sent seen event");
+//            logger.info("Sent seen event");
         }else {
             logger.info("Can't send seen event since stomp session is not connected");
         }
+    }
 
+    public void sendHangupEvent(Long userId, Long otherUserId){
+        if(stompSession != null && stompSession.isConnected()){
+            HangupMessage hangupMessage = new HangupMessage();
+            hangupMessage.setType("hangup");
+            hangupMessage.setFromUserId(userId);
+            hangupMessage.setToUserId(otherUserId);
 
-
+            logger.info("Sent hangup event");
+            stompSession.send("/app/video-call/hangup", hangupMessage);
+        }else {
+            logger.info("Can't send hangup event since stomp session is not connected");
+        }
     }
 //    public ConnectionResult setupWebSocket(String jwtToken, String username) {
 //        webSocketClient = new StandardWebSocketClient();
