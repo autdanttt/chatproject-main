@@ -1,10 +1,12 @@
 package view.main.rightPanel.otherInfoTop;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import custom.CreateButton;
+import event.FullNameUpdateEvent;
 import utility.WebRTCManager;
-import view.MainVideoFrame;
+//import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,28 +62,32 @@ public class InfoOtherAndFeature extends JPanel {
 
         eventBus.register(this);
 
-        initializeListeners();
+//        initializeListeners();
     }
 
-    private void initializeListeners() {
-        callVideoButton.addActionListener(e -> startVideoCall());
-    }
+//    private void initializeListeners() {
+//        callVideoButton.addActionListener(e -> startVideoCall());
+//    }
 
-    private void startVideoCall() {
-        SwingUtilities.invokeLater(() -> {
-            if (chatId != null && userId != null) {
-                MainVideoFrame videoFrame = new MainVideoFrame();
-                videoFrame.setVisible(true);
-
-                webRTCManager.setVideoPanel(videoFrame.localPanel, videoFrame.remotePanel);
-                webRTCManager.initialize(otherUserId);
-                webRTCManager.addMediaStream(1);
-                webRTCManager.createOffer(otherUserId);
-            } else {
-                JOptionPane.showMessageDialog(null, "Hãy chọn một người để gọi.");
-            }
-        });
-    }
+//    private void initializeListeners() {
+//        callVideoButton.addActionListener(e -> startVideoCall());
+//    }
+//
+//    private void startVideoCall() {
+//        SwingUtilities.invokeLater(() -> {
+//            if (chatId != null && userId != null) {
+//                MainVideoFrame videoFrame = new MainVideoFrame();
+//                videoFrame.setVisible(true);
+//
+//                webRTCManager.setVideoPanel(videoFrame.localPanel, videoFrame.remotePanel);
+//                webRTCManager.initialize(otherUserId);
+//                webRTCManager.addMediaStream(1);
+//                webRTCManager.createOffer(otherUserId);
+//            } else {
+//                JOptionPane.showMessageDialog(null, "Hãy chọn một người để gọi.");
+//            }
+//        });
+//    }
 
     public JLabel getUserOtherName() {
         return userOtherName;

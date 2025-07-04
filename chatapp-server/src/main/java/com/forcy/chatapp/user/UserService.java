@@ -1,6 +1,9 @@
 package com.forcy.chatapp.user;
 
 import com.forcy.chatapp.auth.*;
+import com.forcy.chatapp.auth.dto.UserRegisterDTO;
+import com.forcy.chatapp.auth.exception.RoleNotFoundException;
+import com.forcy.chatapp.auth.exception.UserAlreadyExistsException;
 import com.forcy.chatapp.entity.Role;
 import com.forcy.chatapp.entity.User;
 import com.forcy.chatapp.media.AssetService;
@@ -12,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,7 +68,7 @@ public class UserService{
 
         String token = jwtUtility.generateEmailVerificationToken(savedUser);
 
-        emailService.sendVerificationEmail2(savedUser.getEmail(), token);
+        emailService.sendVerificationEmail(savedUser.getEmail(), token);
 
 //        AuthUserDTO authUserDTO = new AuthUserDTO();
 //        authUserDTO.setEmail(savedUser.getEmail());

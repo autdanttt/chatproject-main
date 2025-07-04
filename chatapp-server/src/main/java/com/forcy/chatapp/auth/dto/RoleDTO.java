@@ -1,4 +1,4 @@
-package com.forcy.chatapp.auth;
+package com.forcy.chatapp.auth.dto;
 
 import lombok.Getter;
 import lombok.Setter;

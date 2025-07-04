@@ -70,4 +70,18 @@ public class ChatWebSocketController {
             }
         }
     }
+
+    @MessageMapping("/video-call/hangup")
+    public void handleCallEndedEvent(@Payload HangupMessage hangupMessage) {
+        Long fromUserId =hangupMessage.getFromUserId();
+        User user = userRepository.findById(fromUserId)
+                .orElseThrow(() -> new UserNotFoundException(fromUserId));
+        logger.info("Received READY message from user: {}",user.getEmail());
+
+        User toUser = userRepository.findById(hangupMessage.getToUserId())
+                .orElseThrow(() -> new UserNotFoundException(hangupMessage.getToUserId()));
+
+        logger.info("Send hang up message to user: {}",toUser.getEmail());
+        messagingTemplate.convertAndSendToUser(toUser.getEmail(), "/queue/video-call/peer", hangupMessage);
+    }
 }

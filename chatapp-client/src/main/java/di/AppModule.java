@@ -10,6 +10,8 @@ import controllers.CreateChatGroupController;
 import controllers.FooterLeftController;
 import service.*;
 import utility.WebRTCManager;
+import view.MainVideoFrame;
+import view.MainVideoFrameController;
 import view.login.LoginController;
 import view.login.LoginService;
 import view.login.LoginServiceImpl;
@@ -28,6 +30,9 @@ import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
 import view.main.rightPanel.message.MessageServiceImpl;
+import view.main.rightPanel.otherInfoTop.CallVideoService;
+import view.main.rightPanel.otherInfoTop.CallVideoServiceImpl;
+import view.main.rightPanel.otherInfoTop.InfoOtherAndFeatureController;
 import view.main.rightPanel.sendmessage.SendMessageController;
 import view.main.rightPanel.sendmessage.SendMessageService;
 import view.main.rightPanel.sendmessage.SendMessageServiceImpl;
@@ -51,6 +56,7 @@ public class AppModule extends AbstractModule {
         bind(ChatListService.class).to(ChatListServiceImpl.class);
         bind(MessageService.class).to(MessageServiceImpl.class);
         bind(SendMessageService.class).to(SendMessageServiceImpl.class);
+        bind(CallVideoService.class).to(CallVideoServiceImpl.class);
 
         //Controller Login and Register
         bind(LoginController.class);
@@ -72,6 +78,8 @@ public class AppModule extends AbstractModule {
         bind(HeaderRightController.class);
         bind(SendMessageController.class);
         bind(MessageController.class);
+        bind(InfoOtherAndFeatureController.class);
+        bind(MainVideoFrameController.class);
 
         //View Left Panel
         bind(SearchPanel.class).in(Singleton.class);
@@ -86,6 +94,8 @@ public class AppModule extends AbstractModule {
         bind(MessagePanel.class).in(Singleton.class);
         bind(WebRTCManager.class).in(Singleton.class);
         bind(WebSocketClientManager.class).in(Singleton.class);
+
+        bind(MainVideoFrame.class).in(Singleton.class);
     }
 
     @Provides

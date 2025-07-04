@@ -5,9 +5,6 @@ import com.forcy.chatapp.security.jwt.JwtUtility;
 import com.forcy.chatapp.security.jwt.JwtValidationException;
 import com.forcy.chatapp.user.UserRepository;
 import com.resend.Resend;
-import com.resend.core.exception.ResendException;
-import com.resend.services.emails.model.CreateEmailOptions;
-import com.resend.services.emails.model.CreateEmailResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -36,7 +33,7 @@ public class EmailService {
         this.userRepository = userRepository;
         this.mailSender = mailSender;
     }
-    public void sendVerificationEmail2(String to, String token) {
+    public void sendVerificationEmail(String to, String token) {
         String subject = "Xác thực tài khoản";
         String link = "http://localhost:10000/api/oauth/verify?token=" + token;
         String html = "<p>Nhấn vào <a href=\"" + link + "\">đây</a> để xác thực tài khoản.</p>";
@@ -56,26 +53,31 @@ public class EmailService {
         }
     }
 
-
-    public void sendVerificationEmail(String to, String token) {
-        String link = "http://localhost:10000/api/oauth/verify?token=" + token;
-        String html = "<p>Nhấn vào <a href=\"" + link + "\">đây</a> để xác thực tài khoản.</p>";
-
-        CreateEmailOptions params = CreateEmailOptions.builder()
-                .from("My App <onboarding@resend.dev>")
-                .to(to)
-                .subject("Xác thực tài khoản")
-                .html(html)
-                .build();
+    public void sendOtpResetPasswordEmail(String to, String otpCode) {
+        String subject = "Mã xác thực đặt lại mật khẩu";
+        String html = "<p>Xin chào,</p>" +
+                "<p>Mã xác thực để đặt lại mật khẩu của bạn là:</p>" +
+                "<h2>" + otpCode + "</h2>" +
+                "<p>Mã này có hiệu lực trong vòng <strong>15 phút</strong>.</p>" +
+                "<p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>" +
+                "<br><p>Trân trọng,<br>Chat App</p>";
 
         try {
-            CreateEmailResponse response = resend.emails().send(params);
-            System.out.println("Email ID: " + response.getId());
-        } catch (ResendException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Gửi email thất bại: " + e.getMessage());
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail, "Chat App");
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(html, true);
+
+            mailSender.send(message);
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            throw new RuntimeException("Gửi email thất bại: " + e.getMessage(), e);
         }
     }
+
+
     public void verifyEmail(String token) throws JwtValidationException {
         Claims claims = jwtUtil.validateToken(token);
 

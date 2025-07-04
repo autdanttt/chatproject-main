@@ -10,7 +10,7 @@ public class VideoPanel extends JPanel {
     private BufferedImage image;
 
     public void updateImage(BufferedImage img) {
-        logger.info("Updating image");
+//        logger.info("Updating image");
         this.image = img;
         repaint();
     }
@@ -20,5 +20,8 @@ public class VideoPanel extends JPanel {
         super.paintComponent(g);
         if (image != null)
             g.drawImage(image, 0, 0, this.getWidth(), this.getHeight(), null);
+    }
+    public void clear() {
+        this.getGraphics().clearRect(0, 0, getWidth(), getHeight());
     }
 }
