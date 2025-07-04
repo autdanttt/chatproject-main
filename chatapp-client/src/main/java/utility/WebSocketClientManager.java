@@ -99,6 +99,8 @@ public class WebSocketClientManager {
             public void run() {
                 logger.info("Running seen sender timer");
                 for (Map.Entry<Long, Long> entry : pendingSeenPrivate.entrySet()) {
+                    logger.info("Pending seen private: {}",pendingSeenPrivate);
+                    logger.info("Pending seen entry: {}",entry);
                     Long chatId = entry.getKey();
                     Long messageId = entry.getValue();
                     logger.info("Seen sender timer: chatId={}, messageId={}", chatId, messageId);
