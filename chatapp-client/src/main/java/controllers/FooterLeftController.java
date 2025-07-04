@@ -3,24 +3,25 @@ package controllers;
 import api.ChatApi;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import custom.ConfirmCustom;
 import di.BaseController;
 import event.ChatDeletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import event.ChatSelectedEvent;
 import view.main.leftPanel.components.FooterPanel;
 import view.main.dialog.CreateChat;
 import view.main.dialog.CreateGroupChat;
 
 import javax.inject.Inject;
 import javax.swing.*;
+import java.io.File;
 
 public class FooterLeftController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(FooterLeftController.class);
     private final FooterPanel footerPanel;
 
     private final CreateChatController createChatController;
-
     private final CreateChatGroupController createChatGroupController;
 
     private CreateChat chatDialog;
@@ -28,6 +29,8 @@ public class FooterLeftController extends BaseController {
     private ChatApi chatApi;
     private Long chatIdBoth;
     private String type;
+    private String basePath = new File(System.getProperty("user.dir")).getParent();
+
 
     @Inject
     public FooterLeftController(FooterPanel footerPanel, CreateChatController createChatController, CreateChatGroupController createChatGroupController, ChatApi chatApi, EventBus eventBus) {
@@ -56,25 +59,25 @@ public class FooterLeftController extends BaseController {
         });
 
         footerPanel.deleteChatListener(e -> {
-            logger.info(">>>>>>>>>>>>>Chat deleted: {} - {}", chatIdBoth, type);
+            JFrame mainJFrame = (JFrame) SwingUtilities.getWindowAncestor(footerPanel);
+            ImageIcon imageIcon = new ImageIcon(basePath + "/images/QUESTION.png");
             switch (type) {
                 case "CHAT":
-                    boolean successDeleteChat = chatApi.deleteChat(chatIdBoth);
-                    eventBus.post(new ChatDeletedEvent(chatIdBoth));
-                    if (successDeleteChat) {
-                        logger.info(">>>>>>>>>>>>>>>>>>>>>Delete Chat Success<<<<<<<<<<<<<<<<<<<<<<<");
-                    } else {
-                        logger.error(">>>>>>>>>>>>>>>>>>>>>Delete Chat Failed<<<<<<<<<<<<<<<<<<<<<");
+                    boolean comfirmDelete = ConfirmCustom.showConfirmDialog(mainJFrame,
+                            "Bạn có muốn xóa chat này không?",
+                            "Xác nhận xóa!",
+                            imageIcon,
+                            "Hủy",
+                            "Xóa");
+
+                    if (comfirmDelete) {
+                        boolean successDeleteChat = chatApi.deleteChat(chatIdBoth);
+                        eventBus.post(new ChatDeletedEvent(chatIdBoth));
                     }
                     break;
                 case "GROUP":
                     boolean successDeleteChatGroup = chatApi.deleteGroupChat(chatIdBoth);
                     eventBus.post(new ChatDeletedEvent(chatIdBoth));
-                    if (successDeleteChatGroup) {
-                        logger.info(">>>>>>>>>>>>>>>>>>>>>>>Delete Group Chat Success<<<<<<<<<<<<<<<<<<<<<");
-                    }else {
-                        logger.info(">>>>>>>>>>>>>>>>>>>>>>>>Delete Group Chat Failed<<<<<<<<<<<<<<<<<<<<<");
-                    }
                     break;
             }
         });

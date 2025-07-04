@@ -1,12 +1,8 @@
 package view.main.rightPanel.components;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 
 public class HeaderRightPanel extends JPanel {
     private JLabel userLabel;
@@ -29,6 +25,7 @@ public class HeaderRightPanel extends JPanel {
         avatarLabel = new JLabel();
         avatarLabel.setPreferredSize(new Dimension(40, 40));
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        avatarLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         pn2.add(userLabel, BorderLayout.CENTER);
         pn2.add(avatarLabel, BorderLayout.EAST);

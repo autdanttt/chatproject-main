@@ -64,8 +64,10 @@ public class AppModule extends AbstractModule {
         bind(CreateChatGroupController.class);
         bind(FooterLeftController.class);
 
+
         //Controller Main
         bind(MainChatController.class);
+        bind(MainChatView.class).in(Singleton.class);
 
         //Controller Right Panel
         bind(HeaderRightController.class);
@@ -84,7 +86,6 @@ public class AppModule extends AbstractModule {
         bind(RightPanel.class).in(Singleton.class);
         bind(HeaderRightPanel.class).in(Singleton.class);
         bind(MessagePanel.class).in(Singleton.class);
-        bind(MainChatView.class).in(Singleton.class);
         bind(WebRTCManager.class).in(Singleton.class);
         bind(WebSocketClientManager.class).in(Singleton.class);
     }

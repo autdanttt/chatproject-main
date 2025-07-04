@@ -11,11 +11,9 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class RegisterView extends JFrame {
-    private final JTextField usernameField;
-    private final JTextField passwordField;
+    private final JTextField emailField, fullNameField, passwordField, confirmPasswordField;
     private final JButton sendButton;
     private final JButton cancelButton;
-    private String username;
 
     public RegisterView() {
         setTitle("Đăng ký");
@@ -33,37 +31,44 @@ public class RegisterView extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         gbc.insets = new Insets(4, 0, 4, 0);
-        gbc.gridwidth = 1;
+        gbc.gridwidth = 2;
 
-        JLabel usernameLabel = new JLabel("Tên người dùng");
-        usernameLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
+        JLabel title = new JLabel("Đăng Kí".toUpperCase());
+        title.setFont(new Font("Montserrat", Font.BOLD, 25));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        contentPanel.add(title, gbc);
+
+        JLabel l0 = new JLabel("Nhập email");
+        l0.setFont(new Font("Montserrat", Font.BOLD, 15));
         gbc.gridx = 0;
         gbc.gridy = 1;
-        contentPanel.add(usernameLabel, gbc);
+        contentPanel.add(l0, gbc);
 
-        usernameField = new RoundedTextField(20);
-        usernameField.setPreferredSize(new Dimension(200, 40));
-        usernameField.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        emailField = new RoundedTextField(20);
+        emailField.setPreferredSize(new Dimension(200, 40));
+        emailField.setFont(new Font("Montserrat", Font.PLAIN, 14));
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
-        contentPanel.add(usernameField, gbc);
+        contentPanel.add(emailField, gbc);
 
-        JLabel phoneLabel = new JLabel("Số điện thoại");
-        phoneLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
+        JLabel l1 = new JLabel("Nhập tên người dùng");
+        l1.setFont(new Font("Montserrat", Font.BOLD, 15));
         gbc.gridx = 0;
         gbc.gridy = 3;
-        contentPanel.add(phoneLabel, gbc);
+        contentPanel.add(l1, gbc);
 
-        JTextField phoneField = new RoundedTextField(20);
-        phoneField.setPreferredSize(new Dimension(200, 40));
+        fullNameField = new RoundedTextField(20);
+        fullNameField.setPreferredSize(new Dimension(200, 40));
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
-        contentPanel.add(phoneField, gbc);
+        contentPanel.add(fullNameField, gbc);
 
-        JLabel passwordLabel = new JLabel("Mật khẩu");
-        passwordLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
+        JLabel passwordLabel = new JLabel("Nhập mật khẩu");
+        passwordLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
         gbc.gridy = 5;
         gbc.gridwidth = 1;
         contentPanel.add(passwordLabel, gbc);
@@ -77,12 +82,12 @@ public class RegisterView extends JFrame {
         contentPanel.add(passwordField, gbc);
 
         JLabel confirmPasswordLabel = new JLabel("Nhập lại mật khẩu");
-        confirmPasswordLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
+        confirmPasswordLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
         gbc.gridy = 7;
         gbc.gridwidth = 1;
         contentPanel.add(confirmPasswordLabel, gbc);
 
-        JPasswordField confirmPasswordField = new RoundedPasswordField(20);
+        confirmPasswordField = new RoundedPasswordField(20);
         confirmPasswordField.setPreferredSize(new Dimension(200, 40));
         confirmPasswordField.setFont(new Font("Montserrat", Font.PLAIN, 14));
         gbc.gridx = 0;
@@ -113,22 +118,24 @@ public class RegisterView extends JFrame {
         setVisible(true);
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-        if (usernameField != null) {
-            usernameField.setText(username);
-        }
+    public String getEmail() {
+        return emailField.getText();
     }
 
-    public String getUsername() {
-        return usernameField.getText();
+    public String getFullName() {
+        return fullNameField.getText();
     }
 
     public String getPassword() {
         return passwordField.getText();
     }
 
-    public void addSendButtonListener(ActionListener listener) {
+    public String getConfirmPassword() {
+        return confirmPasswordField.getText();
+    }
+
+
+    public void addRegisterButtonListener(ActionListener listener) {
         sendButton.addActionListener(listener);
 
     }
@@ -136,9 +143,4 @@ public class RegisterView extends JFrame {
     public void addCancelButtonListener(ActionListener listener) {
         cancelButton.addActionListener(listener);
     }
-
-    public void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
 }

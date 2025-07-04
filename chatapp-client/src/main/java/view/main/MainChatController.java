@@ -1,7 +1,9 @@
 package view.main;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import event.UserLogoutEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
@@ -13,7 +15,7 @@ import view.login.TokenManager;
 import javax.swing.*;
 
 public class MainChatController extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainChatController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MainChatController.class);
     private String email;
     private String fullName;
     private Long userId;
@@ -30,7 +32,7 @@ public class MainChatController extends BaseController {
         this.mainChatView = mainChatView;
         this.webSocketClientManager = webSocketClientManager;
         this.eventBus = eventBus;
-
+        eventBus.register(this);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class MainChatController extends BaseController {
         }
         mainChatView.setVisible(true);
 
-        LOGGER.info("Avatar url: " + avatarUrl);
+//        logger.info("Avatar url: " + avatarUrl);
         eventBus.post(new UserToken(TokenManager.getAccessToken(), userId, email, fullName, avatarUrl));
         AutoRefreshScheduler.start();
 
@@ -64,9 +66,14 @@ public class MainChatController extends BaseController {
         }
     }
 
+    @Subscribe
+    public void onUserLogoutEvent(UserLogoutEvent event) {
+        logger.info("???????????????????????onUserLogoutEvent");
+        mainChatView.dispose();
+    }
+
     @Override
     public void deactivate() {
         mainChatView.setVisible(false);
-
     }
 }

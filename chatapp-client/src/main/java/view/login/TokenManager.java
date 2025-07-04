@@ -37,4 +37,11 @@ public class TokenManager {
     public static void setEmail(String email) {
         TokenManager.email = email;
     }
+
+    public static void clear() {
+        userId = null;
+        accessToken = null;
+        refreshToken = null;
+        email = null;
+    }
 }
