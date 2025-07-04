@@ -33,12 +33,12 @@ public class UserRepositoryTests {
     public void testCreateUser() {
         Role role = entityManager.find(Role.class, 1);
         User user = new User();
-        user.setEmail("autdant@gmail.com");
+        user.setEmail("kbg75005@toaik.com");
         user.setPassword(passwordEncoder.encode("12345678"));
-        user.setFullName("Autdant");
+        user.setFullName("Nguyễn Văn An");
         user.setCreateAt(new Date());
         user.setAvatarUrl("https://res.cloudinary.com/dm8tfyppk/image/upload/v1751360443/avatar/c4d30890-c6e2-48e6-a3af-d86089639b5d.jpg");
-        user.setVerified(false);
+        user.setVerified(true);
         user.addRole(role);
 
         User savedUser = userRepository.save(user);
