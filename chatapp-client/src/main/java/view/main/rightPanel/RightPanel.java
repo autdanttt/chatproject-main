@@ -21,6 +21,7 @@ public class RightPanel extends JPanel {
     private CenterRightPanel centerRightPanel;
     private FooterRightPanel footerRightPanel;
 
+
     @Inject
     public RightPanel(MessagePanel messagePanel, MessageController messageController, SendMessageController sendMessageController, HeaderRightController headerRightController, HeaderRightPanel headerRightPanel, CenterRightPanel centerRightPanel, FooterRightPanel footerRightPanel) {
         this.messagePanel = messagePanel;
@@ -40,4 +41,8 @@ public class RightPanel extends JPanel {
         add(footerRightPanel, BorderLayout.SOUTH);
     }
 
+    public void reload() {
+        revalidate();         // Cập nhật lại layout nếu cần
+        repaint();            // Vẽ lại
+    }
 }

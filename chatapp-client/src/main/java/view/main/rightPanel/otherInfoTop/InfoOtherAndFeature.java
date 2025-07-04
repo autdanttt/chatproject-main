@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import custom.CreateButton;
 import event.FullNameUpdateEvent;
 import utility.WebRTCManager;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+//import view.main.leftPanel.chatlist.ChatSelectedEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,6 +64,10 @@ public class InfoOtherAndFeature extends JPanel {
 
 //        initializeListeners();
     }
+
+//    private void initializeListeners() {
+//        callVideoButton.addActionListener(e -> startVideoCall());
+//    }
 
 //    private void initializeListeners() {
 //        callVideoButton.addActionListener(e -> startVideoCall());

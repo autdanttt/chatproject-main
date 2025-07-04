@@ -22,7 +22,7 @@ public class FooterRightPanel extends JPanel {
     private String basePath = new File(System.getProperty("user.dir")).getParent();
 
     public FooterRightPanel() {
-        setLayout(new FlowLayout(FlowLayout.LEFT, 5, 11));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 5, 11));
         setBackground(Color.WHITE);
 
         sendEmoji = new CreateButton(basePath + "/images/EMOJI.png");
@@ -33,7 +33,8 @@ public class FooterRightPanel extends JPanel {
 
         sendImage.addActionListener(e -> showFileChooser());
 
-        sendMessage = new RoundedTextField(30);
+
+        sendMessage = new RoundedTextField(35);
         sendMessage.setPreferredSize(new Dimension(400, 48));
 
         sendBtn = new CreateButton(basePath + "/images/SEND.png");

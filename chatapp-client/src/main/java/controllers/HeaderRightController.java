@@ -6,6 +6,8 @@ import com.google.inject.Inject;
 import custom.ConfirmCustom;
 import custom.RoundedImageUtil;
 import di.BaseController;
+import event.ChatSelectedEvent;
+import event.UserLogoutEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.login.TokenManager;
@@ -61,6 +63,7 @@ public class HeaderRightController extends BaseController {
 
                             if (confirm) {
                                 TokenManager.clear();
+                                eventBus.post(new UserLogoutEvent());
                                 JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(headerRightPanel);
                                 currentFrame.dispose();
                                 navigator.navigateTo("Login");
@@ -72,7 +75,6 @@ public class HeaderRightController extends BaseController {
             }
         });
     }
-
 
     @Subscribe
     public void onJwtToken(UserToken userToken) {

@@ -8,7 +8,7 @@ import di.BaseController;
 import event.ChatDeletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import event.ChatSelectedEvent;
 import view.main.leftPanel.components.FooterPanel;
 import view.main.dialog.CreateChat;
 import view.main.dialog.CreateGroupChat;

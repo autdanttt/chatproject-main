@@ -13,7 +13,7 @@ import utility.WebRTCManager;
 import view.ErrorDTO;
 import view.login.TokenManager;
 import view.main.UserToken;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import event.ChatSelectedEvent;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

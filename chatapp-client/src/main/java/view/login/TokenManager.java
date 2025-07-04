@@ -44,5 +44,4 @@ public class TokenManager {
         refreshToken = null;
         email = null;
     }
-
 }
