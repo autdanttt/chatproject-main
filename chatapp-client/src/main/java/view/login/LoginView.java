@@ -36,9 +36,9 @@ public class LoginView extends JFrame {
         gbc.insets = new Insets(8, 0, 0, 0);
 
 
-        JLabel titleLabel = new JLabel("<html><b>Nhập user name và password để<br>đăng nhập</b></html>");
-        titleLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
-        titleLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        JLabel titleLabel = new JLabel("Đăng nhập".toUpperCase());
+        titleLabel.setFont(new Font("Montserrat", Font.BOLD, 25));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -50,7 +50,7 @@ public class LoginView extends JFrame {
         gbc.gridwidth = 1;
 
         JLabel usernameLabel = new JLabel("Tên người dùng");
-        usernameLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
+        usernameLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -65,7 +65,8 @@ public class LoginView extends JFrame {
         contentPanel.add(usernameField, gbc);
 
         JLabel passwordLabel = new JLabel("Mật khẩu");
-        passwordLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
+        passwordLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
