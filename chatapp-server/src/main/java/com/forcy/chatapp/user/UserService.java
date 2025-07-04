@@ -106,7 +106,7 @@ public class UserService{
 
     public List<UserDTO> getAllUserExcept(Long userId) {
         return userRepository.findAll().stream()
-                .filter(user -> !user.getId().equals(userId))
+                .filter(user -> !user.getId().equals(userId) && user.isVerified())
                 .map(user -> new UserDTO(user.getId(), user.getFullName(), user.getAvatarUrl()))
                 .collect(Collectors.toList());
     }
