@@ -1,4 +1,4 @@
-package view.main.leftPanel.chatlist;
+package event;
 
 public class ChatSelectedEvent {
     private Long chatId;

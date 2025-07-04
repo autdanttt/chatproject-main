@@ -24,7 +24,7 @@ import payload.SdpPayload;
 import view.ApiResult;
 import view.ErrorDTO;
 import view.main.UserToken;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import event.ChatSelectedEvent;
 
 import java.lang.reflect.Type;
 import java.util.*;

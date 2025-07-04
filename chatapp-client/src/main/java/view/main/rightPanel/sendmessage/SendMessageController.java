@@ -13,7 +13,7 @@ import view.ApiResult;
 import view.ErrorDTO;
 import view.login.TokenManager;
 import view.main.UserToken;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import event.ChatSelectedEvent;
 import view.main.rightPanel.components.FooterRightPanel;
 
 import javax.swing.*;

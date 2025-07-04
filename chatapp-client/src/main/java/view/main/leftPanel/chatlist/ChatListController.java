@@ -3,9 +3,7 @@ package view.main.leftPanel.chatlist;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
-import event.ChatCreatedEvent;
-import event.ChatDeletedEvent;
-import event.FullNameUpdateEvent;
+import event.*;
 import model.ChatGroupResponse;
 import model.ChatItem;
 import model.ChatResponse;
@@ -15,15 +13,19 @@ import di.BaseController;
 import view.login.TokenManager;
 import view.main.UserToken;
 
+import javax.swing.*;
+
 public class ChatListController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(ChatListController.class);
     private final ChatListService chatListService;
     private final ChatListPanel chatListPanel;
+    private EventBus eventBus;
 
     @Inject
     public ChatListController(ChatListPanel chatListPanel, ChatListService chatListService, EventBus eventBus) {
         this.chatListPanel = chatListPanel;
         this.chatListService = chatListService;
+        this.eventBus = eventBus;
         eventBus.register(this);
         initializeListeners();
     }
@@ -71,6 +73,7 @@ public class ChatListController extends BaseController {
             ));
         }
 
+
         ChatGroupResponse[] listGroup = chatListService.getChatGroupList(TokenManager.getAccessToken());
         for (ChatGroupResponse group : listGroup) {
             chatListPanel.getChatListModel().addElement(new ChatItem(
@@ -83,6 +86,11 @@ public class ChatListController extends BaseController {
             ));
         }
     }
+
+    @Subscribe
+    public void onUserLogout(UserLogoutEvent event) {
+        chatListPanel.getChatList().clearSelection();
+    };
 
     private ChatResponse[] getListChat() {
         return chatListService.getChatList(TokenManager.getAccessToken());

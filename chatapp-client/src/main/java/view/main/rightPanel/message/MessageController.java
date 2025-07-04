@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import di.BaseController;
 import view.login.TokenManager;
 import view.main.UserToken;
-import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import event.ChatSelectedEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
