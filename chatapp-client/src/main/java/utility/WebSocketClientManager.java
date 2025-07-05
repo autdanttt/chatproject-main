@@ -29,6 +29,7 @@ import view.*;
 import view.login.TokenManager;
 import view.main.UserToken;
 import event.ChatSelectedEvent;
+import view.main.rightPanel.otherInfoTop.UserStatus;
 
 import javax.swing.*;
 import java.lang.reflect.Type;
@@ -78,10 +79,12 @@ public class WebSocketClientManager {
         if (chatSelectedEvent.getType().equals("GROUP")) {
             pendingSeenGroup.put(chatId,0L);
             isGroup = true;
+
         }else {
             pendingSeenPrivate.put(chatId,0L);
             isGroup = false;
             otherUserId = chatSelectedEvent.getUserId();
+            sendWatching(TokenManager.getUserId(), chatSelectedEvent.getUserId());
         }
     }
 
@@ -98,6 +101,14 @@ public class WebSocketClientManager {
     public void onMessageSeenEvent(MessageSeenEvent messageSeenEvent) {
         logger.info("Message seen from controller: {}", messageSeenEvent.getMessageId());
         updatePendingSeen(messageSeenEvent.getMessageId());
+    }
+
+    public void sendWatching(Long userId, Long otherUserId) {
+        if (stompSession != null && stompSession.isConnected()) {
+            WatchingRequest watchingRequest = new WatchingRequest(userId, otherUserId);
+            logger.info("Send watching request: {}", watchingRequest.getOtherUserId());
+            stompSession.send("/app/watching", watchingRequest);
+        }
     }
 
     public void updatePendingSeen(Long messageId) {
@@ -194,6 +205,9 @@ public class WebSocketClientManager {
                     subscribeToCandidate();
 
                     subscribeToEndedCall();
+
+                    sendHeartbeat(TokenManager.getUserId());
+                    subscribeHeartbeat();
                 }
 
                 @Override
@@ -224,6 +238,24 @@ public class WebSocketClientManager {
             logger.error("Exception during WebSocket setup", ex);
             return ApiResult.fail(new ErrorDTO(new Date(), 500, url, List.of(ex.getMessage())));
         }
+    }
+
+    private void subscribeHeartbeat() {
+        stompSession.subscribe("/user/queue/heartbeat", new StompFrameHandler() {
+
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return UserStatus.class;
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+
+                UserStatus status = (UserStatus) payload;
+                logger.info("Received heartbeat from server: " +  status.email +" "+ status.getStatus());
+                eventBus.post(new OtherUserStatusEvent(status.getStatus()));
+            }
+        });
     }
 
     private void subscribeToEndedCall() {
@@ -417,6 +449,24 @@ public class WebSocketClientManager {
             }
         });
     }
+    public void sendHeartbeat(Long userId) {
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (stompSession != null && stompSession.isConnected()) {
+                    HeartbeatRequest payload = new HeartbeatRequest();
+                    payload.setUserId(userId);
+
+                    logger.info("Send heart beat: " + payload.getUserId());
+                    stompSession.send("/app/heartbeat", payload);
+//        logger.info("Sent heartbeat for user: " + userId);
+                } else {
+                    logger.info("Can't send heartbeat, STOMP session not connected");
+                }
+            }
+        }, 0, 30_000);
+    }
 
     public void sendSeenEvent(Long userId, Long chatId, Long groupId, Long messageId){
         if(stompSession != null && stompSession.isConnected()){
@@ -432,6 +482,7 @@ public class WebSocketClientManager {
             logger.info("Can't send seen event since stomp session is not connected");
         }
     }
+
 
     public void sendHangupEvent(Long userId, Long otherUserId){
         if(stompSession != null && stompSession.isConnected()){

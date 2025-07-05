@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import utility.OtherUserStatusEvent;
 import utility.WebRTCManager;
 import view.ErrorDTO;
 import view.login.TokenManager;
@@ -27,18 +28,19 @@ public class InfoOtherAndFeatureController extends BaseController {
     private final Logger logger = LoggerFactory.getLogger(InfoOtherAndFeatureController.class);
     private final InfoOtherAndFeature infoOtherAndFeature;
     private final CallVideoService callVideoService;
-    private final WebRTCManager webRTCManager;
+    private final StatusUserService statusUserService;
 
     private Long chatId;
     private Long otherUserId;
     private Long userId;
     private String fullName;
+    private String type;
 
     @Inject
-    public InfoOtherAndFeatureController(InfoOtherAndFeature infoOtherAndFeature, WebRTCManager webRTCManager,CallVideoService callVideoService, EventBus eventBus) {
+    public InfoOtherAndFeatureController(InfoOtherAndFeature infoOtherAndFeature,StatusUserService statusUserService,CallVideoService callVideoService, EventBus eventBus) {
         this.infoOtherAndFeature = infoOtherAndFeature;
-        this.webRTCManager = webRTCManager;
         this.callVideoService = callVideoService;
+        this.statusUserService = statusUserService;
 
         eventBus.register(this);
         initializeListeners();
@@ -53,6 +55,7 @@ public class InfoOtherAndFeatureController extends BaseController {
     public void onChatSelected(ChatSelectedEvent event) {
         this.chatId = event.getChatId();
         this.otherUserId = event.getUserId();
+        this.type = event.getType();
     }
     @Subscribe
     public void onFullNameUpdate(FullNameUpdateEvent event) {
@@ -60,6 +63,29 @@ public class InfoOtherAndFeatureController extends BaseController {
         infoOtherAndFeature.getUserOtherName().setText(event.getFullName());
         setAvatarIcon(event.getImageUrl());
         fullName = event.getFullName();
+        if(type.equals("CHAT")) {
+            logger.info("Received type " + type);
+            fetchStatus(otherUserId);
+        }else {
+            logger.info("Received type " + type);
+            infoOtherAndFeature.getStatusOther().setText(" ");
+        }
+    }
+
+    @Subscribe
+    public void onOtherUserStatusEvent(OtherUserStatusEvent event) {
+        if(type.equals("CHAT")) {
+            logger.info("Received type " + type);
+            infoOtherAndFeature.getStatusOther().setText(event.getStatus());
+        }else {
+            logger.info("Received type " + type);
+            infoOtherAndFeature.getStatusOther().setText(" ");
+        }
+    }
+
+    private void fetchStatus(Long otherUserId) {
+        UserStatus userStatus = statusUserService.fetchStatus(otherUserId, TokenManager.getAccessToken());
+        infoOtherAndFeature.getStatusOther().setText(userStatus.getStatus());
     }
 
     private void setAvatarIcon(String imageUrl) {

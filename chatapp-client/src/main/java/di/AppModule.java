@@ -30,13 +30,10 @@ import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
 import view.main.rightPanel.message.MessageServiceImpl;
-import view.main.rightPanel.otherInfoTop.CallVideoService;
-import view.main.rightPanel.otherInfoTop.CallVideoServiceImpl;
-import view.main.rightPanel.otherInfoTop.InfoOtherAndFeatureController;
+import view.main.rightPanel.otherInfoTop.*;
 import view.main.rightPanel.sendmessage.SendMessageController;
 import view.main.rightPanel.sendmessage.SendMessageService;
 import view.main.rightPanel.sendmessage.SendMessageServiceImpl;
-import view.main.rightPanel.otherInfoTop.InfoOtherAndFeature;
 import view.main.leftPanel.search.SearchController;
 import view.main.leftPanel.search.SearchPanel;
 import view.register.RegisterController;
@@ -57,6 +54,7 @@ public class AppModule extends AbstractModule {
         bind(MessageService.class).to(MessageServiceImpl.class);
         bind(SendMessageService.class).to(SendMessageServiceImpl.class);
         bind(CallVideoService.class).to(CallVideoServiceImpl.class);
+        bind(StatusUserService.class).to(StatusUserServiceImpl.class);
 
         //Controller Login and Register
         bind(LoginController.class);
