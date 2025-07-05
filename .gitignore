@@ -9,6 +9,7 @@
 *.class
 .idea
 .vscode
+docker-compose.yml
 
 # Logs
 *.log
