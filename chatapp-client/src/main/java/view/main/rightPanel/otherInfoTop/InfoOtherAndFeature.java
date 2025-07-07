@@ -18,8 +18,9 @@ public class InfoOtherAndFeature extends JPanel {
     private final JButton callVideoButton;
     private final JButton callPhoneButton;
     private JLabel avatarOtherLabel;
+    private JLabel statusOther;
 
-    private final WebRTCManager webRTCManager;
+//    private final WebRTCManager webRTCManager;
     private Long chatId;
     private Long otherUserId;
     private Long userId;
@@ -27,8 +28,7 @@ public class InfoOtherAndFeature extends JPanel {
     private String basePath = new File(System.getProperty("user.dir")).getParent();
 
     @Inject
-    public InfoOtherAndFeature(WebRTCManager webRTCManager, EventBus eventBus) {
-        this.webRTCManager = webRTCManager;
+    public InfoOtherAndFeature(EventBus eventBus) {
 
         setLayout(new GridLayout(1, 2));
         setPreferredSize(new Dimension(600, 70));
@@ -42,10 +42,21 @@ public class InfoOtherAndFeature extends JPanel {
         avatarOtherLabel = new JLabel();
         avatarOtherLabel.setPreferredSize(new Dimension(48, 48));
         userOtherName = new JLabel("None");
-        userOtherName.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        userOtherName.setFont(new Font("Montserrat", Font.BOLD, 18));
+
+        statusOther = new JLabel();
+        statusOther.setText(" ");
+        statusOther.setFont(new Font("Montserrat", Font.PLAIN, 14));
+
+        JPanel otherStatusAndName = new JPanel();
+        otherStatusAndName.setLayout(new BorderLayout(0,5));
+        otherStatusAndName.setBackground(Color.WHITE);
+
+        otherStatusAndName.add(userOtherName, BorderLayout.CENTER);
+        otherStatusAndName.add(statusOther, BorderLayout.SOUTH);
 
         avatarOtherPanel.add(avatarOtherLabel);
-        avatarOtherPanel.add(userOtherName);
+        avatarOtherPanel.add(otherStatusAndName);
 
         JPanel featurePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 11));
         featurePanel.setBackground(Color.WHITE);
@@ -62,32 +73,8 @@ public class InfoOtherAndFeature extends JPanel {
 
         eventBus.register(this);
 
-//        initializeListeners();
     }
 
-//    private void initializeListeners() {
-//        callVideoButton.addActionListener(e -> startVideoCall());
-//    }
-
-//    private void initializeListeners() {
-//        callVideoButton.addActionListener(e -> startVideoCall());
-//    }
-//
-//    private void startVideoCall() {
-//        SwingUtilities.invokeLater(() -> {
-//            if (chatId != null && userId != null) {
-//                MainVideoFrame videoFrame = new MainVideoFrame();
-//                videoFrame.setVisible(true);
-//
-//                webRTCManager.setVideoPanel(videoFrame.localPanel, videoFrame.remotePanel);
-//                webRTCManager.initialize(otherUserId);
-//                webRTCManager.addMediaStream(1);
-//                webRTCManager.createOffer(otherUserId);
-//            } else {
-//                JOptionPane.showMessageDialog(null, "Hãy chọn một người để gọi.");
-//            }
-//        });
-//    }
 
     public JLabel getUserOtherName() {
         return userOtherName;
@@ -97,18 +84,10 @@ public class InfoOtherAndFeature extends JPanel {
         return avatarOtherLabel;
     }
 
-//
-//    @Subscribe
-//    public void onChatSelected(ChatSelectedEvent event) {
-//        this.chatId = event.getChatId();
-//        this.otherUserId = event.getUserId();
-//    }
-//
+    public JLabel getStatusOther() {
+        return statusOther;
+    }
 
-//    @Subscribe
-//    public void onUsernameUpdate(FullNameUpdateEvent event) {
-//        userOtherName.setText(event.getFullName());
-//    }
 
     public void setUsername(String username) {
         userOtherName.setText(username);
