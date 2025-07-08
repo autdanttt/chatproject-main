@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import custom.CreateButton;
 import event.FullNameUpdateEvent;
 import utility.WebRTCManager;
-//import view.main.leftPanel.chatlist.ChatSelectedEvent;
+import view.MainVideoFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +18,7 @@ public class InfoOtherAndFeature extends JPanel {
     private final JButton callVideoButton;
     private final JButton callPhoneButton;
     private JLabel avatarOtherLabel;
+    private final JButton renameButton;
     private JLabel statusOther;
 
 //    private final WebRTCManager webRTCManager;
@@ -29,6 +30,7 @@ public class InfoOtherAndFeature extends JPanel {
 
     @Inject
     public InfoOtherAndFeature(EventBus eventBus) {
+
 
         setLayout(new GridLayout(1, 2));
         setPreferredSize(new Dimension(600, 70));
@@ -55,8 +57,13 @@ public class InfoOtherAndFeature extends JPanel {
         otherStatusAndName.add(userOtherName, BorderLayout.CENTER);
         otherStatusAndName.add(statusOther, BorderLayout.SOUTH);
 
+        renameButton = new CreateButton(basePath + "/images/RenameButton.png");
+
         avatarOtherPanel.add(avatarOtherLabel);
         avatarOtherPanel.add(otherStatusAndName);
+//        avatarOtherPanel.add(userOtherName);
+        avatarOtherPanel.add(renameButton);
+        renameButton.setVisible(false);
 
         JPanel featurePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 11));
         featurePanel.setBackground(Color.WHITE);
@@ -76,19 +83,23 @@ public class InfoOtherAndFeature extends JPanel {
     }
 
 
+
     public JLabel getUserOtherName() {
         return userOtherName;
+    }
+
+    public JButton getCallVideoButton() {
+        return renameButton;
     }
 
     public JLabel getAvatarOtherLabel() {
         return avatarOtherLabel;
     }
 
+
     public JLabel getStatusOther() {
         return statusOther;
     }
-
-
     public void setUsername(String username) {
         userOtherName.setText(username);
     }
@@ -96,5 +107,11 @@ public class InfoOtherAndFeature extends JPanel {
     public void addVideoButtonListener(ActionListener listener) {
         callVideoButton.addActionListener(listener);
     }
+    public void renameGroup(ActionListener listener) {
+        renameButton.addActionListener(listener);
+    }
 
+    public JButton getRenameButton(){
+        return renameButton;
+    }
 }

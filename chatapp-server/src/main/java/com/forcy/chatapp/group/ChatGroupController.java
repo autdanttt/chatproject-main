@@ -26,11 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 @RestController
 @RequestMapping("/api/groups")
 @Validated
 public class ChatGroupController {
-
+    Logger logger = LoggerFactory.getLogger(ChatGroupController.class);
     @Autowired
     private ChatGroupService chatGroupService;
 
@@ -59,25 +62,23 @@ public class ChatGroupController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found " + email));
 
-
-        ChatGroupDTO chatGroupDTO = chatGroupService.updateGroupName(groupId, user.getId(), request.getName());
+        logger.info("User iddddddddd: " + user.getId());
+        ChatGroupDTO chatGroupDTO = chatGroupService.updateGroupName(groupId, user.getId(), request.getGroupName());
 
         return new ResponseEntity<>(chatGroupDTO, HttpStatus.OK);
     }
 
-    @PostMapping("/image")
-    public ResponseEntity<?> updateGroupImage(@RequestPart("group_id") Long groupId,@RequestPart("image") MultipartFile file) {
+    @PutMapping("/{group-id}/image")
+    public ResponseEntity<?> updateGroupImage(@PathVariable("group-id") Long groupId,@RequestPart("image") MultipartFile file) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found " + email));
 
         String image = chatGroupService.updateImage(groupId, user.getId(), file);
 
-
         Map<String, String> map = new HashMap<>();
         map.put("image", image);
         return ResponseEntity.ok().body(map);
-
     }
 
 
