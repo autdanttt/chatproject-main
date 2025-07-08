@@ -58,6 +58,7 @@ public class AppModule extends AbstractModule {
 
         //Controller Login and Register
         bind(LoginController.class);
+        bind(ForgotPasswordDialogController.class);
         bind(RegisterController.class);
 
         // Controller Left Panel

@@ -1,13 +1,14 @@
 package view.login;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import event.TakeUserID;
+import controllers.ForgotPasswordDialogController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import di.BaseController;
+import view.main.dialog.ForgotPasswordDialog;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 
@@ -16,16 +17,23 @@ public class LoginController extends BaseController {
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
     private final LoginService loginService;
     private LoginView loginView;
+    private ForgotPasswordDialog forgotPasswordDialog;
+    private ForgotPasswordDialogController forgotPasswordDialogController;
 
     @Inject
-    public LoginController(LoginService loginService) {
+    public LoginController(LoginService loginService, ForgotPasswordDialogController forgotPasswordDialogController) {
         this.loginService = loginService;
+        this.forgotPasswordDialogController = forgotPasswordDialogController;
     }
 
     @Override
     protected void setupDependencies() {
         this.loginView = new LoginView();
 
+        initializeListeners();
+    }
+
+    private void initializeListeners() {
         loginView.addLoginButtonListener(e -> {
             String username = loginView.getUsername().trim();
             String password = loginView.getPassword().trim();
@@ -51,9 +59,15 @@ public class LoginController extends BaseController {
             loginView.setVisible(false);
             navigator.navigateTo("Register", username);
         });
+
+        loginView.addForgetPasswordButtonListener(e -> handleForgotPassword());
     }
 
-    ;
+    private void handleForgotPassword() {
+        forgotPasswordDialog = new ForgotPasswordDialog((JFrame) SwingUtilities.getWindowAncestor(loginView));
+        forgotPasswordDialogController.setForgotPasswordDialog(forgotPasswordDialog);
+        forgotPasswordDialog.setVisible(true);
+    }
 
     @Override
     public void activate(Object... params) {
