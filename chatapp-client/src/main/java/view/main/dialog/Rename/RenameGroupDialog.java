@@ -1,23 +1,21 @@
-package view.main.dialog;
+package view.main.dialog.Rename;
 
 import custom.RoundedButton;
 import custom.RoundedPasswordField;
 import custom.RoundedTextField;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-public class EditProfileUser extends JDialog {
-    private JTextField usernameField;
-    private JPasswordField passwordField;
+public class RenameGroupDialog extends JDialog {
+    private JTextField groupNameField;
     private JLabel avatarLabel;
     private JButton uploadButton;
-    private JButton submitButton, cancelButton;
+    private JButton confirmButton, cancelButton;
 
-    public EditProfileUser(JFrame parent) {
-        super(parent, "Chỉnh sửa thông tin người dùng", true);
+    public RenameGroupDialog(JFrame parent, String currentGroupName) {
+        super(parent, "Chỉnh sửa thông tin", true);
         setSize(600, 500);
         setLocationRelativeTo(parent);
         setResizable(false);
@@ -27,7 +25,7 @@ public class EditProfileUser extends JDialog {
 
         JPanel p1 = new JPanel(new BorderLayout());
         p1.setPreferredSize(new Dimension(600, 100));
-        JLabel title = new JLabel("Chỉnh sử thông tin người dùng".toUpperCase());
+        JLabel title = new JLabel("Chỉnh sử thông tin".toUpperCase());
         title.setFont(new Font("Montserrat", Font.BOLD, 25));
         title.setHorizontalAlignment(SwingConstants.CENTER);
         p1.add(title, BorderLayout.CENTER);
@@ -46,14 +44,15 @@ public class EditProfileUser extends JDialog {
         JPanel fullnamePanel = new JPanel(new BorderLayout(0, 5));
         fullnamePanel.setBackground(Color.WHITE);
 
-        JLabel fullnameLabel = new JLabel("Sửa tên người dùng");
-        fullnameLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
-        usernameField = new RoundedTextField(15);
-        usernameField.setPreferredSize(new Dimension(220, 36));
-        usernameField.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        JLabel currentNameLabel = new JLabel("Tên hiện tại: ");
+        currentNameLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
 
-        fullnamePanel.add(fullnameLabel, BorderLayout.NORTH);
-        fullnamePanel.add(usernameField, BorderLayout.CENTER);
+        JLabel currentName = new JLabel(currentGroupName);
+        currentName.setFont(new Font("Montserrat", Font.BOLD, 14));
+        currentName.setForeground(Color.BLACK);
+
+        fullnamePanel.add(currentNameLabel, BorderLayout.NORTH);
+        fullnamePanel.add(currentName, BorderLayout.CENTER);
 
         contentPanel.add(fullnamePanel, gbc);
 
@@ -61,19 +60,19 @@ public class EditProfileUser extends JDialog {
         JPanel passwordPanel = new JPanel(new BorderLayout(0, 5));
         passwordPanel.setBackground(Color.WHITE);
 
-        JLabel passwordLabel = new JLabel("Sửa mật khẩu");
-        passwordLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
-        passwordField = new RoundedPasswordField(15);
-        passwordField.setPreferredSize(new Dimension(220, 36));
-        passwordField.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        JLabel newNameLabel = new JLabel("Tên mới: ");
+        newNameLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
+        groupNameField = new RoundedTextField(20);
+        groupNameField.setPreferredSize(new Dimension(220, 36));
+        groupNameField.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
         //passwordField = groupNameField
-        //passwordLabel = newNameLabel
+        //newNameLabel = newNameLabel
         //fullNameLabel = currentNameLabel
         //usernameField = currnetName
         //submitButton = confirmButton
-        passwordPanel.add(passwordLabel, BorderLayout.NORTH);
-        passwordPanel.add(passwordField, BorderLayout.CENTER);
+        passwordPanel.add(newNameLabel, BorderLayout.NORTH);
+        passwordPanel.add(groupNameField, BorderLayout.CENTER);
 
         contentPanel.add(passwordPanel, gbc);
 
@@ -110,18 +109,18 @@ public class EditProfileUser extends JDialog {
         cancelButton = new RoundedButton("Hủy");
         cancelButton.setPreferredSize(new Dimension(200, 44));
 
-        submitButton = new RoundedButton("Thực hiện yêu cầu");
-        submitButton.setPreferredSize(new Dimension(200, 44));
+        confirmButton = new RoundedButton("Thực hiện yêu cầu");
+        confirmButton.setPreferredSize(new Dimension(200, 44));
 
         int panelHeight = p3.getPreferredSize().height;
-        int buttonHeight = submitButton.getPreferredSize().height;
+        int buttonHeight = confirmButton.getPreferredSize().height;
         int centerH = (panelHeight - buttonHeight) / 2 - 5;
 
         JPanel p4 = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, centerH));
         p4.setBackground(Color.WHITE);
 
         p4.add(cancelButton);
-        p4.add(submitButton);
+        p4.add(confirmButton);
 
         p3.add(p4, BorderLayout.CENTER);
 
@@ -131,14 +130,12 @@ public class EditProfileUser extends JDialog {
         mainPanel.add(p3, BorderLayout.SOUTH);
 
         setContentPane(mainPanel);
+
     }
 
-    public JTextField getUsernameField() {
-        return usernameField;
-    }
 
-    public JPasswordField getPasswordField() {
-        return passwordField;
+    public JTextField getGroupNameField() {
+        return groupNameField;
     }
 
     public JLabel getAvatarLabel() {
@@ -149,11 +146,26 @@ public class EditProfileUser extends JDialog {
         return uploadButton;
     }
 
-    public JButton getSubmitButton() {
-        return submitButton;
+    public JButton getConfirmButton() {
+        return confirmButton;
     }
 
-    public void addCacelActionListener(ActionListener e) {
-        cancelButton.addActionListener(e);
+
+    public String getNewGroupName() {
+        return groupNameField.getText().trim();
     }
+
+    public void addConfirmListener(ActionListener listener) {
+        confirmButton.addActionListener(listener);
+    }
+
+    public void addCancelListener(ActionListener listener) {
+        cancelButton.addActionListener(listener);
+    }
+
+    public void addPhotoListener(ActionListener listener) {
+        uploadButton.addActionListener(listener);
+    }
+
 }
+

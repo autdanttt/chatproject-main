@@ -16,6 +16,7 @@ public class InfoOtherAndFeature extends JPanel {
     private final JButton callVideoButton;
     private final JButton callPhoneButton;
     private JLabel avatarOtherLabel;
+    private final JButton renameButton;
 
     private final WebRTCManager webRTCManager;
     private Long chatId;
@@ -27,6 +28,7 @@ public class InfoOtherAndFeature extends JPanel {
     @Inject
     public InfoOtherAndFeature(WebRTCManager webRTCManager, EventBus eventBus) {
         this.webRTCManager = webRTCManager;
+
 
         setLayout(new GridLayout(1, 2));
         setPreferredSize(new Dimension(600, 70));
@@ -42,8 +44,12 @@ public class InfoOtherAndFeature extends JPanel {
         userOtherName = new JLabel("None");
         userOtherName.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
+        renameButton = new CreateButton(basePath + "/images/RenameButton.png");
+
         avatarOtherPanel.add(avatarOtherLabel);
         avatarOtherPanel.add(userOtherName);
+        avatarOtherPanel.add(renameButton);
+        renameButton.setVisible(false);
 
         JPanel featurePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 11));
         featurePanel.setBackground(Color.WHITE);
@@ -67,6 +73,7 @@ public class InfoOtherAndFeature extends JPanel {
         callVideoButton.addActionListener(e -> startVideoCall());
     }
 
+
     private void startVideoCall() {
         SwingUtilities.invokeLater(() -> {
             if (chatId != null && userId != null) {
@@ -85,6 +92,10 @@ public class InfoOtherAndFeature extends JPanel {
 
     public JLabel getUserOtherName() {
         return userOtherName;
+    }
+
+    public JButton getCallVideoButton() {
+        return renameButton;
     }
 
     public JLabel getAvatarOtherLabel() {
@@ -111,5 +122,11 @@ public class InfoOtherAndFeature extends JPanel {
     public void addVideoButtonListener(ActionListener listener) {
         callVideoButton.addActionListener(listener);
     }
+    public void renameGroup(ActionListener listener) {
+        renameButton.addActionListener(listener);
+    }
 
+    public JButton getRenameButton(){
+        return renameButton;
+    }
 }

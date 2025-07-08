@@ -3,14 +3,19 @@ package view.main.rightPanel.otherInfoTop;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import controllers.RenameGroupController;
 import di.BaseController;
 import event.FullNameUpdateEvent;
+import event.GroupRenamedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
+import view.login.TokenManager;
 import view.main.UserToken;
 import event.ChatSelectedEvent;
+import view.main.dialog.Rename.RenameGroupDialog;
+import view.main.dialog.Rename.RenameGroupImpl;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,43 +27,72 @@ import java.net.URL;
 public class InfoOtherAndFeatureController extends BaseController {
     private final Logger logger = LoggerFactory.getLogger(InfoOtherAndFeatureController.class);
     private final InfoOtherAndFeature infoOtherAndFeature;
+    private final RenameGroupImpl renameGroupImpl;
     private final WebRTCManager webRTCManager;
+    private RenameGroupDialog renameGroupDialog;
+    private final RenameGroupController renameGroupController;
 
     private Long chatId;
     private Long otherUserId;
     private Long userId;
+    private String jwtToken;
+    private String Name;
+    private String type;
+
 
     @Inject
-    public InfoOtherAndFeatureController(InfoOtherAndFeature infoOtherAndFeature, WebRTCManager webRTCManager, EventBus eventBus) {
+    public InfoOtherAndFeatureController(InfoOtherAndFeature infoOtherAndFeature, WebRTCManager webRTCManager, EventBus eventBus, RenameGroupImpl renameGroupImpl, RenameGroupController renameGroupController) {
         this.infoOtherAndFeature = infoOtherAndFeature;
         this.webRTCManager = webRTCManager;
+        this.renameGroupImpl = renameGroupImpl;
+        this.renameGroupController = renameGroupController;
 
         eventBus.register(this);
         initializeListeners();
     }
 
+
     @Subscribe
     public void onJwtToken(UserToken userToken) {
+        this.jwtToken = TokenManager.getAccessToken();
         this.userId = userToken.getUserId();
     }
+
+    @Subscribe
+    public void onGroupRenamed(GroupRenamedEvent event) {
+            infoOtherAndFeature.setUsername(event.getNewGroupName());
+            infoOtherAndFeature.revalidate();
+            infoOtherAndFeature.repaint();
+    }
+
 
     @Subscribe
     public void onChatSelected(ChatSelectedEvent event) {
         this.chatId = event.getChatId();
         this.otherUserId = event.getUserId();
+        this.type = event.getType();
+
+        boolean isGroup = "GROUP".equalsIgnoreCase(type);
+        infoOtherAndFeature.getRenameButton().setVisible(isGroup);
     }
     @Subscribe
     public void onFullNameUpdate(FullNameUpdateEvent event) {
-        logger.info("Received image " + event.getImageUrl());
-        infoOtherAndFeature.getUserOtherName().setText(event.getFullName());
-        setAvatarIcon(event.getImageUrl());
+        this.Name = event.getFullName();
+        logger.info("NNNNNNNNNNNName: " + event.getFullName());
+        if(Name != null && !Name.isEmpty()) {
+            infoOtherAndFeature.getUserOtherName().setText(event.getFullName());
+            logger.info("NNNNNNNNNNNNNNNNNName: " + event.getFullName());
+        }
+        if(event.getImageUrl() != null) {
+            setAvatarIcon(event.getImageUrl());
+            logger.info("update imageeeeeeeeeeeeeeeeeee");
+        }
     }
 
     private void setAvatarIcon(String imageUrl) {
-        logger.info("Setting avatar icon to " + imageUrl);
         try {
             BufferedImage originalImage = ImageIO.read(new URL(imageUrl));
-            // Resize ảnh về đúng kích thước label (40x40)
+
             Image scaledImage = originalImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 
             ImageIcon icon = new ImageIcon(scaledImage);
@@ -68,6 +102,7 @@ public class InfoOtherAndFeatureController extends BaseController {
         }
     }
 
+
     @Override
     protected void setupDependencies() {
 
@@ -75,7 +110,16 @@ public class InfoOtherAndFeatureController extends BaseController {
 
     private void initializeListeners() {
         infoOtherAndFeature.addVideoButtonListener(e -> startVideoCall());
-    }
+
+            infoOtherAndFeature.renameGroup(e -> {
+                    renameGroupDialog = new RenameGroupDialog((JFrame) SwingUtilities.getWindowAncestor(infoOtherAndFeature), Name);
+                    renameGroupController.setRenameGroup(renameGroupDialog);
+                    renameGroupDialog.setVisible(true);
+            });
+        }
+
+
+
 
     private void startVideoCall() {
         SwingUtilities.invokeLater(() -> {

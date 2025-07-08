@@ -5,9 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import controllers.CreateChatController;
-import controllers.CreateChatGroupController;
-import controllers.FooterLeftController;
+import controllers.*;
 import service.*;
 import utility.WebRTCManager;
 import view.login.LoginController;
@@ -22,12 +20,14 @@ import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
 import view.main.rightPanel.components.FooterRightPanel;
-import controllers.HeaderRightController;
 import view.main.rightPanel.components.HeaderRightPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
 import view.main.rightPanel.message.MessageService;
 import view.main.rightPanel.message.MessageServiceImpl;
+import view.main.rightPanel.otherInfoTop.InfoOtherAndFeatureController;
+import view.main.dialog.Rename.RenameGroupImpl;
+import view.main.dialog.Rename.RenameGroupService;
 import view.main.rightPanel.sendmessage.SendMessageController;
 import view.main.rightPanel.sendmessage.SendMessageService;
 import view.main.rightPanel.sendmessage.SendMessageServiceImpl;
@@ -51,6 +51,7 @@ public class AppModule extends AbstractModule {
         bind(ChatListService.class).to(ChatListServiceImpl.class);
         bind(MessageService.class).to(MessageServiceImpl.class);
         bind(SendMessageService.class).to(SendMessageServiceImpl.class);
+        bind(RenameGroupService.class).to(RenameGroupImpl.class);
 
         //Controller Login and Register
         bind(LoginController.class);
@@ -62,6 +63,8 @@ public class AppModule extends AbstractModule {
         bind(CreateChatController.class);
         bind(CreateChatGroupController.class);
         bind(FooterLeftController.class);
+        bind(RenameGroupController.class);
+        bind(InfoOtherAndFeatureController.class);
 
 
         //Controller Main
