@@ -39,6 +39,7 @@ public class ChatGroupService {
     @Autowired
     private AssetService assetService;
 
+
     public ChatGroupDTO createGroup(CreateGroupRequest request, MultipartFile multipartFile) {
 
         User creator = userRepository.findById(request.getCreatorId())
@@ -82,7 +83,7 @@ public class ChatGroupService {
 
         ChatGroupDTO groupDTO = new ChatGroupDTO();
         groupDTO.setId(group.getId());
-        groupDTO.setName(group.getName());
+        groupDTO.setGroupName(group.getName());
         groupDTO.setImage(group.getImage());
         groupDTO.setCreatorId(creator.getId());
         groupDTO.setMemberIds(allMemberIds.stream().toList());
@@ -128,8 +129,9 @@ public class ChatGroupService {
 
         ChatGroupDTO groupDTO = new ChatGroupDTO();
         groupDTO.setId(updatedGroup.getId());
-        groupDTO.setName(updatedGroup.getName());
+        groupDTO.setGroupName(updatedGroup.getName());
         groupDTO.setCreatorId(member.getId());
+        logger.info("Creater iddddddddddđ : " + member.getId());
 
         List<Long> memberListId = new ArrayList<>();
         for (GroupMember user : group.getMembers()) {

@@ -66,6 +66,7 @@ public class HeaderRightController extends BaseController {
                                 eventBus.post(new UserLogoutEvent());
                                 JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(headerRightPanel);
                                 currentFrame.dispose();
+                                logger.info("current frame is: " + currentFrame);
                                 navigator.navigateTo("Login");
                             }
                         }

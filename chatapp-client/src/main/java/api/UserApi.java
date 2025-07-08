@@ -14,6 +14,7 @@ public class UserApi {
     public List<UserOther> getAllOtherUsers(String accessToken) throws IOException {
         URL url = new URL("http://localhost:10000/api/users/listother");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Authorization", "Bearer " + accessToken);
         conn.setRequestProperty("Content-Type", "application/json");

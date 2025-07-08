@@ -1,4 +1,4 @@
-package com.forcy.chatapp.group.dto;
+package model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

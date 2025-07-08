@@ -14,6 +14,7 @@ public class LoginView extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton signupButton;
+    private JButton forgetPasswordButton;
 
     public LoginView() {
         initUI();
@@ -21,7 +22,7 @@ public class LoginView extends JFrame {
 
     private void initUI() {
         setTitle("Đăng nhập");
-        setSize(400, 400);
+        setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -35,9 +36,9 @@ public class LoginView extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(8, 0, 0, 0);
 
-
         JLabel titleLabel = new JLabel("Đăng nhập".toUpperCase());
         titleLabel.setFont(new Font("Montserrat", Font.BOLD, 25));
+        titleLabel.setForeground(Color.decode("#090040"));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         gbc.gridx = 0;
@@ -50,10 +51,10 @@ public class LoginView extends JFrame {
         gbc.gridwidth = 1;
 
         JLabel usernameLabel = new JLabel("Tên người dùng");
+        usernameLabel.setForeground(Color.decode("#090040"));
         usernameLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1;
         contentPanel.add(usernameLabel, gbc);
 
         usernameField = new RoundedTextField(20);
@@ -65,13 +66,12 @@ public class LoginView extends JFrame {
         contentPanel.add(usernameField, gbc);
 
         JLabel passwordLabel = new JLabel("Mật khẩu");
+        passwordLabel.setForeground(Color.decode("#090040"));
         passwordLabel.setFont(new Font("Montserrat", Font.BOLD, 15));
-
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 1;
         contentPanel.add(passwordLabel, gbc);
-
 
         passwordField = new RoundedPasswordField(20);
         passwordField.setPreferredSize(new Dimension(200, 40));
@@ -81,26 +81,33 @@ public class LoginView extends JFrame {
         gbc.gridwidth = 2;
         contentPanel.add(passwordField, gbc);
 
-
-        JPanel buttonsPanel = new JPanel(new BorderLayout());
+        JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonsPanel.setBackground(Color.WHITE);
 
-        loginButton = new RoundedButton("Đăng nhập");
-        loginButton.setFont(new Font("Montserrat", Font.BOLD, 13));
-        loginButton.setPreferredSize(new Dimension(150, 44));
+        forgetPasswordButton = new RoundedButton("Quên mật khẩu");
+        forgetPasswordButton.setFont(new Font("Montserrat", Font.BOLD, 13));
 
         signupButton = new RoundedButton("Tạo tài khoản");
         signupButton.setFont(new Font("Montserrat", Font.BOLD, 13));
-        signupButton.setPreferredSize(new Dimension(150, 44));
 
-        buttonsPanel.add(loginButton, BorderLayout.WEST);
-        buttonsPanel.add(signupButton, BorderLayout.EAST);
+        buttonsPanel.add(forgetPasswordButton);
+        buttonsPanel.add(signupButton);
 
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
         gbc.insets = new Insets(20, 0, 0, 0);
         contentPanel.add(buttonsPanel, gbc);
+
+        loginButton = new RoundedButton("Đăng nhập");
+        loginButton.setFont(new Font("Montserrat", Font.BOLD, 13));
+        loginButton.setPreferredSize(new Dimension(300, 44));
+
+        gbc.gridx = 0;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(12, 0, 0, 0);
+        contentPanel.add(loginButton, gbc);
 
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         add(mainPanel);
@@ -116,6 +123,14 @@ public class LoginView extends JFrame {
         signupButton.addActionListener(listener);
     }
 
+    public void addForgetPasswordButtonListener(ActionListener listener) {
+        forgetPasswordButton.addActionListener(listener);
+    }
+
+    public void addResetPasswordButtonListener(ActionListener listener) {
+        forgetPasswordButton.addActionListener(listener);
+    }
+
     public String getUsername() {
         return usernameField.getText();
     }
@@ -124,15 +139,8 @@ public class LoginView extends JFrame {
         return new String(passwordField.getPassword());
     }
 
-    public void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
+//    public void showError(String message) {
+//        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+//    }
 
-    public JButton getLoginButton() {
-        return loginButton;
-    }
-
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
 }

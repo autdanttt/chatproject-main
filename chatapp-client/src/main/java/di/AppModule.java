@@ -5,9 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import controllers.CreateChatController;
-import controllers.CreateChatGroupController;
-import controllers.FooterLeftController;
+import controllers.*;
 import service.*;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
@@ -18,13 +16,14 @@ import view.login.LoginServiceImpl;
 import view.main.MainChatController;
 import view.main.MainChatView;
 import utility.WebSocketClientManager;
+import view.main.dialog.Rename.RenameGroupImpl;
+import view.main.dialog.Rename.RenameGroupService;
 import view.main.leftPanel.chatlist.ChatListController;
 import view.main.leftPanel.chatlist.ChatListPanel;
 import view.main.leftPanel.chatlist.ChatListService;
 import view.main.leftPanel.chatlist.ChatListServiceImpl;
 import view.main.rightPanel.RightPanel;
 import view.main.rightPanel.components.FooterRightPanel;
-import controllers.HeaderRightController;
 import view.main.rightPanel.components.HeaderRightPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
@@ -53,11 +52,13 @@ public class AppModule extends AbstractModule {
         bind(ChatListService.class).to(ChatListServiceImpl.class);
         bind(MessageService.class).to(MessageServiceImpl.class);
         bind(SendMessageService.class).to(SendMessageServiceImpl.class);
+        bind(RenameGroupService.class).to(RenameGroupImpl.class);
         bind(CallVideoService.class).to(CallVideoServiceImpl.class);
         bind(StatusUserService.class).to(StatusUserServiceImpl.class);
 
         //Controller Login and Register
         bind(LoginController.class);
+        bind(ForgotPasswordDialogController.class);
         bind(RegisterController.class);
 
         // Controller Left Panel
@@ -66,6 +67,8 @@ public class AppModule extends AbstractModule {
         bind(CreateChatController.class);
         bind(CreateChatGroupController.class);
         bind(FooterLeftController.class);
+        bind(RenameGroupController.class);
+        bind(InfoOtherAndFeatureController.class);
 
 
         //Controller Main
@@ -76,7 +79,6 @@ public class AppModule extends AbstractModule {
         bind(HeaderRightController.class);
         bind(SendMessageController.class);
         bind(MessageController.class);
-        bind(InfoOtherAndFeatureController.class);
         bind(MainVideoFrameController.class);
 
         //View Left Panel
