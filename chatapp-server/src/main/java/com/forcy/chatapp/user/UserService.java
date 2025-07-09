@@ -86,6 +86,35 @@ public class UserService{
 //        authUserDTO.setId(savedUser.getId());
 //        return authUserDTO;
     }
+
+    public UserDTO updateUserInfo(UpdateUserRequest dto, MultipartFile file, Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        // Cập nhật họ tên nếu có
+        if (dto != null && dto.getFullName() != null && !dto.getFullName().isBlank()) {
+            user.setFullName(dto.getFullName().trim());
+        }
+
+        // Cập nhật avatar nếu có file mới
+        if (file != null && !file.isEmpty()) {
+            assetService.deleteAvatarIfNotDefault(user.getAvatarUrl()); // Xóa avatar cũ nếu không phải mặc định
+            String uploadedAvatar = assetService.uploadToCloudinary(file, "avatar");
+            user.setAvatarUrl(uploadedAvatar);
+        }
+
+        user.setUpdateAt(new Date());
+        User savedUser = userRepository.save(user);
+
+        // Trả về DTO
+        return new UserDTO(
+                savedUser.getId(),
+                savedUser.getFullName(),
+                savedUser.getAvatarUrl()
+        );
+    }
+
+
     public String updateAvatar(Long id, MultipartFile file) {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("User not found: " + id));
 
