@@ -9,7 +9,7 @@ public class DefaultPanel extends JPanel {
         setLayout(new GridBagLayout());
 
         JLabel label = new JLabel("Chọn một cuộc trò chuyện để bắt đầu");
-        label.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        label.setFont(new Font("Montserrat", Font.BOLD, 20));
         label.setForeground(Color.GRAY);
 
         add(label);
