@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import utility.OtherUserStatusEvent;
+import utility.StatusNotification;
 import utility.WebRTCManager;
 import view.ErrorDTO;
 import view.login.TokenManager;
@@ -28,6 +29,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class InfoOtherAndFeatureController extends BaseController {
     private final Logger logger = LoggerFactory.getLogger(InfoOtherAndFeatureController.class);
     private final InfoOtherAndFeature infoOtherAndFeature;
@@ -41,7 +45,7 @@ public class InfoOtherAndFeatureController extends BaseController {
     private Long userId;
     private String fullName;
     private String type;
-
+    private Timer offlineStatusTimer;
     @Inject
     public InfoOtherAndFeatureController(InfoOtherAndFeature infoOtherAndFeature, StatusUserService statusUserService, CallVideoService callVideoService, RenameGroupService renameGroupService,RenameGroupController renameGroupController, EventBus eventBus) {
         this.infoOtherAndFeature = infoOtherAndFeature;
@@ -99,21 +103,96 @@ public class InfoOtherAndFeatureController extends BaseController {
         }
     }
 
+//    @Subscribe
+//    public void onOtherUserStatusEvent(StatusNotification event) {
+//        String status = event.getStatus();
+//        type = "CHAT";
+//
+//        logger.info("Received user status: type=" + type + ", status=" + status);
+//
+//        if (!"CHAT".equals(type)) {
+//            infoOtherAndFeature.getStatusOther().setText(" ");
+//            return;
+//        }
+//
+//        if ("online".equals(status)) {
+//            infoOtherAndFeature.getStatusOther().setText("🟢 " + status);
+//        } else {
+//            infoOtherAndFeature.getStatusOther().setText("⚫ " + status);
+//        }
+//    }
+//
+
     @Subscribe
-    public void onOtherUserStatusEvent(OtherUserStatusEvent event) {
-        if(type.equals("CHAT")) {
-            logger.info("Received type " + type);
-            infoOtherAndFeature.getStatusOther().setText(event.getStatus());
-        }else {
-            logger.info("Received type " + type);
+    public void onOtherUserStatusEvent(StatusNotification event) {
+        String status = event.getStatus();
+        String email = event.getEmail();
+        String lastSeen = event.getLast();
+
+        if (!"CHAT".equals(type)) {
             infoOtherAndFeature.getStatusOther().setText(" ");
+            return;
         }
+        updateStatusDisplay(status, lastSeen);
+
     }
 
+
+
     private void fetchStatus(Long otherUserId) {
-        UserStatus userStatus = statusUserService.fetchStatus(otherUserId, TokenManager.getAccessToken());
-        infoOtherAndFeature.getStatusOther().setText(userStatus.getStatus());
+        try {
+            StatusNotification userStatus = statusUserService.fetchStatus(otherUserId, TokenManager.getAccessToken());
+            updateStatusDisplay(userStatus.getStatus(), userStatus.getLast());
+        } catch (Exception e) {
+            logger.warn("❌ Không thể lấy trạng thái userId=" + otherUserId, e);
+            infoOtherAndFeature.getStatusOther().setText("Không xác định");
+        }
     }
+    private void updateStatusDisplay(String status, String lastSeenStr) {
+        // Hủy timer cũ nếu có
+        if (offlineStatusTimer != null) {
+            offlineStatusTimer.cancel();
+            offlineStatusTimer = null;
+        }
+
+        if ("online".equalsIgnoreCase(status)) {
+            infoOtherAndFeature.getStatusOther().setText("🟢 Đang hoạt động");
+            return;
+        }
+
+        long parsedLastSeen;
+        try {
+            parsedLastSeen = Long.parseLong(lastSeenStr);
+        } catch (NumberFormatException e) {
+            logger.warn("⚠️ Không parse được lastSeen: {}", lastSeenStr, e);
+            parsedLastSeen = System.currentTimeMillis();
+        }
+
+        final long lastSeenMillis = parsedLastSeen;
+       // Nếu offline → khởi tạo timer cập nhật thời gian
+        offlineStatusTimer = new Timer();
+        offlineStatusTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                long minutesAgo = (System.currentTimeMillis() - lastSeenMillis) / 60000;
+
+                String text;
+                if (minutesAgo < 1) {
+                    text = "⚫ Vừa xong";
+                } else if (minutesAgo < 60) {
+                    text = "⚫ " + minutesAgo + " phút trước";
+                } else {
+                    long hoursAgo = minutesAgo / 60;
+                    text = "⚫ " + hoursAgo + " giờ trước";
+                }
+
+                SwingUtilities.invokeLater(() ->
+                        infoOtherAndFeature.getStatusOther().setText(text)
+                );
+            }
+        }, 0, 60 * 1000);
+    }
+
 
     private void setAvatarIcon(String imageUrl) {
         logger.info("Setting avatar icon to " + imageUrl);

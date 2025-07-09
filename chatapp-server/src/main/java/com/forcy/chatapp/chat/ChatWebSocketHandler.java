@@ -28,6 +28,4 @@ public class ChatWebSocketHandler{
     public boolean isOnline(String email) {
         return sessionManager.isUserOnline(email);
     }
-
-
 }
