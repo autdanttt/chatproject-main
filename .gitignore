@@ -10,7 +10,7 @@
 .idea
 .vscode
 docker-compose.yml
-
+/chatapp-client/activity-chart
 # Logs
 *.log
 
