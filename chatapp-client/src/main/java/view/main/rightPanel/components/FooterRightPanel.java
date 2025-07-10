@@ -2,6 +2,7 @@ package view.main.rightPanel.components;
 
 import custom.CreateButton;
 import custom.RoundedTextField;
+import lombok.Setter;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,10 +18,12 @@ import java.util.function.Consumer;
 
 public class FooterRightPanel extends JPanel {
     private JButton sendImage, sendBtn, sendEmoji;
-    private JTextField sendMessage;
+    private final JTextField sendMessage;
+    @Setter
     private Consumer<File> emojiSelectedListener;
+    @Setter
     private Consumer<File> imageSelectedListener;
-    private String basePath = new File(System.getProperty("user.dir")).getParent();
+    private final String basePath = new File(System.getProperty("user.dir")).getParent();
 
     public FooterRightPanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 5, 11));
@@ -52,13 +55,12 @@ public class FooterRightPanel extends JPanel {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
 
-        // Bộ lọc file ảnh (bao gồm .jfif)
         FileNameExtensionFilter imageFilter = new FileNameExtensionFilter(
                 "Image files (*.jpg, *.jpeg, *.png, *.gif, *.bmp, *.jfif)",
                 "jpg", "jpeg", "png", "gif", "bmp", "jfif"
         );
         fileChooser.setFileFilter(imageFilter);
-        fileChooser.setAcceptAllFileFilterUsed(false); // Không cho phép chọn file bất kỳ
+        fileChooser.setAcceptAllFileFilterUsed(false);
 
         int result = fileChooser.showOpenDialog(owner);
         if (result == JFileChooser.APPROVE_OPTION) {
@@ -81,7 +83,6 @@ public class FooterRightPanel extends JPanel {
             }
         }
     }
-
 
     private void showEmojiPicker() {
         Frame owner = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
@@ -142,20 +143,15 @@ public class FooterRightPanel extends JPanel {
         emojiDialog.setVisible(true);
     }
 
-    public void setEmojiSelectedListener(Consumer<File> emojiSelectedListener) {
-        this.emojiSelectedListener = emojiSelectedListener;
-    }
-
-    public void setImageSelectedListener(Consumer<File> imageSelectedListener) {
-        this.imageSelectedListener = imageSelectedListener;
-    }
-
-
     public void addSendButtonListener(ActionListener listener) {
         sendBtn.addActionListener(listener);
     }
 
     public JTextField getTextField() {
+        return sendMessage;
+    }
+
+    public JTextField takeSendMessage() {
         return sendMessage;
     }
 }

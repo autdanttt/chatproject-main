@@ -32,10 +32,7 @@ public class CreateChat extends JDialog {
         headerPanel.setLayout(new GridLayout(2, 1));
         JLabel title = new JLabel("Danh sách người dùng");
         title.setFont(new Font("Montserrat", Font.BOLD, 20));
-        JTextField searchtxt = new RoundedTextField(20);
-        headerPanel.setPreferredSize(new Dimension(500, 100));
         headerPanel.add(title);
-        headerPanel.add(searchtxt);
 
         JPanel contentPanel = new RoundedPanel(20, Color.WHITE, Color.decode("#33333"), 2);
         userListModel = new DefaultListModel<>();

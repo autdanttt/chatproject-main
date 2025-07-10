@@ -127,9 +127,9 @@ public class LoginView extends JFrame {
         forgetPasswordButton.addActionListener(listener);
     }
 
-    public void addResetPasswordButtonListener(ActionListener listener) {
-        forgetPasswordButton.addActionListener(listener);
-    }
+   public JPasswordField takeConfirmPassWordJPasswordField() {
+        return passwordField;
+   }
 
     public String getUsername() {
         return usernameField.getText();

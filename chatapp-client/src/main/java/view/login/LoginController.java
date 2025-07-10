@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import view.main.dialog.ForgotPasswordDialog;
 
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 
@@ -33,29 +35,7 @@ public class LoginController extends BaseController {
     }
 
     private void initializeListeners() {
-        loginView.addLoginButtonListener(e -> {
-            String username = loginView.getUsername().trim();
-            String password = loginView.getPassword().trim();
-
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(loginView, "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
-                return;
-            }
-
-            try {
-                UserLogin userLogin = loginService.authenticate(username, password);
-                TokenManager.setUserId(userLogin.getUserId());
-                TokenManager.setFullName(userLogin.getFullName());
-                TokenManager.setAvatarUrl(userLogin.getAvatarUrl());
-                if (userLogin.getStatusCode() == 200) {
-                    navigator.navigateTo("MainChat", userLogin.getUserId(), userLogin.getEmail(), userLogin.getFullName(), userLogin.getAvatarUrl(), TokenManager.getAccessToken());
-                } else {
-                    JOptionPane.showMessageDialog(loginView,"Email và mật khẩu không chính xác. Vui lòng nhập lại");
-                }
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        loginView.addLoginButtonListener(e -> handleLogin());
 
         loginView.addSignupButtonListener(e -> {
             String username = loginView.getUsername();
@@ -64,6 +44,38 @@ public class LoginController extends BaseController {
         });
 
         loginView.addForgetPasswordButtonListener(e -> handleForgotPassword());
+        loginView.takeConfirmPassWordJPasswordField().addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    handleLogin();
+                }
+            }
+        });
+    }
+
+    private void handleLogin() {
+        String username = loginView.getUsername().trim();
+        String password = loginView.getPassword().trim();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(loginView, "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.");
+            return;
+        }
+
+        try {
+            UserLogin userLogin = loginService.authenticate(username, password);
+            TokenManager.setUserId(userLogin.getUserId());
+            TokenManager.setFullName(userLogin.getFullName());
+            TokenManager.setAvatarUrl(userLogin.getAvatarUrl());
+            if (userLogin.getStatusCode() == 200) {
+                navigator.navigateTo("MainChat", userLogin.getUserId(), userLogin.getEmail(), userLogin.getFullName(), userLogin.getAvatarUrl(), TokenManager.getAccessToken());
+            } else {
+                JOptionPane.showMessageDialog(loginView, "Email và mật khẩu không chính xác. Vui lòng nhập lại");
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void handleForgotPassword() {

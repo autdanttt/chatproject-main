@@ -44,6 +44,55 @@ public class UserRepositoryTests {
         User savedUser = userRepository.save(user);
         assertThat(savedUser.getId()).isGreaterThan(0);
     }
+
+    @Test
+    public void testCreateMultipleProfessionalUsers() {
+        Role role = entityManager.find(Role.class, 1);
+        String avatarUrl = "https://res.cloudinary.com/dm8tfyppk/image/upload/v1751360443/avatar/c4d30890-c6e2-48e6-a3af-d86089639b5d.jpg";
+
+        String[] emails = {
+                "alice.nguyen.test01@example.com",
+                "bob.tran.test02@example.com",
+                "charlie.le.test03@example.com",
+                "david.pham.test04@example.com",
+                "emma.hoang.test05@example.com"
+        };
+
+        String[] fullNames = {
+                "Alice Nguyen",
+                "Bob Tran",
+                "Charlie Le",
+                "David Pham",
+                "Emma Hoang"
+        };
+
+        String[] passwords = {
+                "A!iceNguyen2025@",
+                "B0bTran#2025$",
+                "Ch@rlieLe2025%",
+                "Dav!dPham2025^",
+                "Emm@Hoang2025&"
+        };
+
+        for (int i = 0; i < emails.length; i++) {
+            User user = new User();
+            user.setEmail(emails[i]);
+            user.setPassword(passwordEncoder.encode(passwords[i]));
+            user.setFullName(fullNames[i]);
+            user.setCreateAt(new Date());
+            user.setAvatarUrl(avatarUrl);
+            user.setVerified(true);
+            user.addRole(role);
+
+            User savedUser = userRepository.save(user);
+            assertThat(savedUser.getId()).isGreaterThan(0);
+            System.out.println("Created user: " + savedUser.getFullName() + " with email: " + savedUser.getEmail());
+        }
+    }
+
+
+
+
     @Test
     void testCreateUserWithFullFields() {
         // 1. Lấy role có ID = 1 từ database

@@ -42,7 +42,7 @@ public class RightPanel extends JPanel {
     }
 
     public void reload() {
-        revalidate();         // Cập nhật lại layout nếu cần
-        repaint();            // Vẽ lại
+        revalidate();
+        repaint();
     }
 }

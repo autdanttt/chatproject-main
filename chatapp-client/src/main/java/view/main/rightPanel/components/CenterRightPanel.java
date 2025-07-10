@@ -40,17 +40,15 @@ public class CenterRightPanel extends JPanel {
         setBackground(Color.WHITE);
         setBorder(new EmptyBorder(0, 10, 0, 10));
 
-        // Default panel
+
         DefaultPanel defaultPanel = new DefaultPanel();
 
-        // Chat panel
         JPanel mainChatPanel = new RoundedPanel(20, Color.WHITE, Color.decode("#E9E9E9"), 2);
         mainChatPanel.setBorder(new EmptyBorder(20, 10, 20, 10));
         mainChatPanel.setLayout(new BorderLayout());
         mainChatPanel.add(infoOtherAndFeature, BorderLayout.NORTH);
         mainChatPanel.add(messagePanel, BorderLayout.CENTER);
 
-        // Add cards
         cardPanel.setBackground(Color.WHITE);
         cardPanel.add(defaultPanel, DEFAULT_VIEW);
         cardPanel.add(mainChatPanel, CHAT_VIEW);

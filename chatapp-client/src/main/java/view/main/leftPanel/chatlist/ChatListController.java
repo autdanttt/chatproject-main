@@ -60,7 +60,6 @@ public class ChatListController extends BaseController {
                     String type = selectedChat.getOtherUserId() == null ? "GROUP" : "CHAT";
                     eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId(), type));
                     eventBus.post(new FullNameUpdateEvent(selectedChat.getOtherUserFullName(), selectedChat.getAvatarUrl()));
-                    logger.info("nameeeeeeeee: "+ selectedChat.getOtherUserFullName());
                 }
             }
         });
@@ -139,6 +138,7 @@ public class ChatListController extends BaseController {
             chatListPanel.getChatListModel().addElement(item);
         }
     }
+
     @Subscribe
     public void addMessage(MessageResponse response) {
         updateChatListOnNewMessage(response);

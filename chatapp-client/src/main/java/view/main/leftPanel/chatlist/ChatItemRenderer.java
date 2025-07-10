@@ -12,7 +12,6 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
         if (!(value instanceof ChatItem item)) return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         JPanel panel = new JPanel(new BorderLayout(10, 0));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panel.setOpaque(true);
 
         JLabel avatarLabel = new JLabel();
         avatarLabel.setPreferredSize(new Dimension(40, 40));
@@ -64,7 +63,7 @@ public class ChatItemRenderer extends DefaultListCellRenderer {
 
     private String shortenText(String text) {
         if (text.length() <= 30) return text;
-        return text.substring(0, 30 - 3) + "...";
+        return text.substring(0, 30 - 5) + "...";
     }
 
 }

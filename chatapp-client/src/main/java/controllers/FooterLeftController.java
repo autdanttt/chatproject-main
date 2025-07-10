@@ -76,8 +76,16 @@ public class FooterLeftController extends BaseController {
                     }
                     break;
                 case "GROUP":
-                    boolean successDeleteChatGroup = chatApi.deleteGroupChat(chatIdBoth);
-                    eventBus.post(new ChatDeletedEvent(chatIdBoth));
+                    boolean confirmDeleteGroup = ConfirmCustom.showConfirmDialog(mainJFrame,
+                            "Bạn có muốn xóa nhóm này không?",
+                            "Xác nhận xóa nhóm",
+                            imageIcon,
+                            "Hủy",
+                            "Xóa nhóm");
+                    if (confirmDeleteGroup) {
+                        boolean successDeleteChatGroup = chatApi.deleteGroupChat(chatIdBoth);
+                        eventBus.post(new ChatDeletedEvent(chatIdBoth));
+                    }
                     break;
             }
         });

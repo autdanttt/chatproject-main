@@ -1,5 +1,7 @@
 package view;
 
+import custom.RoundedButton;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -26,8 +28,7 @@ public class MainVideoFrame extends JFrame {
         videoPanelContainer.add(remotePanel);
 
         // Thêm nút hangup
-        hangupButton = new JButton("Kết thúc cuộc gọi");
-               // Panel dưới cùng chứa nút
+        hangupButton = new RoundedButton("Kết thúc cuộc gọi");
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(hangupButton);
 
