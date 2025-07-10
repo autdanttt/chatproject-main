@@ -46,6 +46,8 @@ public class LoginController extends BaseController {
             try {
                 UserLogin userLogin = loginService.authenticate(username, password);
                 TokenManager.setUserId(userLogin.getUserId());
+                TokenManager.setFullName(userLogin.getFullName());
+                TokenManager.setAvatarUrl(userLogin.getAvatarUrl());
                 if (userLogin.getStatusCode() == 200) {
                     navigator.navigateTo("MainChat", userLogin.getUserId(), userLogin.getEmail(), userLogin.getFullName(), userLogin.getAvatarUrl(), TokenManager.getAccessToken());
                 }

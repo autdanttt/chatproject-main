@@ -25,7 +25,7 @@ public class RenameGroupDialog extends JDialog {
 
         JPanel p1 = new JPanel(new BorderLayout());
         p1.setPreferredSize(new Dimension(600, 100));
-        JLabel title = new JLabel("Chỉnh sử thông tin".toUpperCase());
+        JLabel title = new JLabel("Chỉnh sửa thông tin".toUpperCase());
         title.setFont(new Font("Montserrat", Font.BOLD, 25));
         title.setHorizontalAlignment(SwingConstants.CENTER);
         p1.add(title, BorderLayout.CENTER);

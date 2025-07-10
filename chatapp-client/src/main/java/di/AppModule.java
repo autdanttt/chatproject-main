@@ -69,7 +69,7 @@ public class AppModule extends AbstractModule {
         bind(FooterLeftController.class);
         bind(RenameGroupController.class);
         bind(InfoOtherAndFeatureController.class);
-
+        bind(EditProfileUserController.class);
 
         //Controller Main
         bind(MainChatController.class);

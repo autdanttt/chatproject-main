@@ -1,11 +1,10 @@
-package view.main.dialog;
+package view.main.dialog.EditProfileUser;
 
 import custom.RoundedButton;
 import custom.RoundedPasswordField;
 import custom.RoundedTextField;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -67,11 +66,6 @@ public class EditProfileUser extends JDialog {
         passwordField.setPreferredSize(new Dimension(220, 36));
         passwordField.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
-        //passwordField = groupNameField
-        //passwordLabel = newNameLabel
-        //fullNameLabel = currentNameLabel
-        //usernameField = currnetName
-        //submitButton = confirmButton
         passwordPanel.add(passwordLabel, BorderLayout.NORTH);
         passwordPanel.add(passwordField, BorderLayout.CENTER);
 
@@ -156,4 +150,25 @@ public class EditProfileUser extends JDialog {
     public void addCacelActionListener(ActionListener e) {
         cancelButton.addActionListener(e);
     }
+
+    public void addSubmitActionListener(ActionListener listener) {
+        submitButton.addActionListener(listener);
+    }
+
+    public void addUploadActionListener(ActionListener listener) {
+        uploadButton.addActionListener(listener);
+    }
+
+    public String getUsername() {
+        return usernameField.getText().trim();
+    }
+
+    public String getPassword() {
+        return new String(passwordField.getPassword());
+    }
+
+    public void setAvatarImage(String imagePath) {
+        avatarLabel.setIcon(new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+    }
+
 }

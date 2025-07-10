@@ -1,10 +1,17 @@
 package view.login;
 
+import lombok.Getter;
+import lombok.Setter;
+import view.main.dialog.EditProfileUser.EditProfileUser;
+@Getter
+@Setter
 public class TokenManager {
     private static Long userId;
     private static String accessToken;
     private static String refreshToken;
     private static String email;
+    private static String fullName;
+    private static String avatarUrl;
 
     public static Long getUserId() {
         return userId;
@@ -43,5 +50,23 @@ public class TokenManager {
         accessToken = null;
         refreshToken = null;
         email = null;
+        fullName = null;
+        avatarUrl = null;
+    }
+
+    public static void setFullName(String fullName) {
+        TokenManager.fullName = fullName;
+    }
+
+    public static void setAvatarUrl(String avatarUrl) {
+        TokenManager.avatarUrl = avatarUrl;
+    }
+
+    public static String getFullName() {
+        return fullName;
+    }
+
+    public static String getAvatarUrl() {
+        return avatarUrl;
     }
 }

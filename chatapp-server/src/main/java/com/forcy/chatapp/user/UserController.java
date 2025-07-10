@@ -43,8 +43,8 @@ public class UserController {
         return ResponseEntity.ok().body(map);
     }
 
-    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateInfo(@RequestPart(value = "user") @Valid UpdateUserRequest updateUserRequest, @RequestPart(value = "image") @Nullable MultipartFile image) {
+    @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateInfo(@RequestPart(value = "user") @Valid UpdateUserRequest updateUserRequest, @RequestPart(value = "image", required = false) @Nullable MultipartFile image) {
 
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -56,6 +56,38 @@ public class UserController {
 
         return ResponseEntity.ok().body(userDTO);
     }
+
+//    @PostMapping(value = "/update-avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> updateUserAvatar(@RequestPart("image") MultipartFile image) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
+//
+//        // Gọi service xử lý ảnh
+//        UpdateUserRequest dummyRequest = new UpdateUserRequest();
+//        dummyRequest.setFullName(user.getFullName()); // giữ tên cũ
+//
+//        UserDTO userDTO = userService.updateUserInfo(dummyRequest, image, user.getId());
+//        return ResponseEntity.ok(userDTO);
+//    }
+//
+//
+//    @PutMapping(value = "/update-json", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<?> updateUserJson(@RequestBody @Valid UpdateUserRequest updateUserRequest) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
+//
+//        // ✅ Nếu không nhập tên mới thì giữ nguyên tên cũ
+//        if (updateUserRequest.getFullName() == null || updateUserRequest.getFullName().trim().isEmpty()) {
+//            updateUserRequest.setFullName(user.getFullName());
+//        }
+//
+//        UserDTO userDTO = userService.updateUserInfo(updateUserRequest, null, user.getId());
+//        return ResponseEntity.ok(userDTO);
+//    }
+
+
 
 
     @GetMapping("/listother")

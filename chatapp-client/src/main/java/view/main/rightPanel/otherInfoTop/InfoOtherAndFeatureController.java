@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import controllers.RenameGroupController;
+import custom.RoundedImageUtil;
 import di.BaseController;
 import event.FullNameUpdateEvent;
 import event.GroupRenamedEvent;
@@ -117,16 +118,12 @@ public class InfoOtherAndFeatureController extends BaseController {
 
     private void setAvatarIcon(String imageUrl) {
         logger.info("Setting avatar icon to " + imageUrl);
-        try {
-            BufferedImage originalImage = ImageIO.read(new URL(imageUrl));
+        //            BufferedImage originalImage = ImageIO.read(new URL(imageUrl));
 
-            Image scaledImage = originalImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        Image scaledImage = RoundedImageUtil.loadRoundedAvatarFromURL(imageUrl, 40).getImage();
 
-            ImageIcon icon = new ImageIcon(scaledImage);
-            infoOtherAndFeature.getAvatarOtherLabel().setIcon(icon);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        ImageIcon icon = new ImageIcon(scaledImage);
+        infoOtherAndFeature.getAvatarOtherLabel().setIcon(icon);
     }
 
 

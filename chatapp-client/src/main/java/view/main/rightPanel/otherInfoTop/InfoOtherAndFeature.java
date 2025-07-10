@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import custom.CreateButton;
+import custom.RoundedImageUtil;
 import event.FullNameUpdateEvent;
 import utility.WebRTCManager;
 import view.MainVideoFrame;
