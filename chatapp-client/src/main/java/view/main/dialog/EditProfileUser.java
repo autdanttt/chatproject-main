@@ -67,17 +67,11 @@ public class EditProfileUser extends JDialog {
         passwordField.setPreferredSize(new Dimension(220, 36));
         passwordField.setFont(new Font("Montserrat", Font.PLAIN, 14));
 
-        //passwordField = groupNameField
-        //passwordLabel = newNameLabel
-        //fullNameLabel = currentNameLabel
-        //usernameField = currnetName
-        //submitButton = confirmButton
         passwordPanel.add(passwordLabel, BorderLayout.NORTH);
         passwordPanel.add(passwordField, BorderLayout.CENTER);
 
         contentPanel.add(passwordPanel, gbc);
 
-        // ===== RIGHT SIDE (Avatar + Upload) =====
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.gridheight = 2;
@@ -102,7 +96,6 @@ public class EditProfileUser extends JDialog {
         contentPanel.add(avatarPanel, gbc);
 
 
-        // ===== Submit Button =====
         JPanel p3 = new JPanel(new BorderLayout());
         p3.setBackground(Color.WHITE);
         p3.setPreferredSize(new Dimension(600, 100));
@@ -125,32 +118,11 @@ public class EditProfileUser extends JDialog {
 
         p3.add(p4, BorderLayout.CENTER);
 
-
         mainPanel.add(p1, BorderLayout.NORTH);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         mainPanel.add(p3, BorderLayout.SOUTH);
 
         setContentPane(mainPanel);
-    }
-
-    public JTextField getUsernameField() {
-        return usernameField;
-    }
-
-    public JPasswordField getPasswordField() {
-        return passwordField;
-    }
-
-    public JLabel getAvatarLabel() {
-        return avatarLabel;
-    }
-
-    public JButton getUploadButton() {
-        return uploadButton;
-    }
-
-    public JButton getSubmitButton() {
-        return submitButton;
     }
 
     public void addCacelActionListener(ActionListener e) {
