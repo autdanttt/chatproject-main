@@ -241,19 +241,19 @@ public class WebSocketClientManager {
     }
 
     private void subscribeHeartbeat() {
-        stompSession.subscribe("/user/queue/heartbeat", new StompFrameHandler() {
+        stompSession.subscribe("/user/queue/status", new StompFrameHandler() {
 
             @Override
             public Type getPayloadType(StompHeaders headers) {
-                return UserStatus.class;
+                return StatusNotification.class;
             }
 
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
 
-                UserStatus status = (UserStatus) payload;
-                logger.info("Received heartbeat from server: " +  status.email +" "+ status.getStatus());
-                eventBus.post(new OtherUserStatusEvent(status.getStatus()));
+                StatusNotification statusNotification = (StatusNotification) payload;
+                logger.info("Received heartbeat from server: " + statusNotification.getEmail() +" "+ statusNotification.getStatus());
+                eventBus.post(statusNotification);
             }
         });
     }

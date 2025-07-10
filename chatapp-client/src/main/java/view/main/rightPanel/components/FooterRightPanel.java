@@ -4,6 +4,7 @@ import custom.CreateButton;
 import custom.RoundedTextField;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -50,14 +51,37 @@ public class FooterRightPanel extends JPanel {
         Frame owner = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
+        // Bộ lọc file ảnh (bao gồm .jfif)
+        FileNameExtensionFilter imageFilter = new FileNameExtensionFilter(
+                "Image files (*.jpg, *.jpeg, *.png, *.gif, *.bmp, *.jfif)",
+                "jpg", "jpeg", "png", "gif", "bmp", "jfif"
+        );
+        fileChooser.setFileFilter(imageFilter);
+        fileChooser.setAcceptAllFileFilterUsed(false); // Không cho phép chọn file bất kỳ
+
         int result = fileChooser.showOpenDialog(owner);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
+            String name = file.getName().toLowerCase();
+
+            // Kiểm tra lại phần mở rộng để đảm bảo đúng định dạng ảnh
+            if (!(name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png")
+                    || name.endsWith(".gif") || name.endsWith(".bmp") || name.endsWith(".jfif"))) {
+                JOptionPane.showMessageDialog(this,
+                        "Vui lòng chọn file ảnh hợp lệ (.jpg, .jpeg, .png, .gif, .bmp, .jfif)",
+                        "Lỗi định dạng",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Gọi listener nếu file hợp lệ
             if (imageSelectedListener != null) {
                 imageSelectedListener.accept(file);
             }
         }
     }
+
 
     private void showEmojiPicker() {
         Frame owner = (Frame) SwingUtilities.getAncestorOfClass(Frame.class, this);

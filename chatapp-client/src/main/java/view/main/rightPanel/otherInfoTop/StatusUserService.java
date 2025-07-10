@@ -1,5 +1,7 @@
 package view.main.rightPanel.otherInfoTop;
 
+import utility.StatusNotification;
+
 public interface StatusUserService {
-    public UserStatus fetchStatus(Long otherUserId, String jwtToken);
+    public StatusNotification fetchStatus(Long otherUserId, String jwtToken);
 }
