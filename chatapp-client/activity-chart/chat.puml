@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+|Người dùng|
+start
+:Click nút "Thêm chat";
+
+|Hệ thống|
+:Hiển thị hộp thoại thêm chat;
+:Tải và hiển thị danh sách người dùng;
+
+|Người dùng|
+:Chọn người cần chat;
+:Nhấn nút "Thực hiện";
+
+|Hệ thống|
+:Gửi yêu cầu tạo chat lên máy chủ;
+:Hiển thị thông báo "Tạo chat thành công";
+
+stop
+@enduml

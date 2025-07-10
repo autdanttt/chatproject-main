@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+|Người dùng|
+start
+:Nhấn nút "Tạo nhóm";
+
+|Hệ thống|
+:Hệ thống mở hộp thoại tạo nhóm;
+:Tải danh sách người dùng;
+
+|Người dùng|
+:Chọn thành viên, nhập tên nhóm;
+:Nhấn "Tạo nhóm";
+
+|Hệ thống|
+:Gửi yêu cầu tạo nhóm lên máy chủ;
+:Đóng hộp thoại tạo nhóm;
+
+stop
+@enduml
