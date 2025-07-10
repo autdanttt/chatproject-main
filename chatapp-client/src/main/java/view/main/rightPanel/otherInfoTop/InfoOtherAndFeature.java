@@ -1,13 +1,8 @@
 package view.main.rightPanel.otherInfoTop;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import custom.CreateButton;
-import custom.RoundedImageUtil;
-import event.FullNameUpdateEvent;
-import utility.WebRTCManager;
-import view.MainVideoFrame;
 
 import javax.swing.*;
 import java.awt.*;

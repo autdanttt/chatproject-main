@@ -6,10 +6,13 @@ import di.BaseController;
 import event.UserProfileUpdatedEvent;
 import model.UpdateUserRequest;
 import model.UserOther;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.dialog.EditProfileUser.EditProfileImpl;
 import view.main.dialog.EditProfileUser.EditProfileUser;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,8 +20,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 
 public class EditProfileUserController extends BaseController {

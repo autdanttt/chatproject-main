@@ -1,13 +1,11 @@
 package view.main.dialog;
 
 import custom.RoundedImageUtil;
-import model.User;
 import model.UserOther;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.net.URL;
 
 
 public class UserItemRenderer extends DefaultListCellRenderer {

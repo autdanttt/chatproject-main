@@ -4,19 +4,9 @@ package view.main.dialog.Rename;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.ChatGroupDTO;
-import model.ChatGroupResponse;
 import model.UpdateGroupRequest;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -28,6 +18,14 @@ import org.slf4j.LoggerFactory;
 import utility.Config;
 
 import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class RenameGroupImpl implements RenameGroupService {
     private Logger logger = LoggerFactory.getLogger(RenameGroupImpl.class);

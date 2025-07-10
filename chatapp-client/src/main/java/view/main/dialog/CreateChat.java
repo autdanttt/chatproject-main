@@ -5,10 +5,6 @@ import custom.RoundedButton;
 import custom.RoundedPanel;
 import custom.RoundedTextField;
 import model.UserOther;
-import model.UserOther;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import view.login.LoginController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

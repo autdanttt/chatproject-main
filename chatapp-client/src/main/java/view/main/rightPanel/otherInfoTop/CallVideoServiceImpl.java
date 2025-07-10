@@ -11,7 +11,6 @@ import view.ErrorDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class CallVideoServiceImpl implements CallVideoService{

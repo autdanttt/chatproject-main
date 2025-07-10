@@ -1,11 +1,11 @@
 package view.main.leftPanel.search;
 
 import com.google.inject.Inject;
+import di.BaseController;
 import model.ChatResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.SearchService;
-import di.BaseController;
 
 import javax.swing.*;
 

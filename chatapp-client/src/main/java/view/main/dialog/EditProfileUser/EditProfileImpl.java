@@ -3,9 +3,8 @@ package view.main.dialog.EditProfileUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.UpdateUserRequest;
 import model.UserOther;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import java.io.File;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -13,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import utility.Config;
 
+import java.io.File;
 import java.util.List;
 
 

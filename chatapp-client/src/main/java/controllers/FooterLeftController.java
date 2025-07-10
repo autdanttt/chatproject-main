@@ -6,12 +6,12 @@ import com.google.common.eventbus.Subscribe;
 import custom.ConfirmCustom;
 import di.BaseController;
 import event.ChatDeletedEvent;
+import event.ChatSelectedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import event.ChatSelectedEvent;
-import view.main.leftPanel.components.FooterPanel;
 import view.main.dialog.CreateChat;
 import view.main.dialog.CreateGroupChat;
+import view.main.leftPanel.components.FooterPanel;
 
 import javax.inject.Inject;
 import javax.swing.*;

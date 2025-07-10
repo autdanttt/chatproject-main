@@ -3,6 +3,7 @@ package view.main.leftPanel.chatlist;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import di.BaseController;
 import event.*;
 import model.ChatGroupResponse;
 import model.ChatItem;
@@ -10,7 +11,6 @@ import model.ChatResponse;
 import model.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import di.BaseController;
 import view.login.TokenManager;
 import view.main.UserToken;
 

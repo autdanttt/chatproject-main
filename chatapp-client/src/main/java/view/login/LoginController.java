@@ -2,13 +2,12 @@ package view.login;
 
 import com.google.inject.Inject;
 import controllers.ForgotPasswordDialogController;
+import di.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import di.BaseController;
 import view.main.dialog.ForgotPasswordDialog;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 
 
