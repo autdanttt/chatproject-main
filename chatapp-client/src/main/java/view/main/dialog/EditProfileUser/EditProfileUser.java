@@ -124,6 +124,30 @@ public class EditProfileUser extends JDialog {
         setContentPane(mainPanel);
     }
 
+    public JTextField getUsernameField() {
+        return usernameField;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public JLabel getAvatarLabel() {
+        return avatarLabel;
+    }
+
+    public JButton getUploadButton() {
+        return uploadButton;
+    }
+
+    public JButton getSubmitButton() {
+        return submitButton;
+    }
+
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
     public void addCacelActionListener(ActionListener e) {
         cancelButton.addActionListener(e);
     }
