@@ -25,6 +25,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utility.Config;
 
 import javax.swing.*;
 
@@ -33,7 +34,7 @@ public class RenameGroupImpl implements RenameGroupService {
     @Override
         public ChatGroupDTO renameGroup(Long groupId, String newGroupName, String jwtToken) {
             try{
-                String url = "http://localhost:10000/api/groups/" + groupId;
+                String url = Config.BASE_HTTP_URL +  "api/groups/" + groupId;
                 HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Authorization", "Bearer " + jwtToken);
@@ -81,7 +82,7 @@ public class RenameGroupImpl implements RenameGroupService {
 public String updateGroupImage(Long groupId, File imageFile, String jwtToken) {
     try {
 
-        HttpPut put = new HttpPut("http://localhost:10000/api/groups/" + groupId + "/image");
+        HttpPut put = new HttpPut(Config.BASE_HTTP_URL + "api/groups/" + groupId + "/image");
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setCharset(StandardCharsets.UTF_8);

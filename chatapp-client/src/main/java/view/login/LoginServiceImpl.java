@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import utility.Config;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public UserLogin authenticate(String email, String password) throws IOException {
          RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:10000/api/oauth/login";
+        String url = Config.BASE_HTTP_URL +  "api/oauth/login";
 
         // Tạo request body
         Map<String, String> requestBody = new HashMap<>();

@@ -13,6 +13,5 @@ import lombok.Setter;
     @AllArgsConstructor
     public class UpdateUserRequest {
         @JsonProperty("full_name")
-        @NotNull
         private String fullName;
     }

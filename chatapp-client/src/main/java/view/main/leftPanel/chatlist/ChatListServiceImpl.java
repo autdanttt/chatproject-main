@@ -7,6 +7,7 @@ import model.ChatGroupResponse;
 import model.ChatResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utility.Config;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,7 +18,7 @@ public class ChatListServiceImpl implements ChatListService {
     @Override
     public ChatResponse[] getChatList(String jwtToken) {
         try {
-            String url = "http://localhost:10000/chats";
+            String url = Config.BASE_HTTP_URL +  "chats";
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer " + jwtToken);
@@ -40,7 +41,7 @@ public class ChatListServiceImpl implements ChatListService {
     @Override
     public ChatGroupResponse[] getChatGroupList(String jwtToken) {
         try {
-            String url = "http://localhost:10000/api/groups/my";
+            String url = Config.BASE_HTTP_URL + "api/groups/my";
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer " + jwtToken);

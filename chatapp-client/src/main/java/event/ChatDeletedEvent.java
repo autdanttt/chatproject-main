@@ -1,13 +1,12 @@
 package event;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@AllArgsConstructor
 public class ChatDeletedEvent {
-    private final Long chatId;
-
-    public ChatDeletedEvent(Long chatId) {
-        this.chatId = chatId;
-    }
-
-    public Long getChatId() {
-        return chatId;
-    }
+    private Long chatId;
 }

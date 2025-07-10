@@ -5,11 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import utility.Config;
 import utility.StatusNotification;
 
 public class StatusUserServiceImpl implements StatusUserService {
     private static final Logger logger = LoggerFactory.getLogger(StatusUserServiceImpl.class);
-    private static final String BASE_URL = "http://localhost:10000/api/status/";
+    private static final String BASE_URL = Config.BASE_HTTP_URL + "api/status/";
 
     @Override
     public StatusNotification fetchStatus(Long otherUserId, String jwtToken) {
@@ -29,11 +30,11 @@ public class StatusUserServiceImpl implements StatusUserService {
                     StatusNotification.class
             );
 
-            logger.info("✅ Fetched status from {}", BASE_URL + otherUserId);
+            logger.info("Fetched status from {}", BASE_URL + otherUserId);
             return response.getBody();
 
         } catch (Exception e) {
-            logger.error("❌ Error fetching status from {}", BASE_URL + otherUserId, e);
+            logger.error("Error fetching status from {}", BASE_URL + otherUserId, e);
             // Trả về trạng thái không rõ
             return new StatusNotification(null, "unknown", null);
         }

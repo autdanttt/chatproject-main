@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import utility.Config;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,7 +17,7 @@ public class AutoRefreshScheduler {
     private final Logger logger = LoggerFactory.getLogger(AutoRefreshScheduler.class);
     private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    public static final String REFRESH_URL = "http://localhost:10000/api/oauth/token/refresh";
+    public static final String REFRESH_URL = Config.BASE_HTTP_URL + "api/oauth/token/refresh";
 
     public static void start() {
         scheduler.scheduleAtFixedRate(() -> {

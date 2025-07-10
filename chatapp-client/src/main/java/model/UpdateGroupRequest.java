@@ -10,7 +10,5 @@ import org.hibernate.validator.constraints.Length;
 @Setter
 public class UpdateGroupRequest {
     @JsonProperty("group_name")
-    @NotNull
-    @Length(min = 2, max = 30, message = "Name must be between 2 - 30")
     private String groupName;
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utility.Config;
 import view.login.TokenManager;
 
 import java.io.OutputStream;
@@ -15,14 +16,9 @@ import java.util.Map;
 public class SendOtpApi {
     private static final Logger logger = LoggerFactory.getLogger(SendOtpApi.class);
 
-    /**
-     * Gửi OTP quên mật khẩu tới email người dùng
-     * @param email email cần gửi OTP
-     * @return message trả về từ server hoặc null nếu lỗi
-     */
     public String sendOtp(String email) {
         try {
-            URL url = new URL("http://localhost:10000/api/oauth/forgot-password");
+            URL url = new URL(Config.BASE_HTTP_URL + "api/oauth/forgot-password");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");
@@ -54,7 +50,7 @@ public class SendOtpApi {
 
     public String resetPasswordByOtp(String email, String otp, String newPassword) {
         try {
-            URL url = new URL("http://localhost:10000/api/oauth/reset-password");
+            URL url = new URL(Config.BASE_HTTP_URL + "api/oauth/reset-password");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");

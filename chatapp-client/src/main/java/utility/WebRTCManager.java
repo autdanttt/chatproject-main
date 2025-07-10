@@ -225,21 +225,6 @@ public class WebRTCManager {
             remotePanel = null;
         }
 
-//        // Thông báo server
-//        LOGGER.info("Notifying server of call termination");
-//        try {
-//            String url = "http://localhost:10000/video-call/end";
-//            RestTemplate restTemplate = new RestTemplate();
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_JSON);
-//            headers.set("Authorization", "Bearer " + TokenManager.getAccessToken());
-//            HttpEntity<String> entity = new HttpEntity<>(headers);
-//            restTemplate.postForObject(url, entity, String.class);
-//            LOGGER.info("Server notified");
-//        } catch (Exception e) {
-//            LOGGER.error("Error notifying server: {}", e.getMessage(), e);
-//        }
-
         LOGGER.info("Call termination completed at {}", System.currentTimeMillis());
     }
     public void setVideoPanel(VideoPanel localPanel, VideoPanel remotePanel) {
@@ -282,7 +267,9 @@ public class WebRTCManager {
                         }
 
 
-                        String url = "http://localhost:10000/video-call/candidate";
+//                        String url = "http://localhost:10000/video-call/candidate";
+
+                        String url = Config.BASE_HTTP_URL + "video-call/candidate";
 
                         RestTemplate restTemplate = new RestTemplate();
                         HttpHeaders headers = new HttpHeaders();
@@ -403,45 +390,6 @@ public class WebRTCManager {
         }
     }
 
-//    public void addMediaStream(int cameraId){
-//        // Video
-//        List<VideoDevice> cams = MediaDevices.getVideoCaptureDevices();
-//
-//        if (!cams.isEmpty()) {
-//            for (int i = 0; i < cams.size(); i++) {
-//                logger.warning(i + ": " + cams.get(i).toString());
-//            }
-//            VideoDeviceSource videoSource = new VideoDeviceSource();
-//            videoSource.setVideoCaptureDevice(cams.get(cameraId));
-//            //VIDEO START
-//            videoSource.start();
-//
-//            VideoTrack vt = factory.createVideoTrack("video0", (VideoTrackSource) videoSource);
-//
-//            vt.addSink(new VideoTrackSink() {
-//                @Override
-//                public void onVideoFrame(VideoFrame frame) {
-////                    logger.info("Received video frame " + frame);
-//                    VideoFrameBuffer frameBuffer = frame.buffer;
-//                    BufferedImage img = i420ToBufferedImage(frameBuffer);
-//                    SwingUtilities.invokeLater(() ->{
-//                        localPanel.updateImage(img);
-//                    });
-//                }
-//            });
-//            peerConnection.addTrack(vt, List.of("stream1"));
-//            logger.info("Local video track added to PeerConnection");
-//        }
-//
-//        //Audio
-//        List<AudioDevice> mics = MediaDevices.getAudioCaptureDevices();
-//        if (!mics.isEmpty()) {
-//            AudioTrackSource audioTrackSource = factory.createAudioSource(new AudioOptions());
-//            AudioTrack audioTrack = factory.createAudioTrack("audio0",audioTrackSource);
-//            peerConnection.addTrack(audioTrack, List.of("stream1"));
-//        }
-//    }
-
     private BufferedImage i420ToBufferedImage(VideoFrameBuffer videoFrameBuffer) {
         I420Buffer i420Buffer = videoFrameBuffer.toI420();
         int width = i420Buffer.getWidth();
@@ -533,7 +481,8 @@ public class WebRTCManager {
                 throw new RuntimeException(e);
             }
 
-            String url = "http://localhost:10000/video-call/sdp";
+//            String url = "http://localhost:10000/video-call/sdp";
+            String url = Config.BASE_HTTP_URL + "video-call/sdp";
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
