@@ -14,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import utility.Config;
 import view.ApiResult;
 import view.ErrorDTO;
 
@@ -36,7 +37,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
             LOGGER.info("Message request: {}", messageRequest);
 
-            String url = "http://localhost:10000/messages";
+            String url = Config.BASE_HTTP_URL + "messages";
             LOGGER.info("JWT token: {}", jwtToken);
 
             RestTemplate restTemplate = new RestTemplate();
@@ -85,7 +86,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, uploadHeaders);
-        String urlUpload = "http://localhost:10000/v1/media/upload";
+        String urlUpload =Config.BASE_HTTP_URL +  "v1/media/upload";
         RestTemplate restTemplate = new RestTemplate();
 
         return restTemplate.postForEntity(urlUpload, requestEntity, Map.class);
@@ -94,12 +95,6 @@ public class SendMessageServiceImpl implements SendMessageService {
     @Override
     public ApiResult<MessageResponse> sendTextGroupMessage(String jwtToken, Long userId, Long chatId, String messageContent,MessageType messageType) {
         try {
-//            MessageRequest messageRequest = new MessageRequest();
-//            messageRequest.setFromUserId(fromUserId);
-//            messageRequest.setToUserId(toUserId);
-//            messageRequest.setMessageType(messageType);
-//            messageRequest.setContent(messageContent);
-
             GroupMessageRequest groupMessageRequest = new GroupMessageRequest();
             groupMessageRequest.setFromUserId(userId);
             groupMessageRequest.setToGroupId(chatId);
@@ -108,7 +103,7 @@ public class SendMessageServiceImpl implements SendMessageService {
 
             LOGGER.info("Message request: {}", groupMessageRequest);
 
-            String url = "http://localhost:10000/messages" + "/group";
+            String url = Config.BASE_HTTP_URL+"messages" + "/group";
             LOGGER.info("JWT token: {}", jwtToken);
 
             RestTemplate restTemplate = new RestTemplate();

@@ -2,6 +2,8 @@ package api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.UserOther;
+import utility.Config;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class UserApi {
     public List<UserOther> getAllOtherUsers(String accessToken) throws IOException {
-        URL url = new URL("http://localhost:10000/api/users/listother");
+        URL url = new URL(Config.BASE_HTTP_URL + "api/users/listother");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");

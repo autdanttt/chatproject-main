@@ -13,17 +13,15 @@ docker-compose.yml
 /chatapp-client/activity-chart
 # Logs
 *.log
-
+/redis-data
+/chatapp-server/.env
 # Dependency directories
 /lib/
 /libs/
 
 # OS-specific files
 .DS_Store  # macOS
-Thumbs.db  # Windows
-
-# Other
-.env
+Thumbs.db  # Window
 /build/
 
 # Spring Boot configuration files

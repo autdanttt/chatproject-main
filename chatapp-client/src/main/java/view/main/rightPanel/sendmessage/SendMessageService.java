@@ -1,6 +1,5 @@
 package view.main.rightPanel.sendmessage;
 
-import model.GroupMessageRequest;
 import model.MessageResponse;
 import model.MessageType;
 import org.springframework.http.ResponseEntity;

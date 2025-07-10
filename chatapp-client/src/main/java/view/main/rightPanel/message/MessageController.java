@@ -3,16 +3,16 @@ package view.main.rightPanel.message;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import di.BaseController;
+import event.ChatSelectedEvent;
 import event.LastMessageEvent;
 import event.MessageSeenEvent;
 import model.MessageResponse;
 import model.MessageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import di.BaseController;
 import view.login.TokenManager;
 import view.main.UserToken;
-import event.ChatSelectedEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

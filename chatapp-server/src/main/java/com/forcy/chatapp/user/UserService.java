@@ -57,7 +57,7 @@ public class UserService{
         if(!"".equals(avatar)){
             user.setAvatarUrl(avatar);
         }else {
-             user.setAvatarUrl("https://res.cloudinary.com/dm8tfyppk/image/upload/v1751297593/avatar/default.jpg");
+             user.setAvatarUrl("https://res.cloudinary.com/dm8tfyppk/image/upload/v1752139889/avatar/default.jpg");
         }
 
         Role role = (Role) roleRepository.findByName("ROLE_USER")

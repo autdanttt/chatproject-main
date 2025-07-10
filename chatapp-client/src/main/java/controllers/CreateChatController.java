@@ -5,7 +5,6 @@ import api.UserApi;
 import com.google.common.eventbus.EventBus;
 import di.BaseController;
 import event.ChatCreatedEvent;
-import model.User;
 import model.UserOther;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

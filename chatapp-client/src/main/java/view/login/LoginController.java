@@ -2,13 +2,12 @@ package view.login;
 
 import com.google.inject.Inject;
 import controllers.ForgotPasswordDialogController;
+import di.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import di.BaseController;
 import view.main.dialog.ForgotPasswordDialog;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 
 
@@ -50,6 +49,8 @@ public class LoginController extends BaseController {
                 TokenManager.setAvatarUrl(userLogin.getAvatarUrl());
                 if (userLogin.getStatusCode() == 200) {
                     navigator.navigateTo("MainChat", userLogin.getUserId(), userLogin.getEmail(), userLogin.getFullName(), userLogin.getAvatarUrl(), TokenManager.getAccessToken());
+                } else {
+                    JOptionPane.showMessageDialog(loginView,"Email và mật khẩu không chính xác. Vui lòng nhập lại");
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);

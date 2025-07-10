@@ -124,16 +124,16 @@ public class EditProfileUser extends JDialog {
         setContentPane(mainPanel);
     }
 
-    public JLabel getAvatarLabel() {
-        return avatarLabel;
-    }
-
     public JTextField getUsernameField() {
         return usernameField;
     }
 
     public JPasswordField getPasswordField() {
         return passwordField;
+    }
+
+    public JLabel getAvatarLabel() {
+        return avatarLabel;
     }
 
     public JButton getUploadButton() {

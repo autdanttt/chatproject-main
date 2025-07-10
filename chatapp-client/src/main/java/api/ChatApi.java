@@ -11,6 +11,7 @@ import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import utility.Config;
 import view.login.TokenManager;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class ChatApi {
 
     public ChatResponse createChat(Long targetUserId) {
         try {
-            URL url = new URL("http://localhost:10000/chats");
+            URL url = new URL(Config.BASE_HTTP_URL + "chats");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");
@@ -58,7 +59,7 @@ public class ChatApi {
 
     public boolean deleteChat(Long chatID) {
         try {
-            URL url = new URL("http://localhost:10000/chats/" + chatID);
+            URL url = new URL(Config.BASE_HTTP_URL + "chats/" + chatID);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
 
@@ -126,7 +127,7 @@ public class ChatApi {
 
     public ChatGroupResponse createGroupChat(String nameGroup, Long currentUserId, List<Long> memberIds, File imageFile) {
         try {
-            String url = "http://localhost:10000/api/groups";
+            String url = Config.BASE_HTTP_URL + "api/groups";
 
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -174,7 +175,7 @@ public class ChatApi {
 
     public boolean deleteGroupChat(Long groupId) {
         try {
-            URL url = new URL("http://localhost:10000/api/groups/" + groupId);
+            URL url = new URL( Config.BASE_HTTP_URL + "api/groups/" + groupId);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("DELETE");
 

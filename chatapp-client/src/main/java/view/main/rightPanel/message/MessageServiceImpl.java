@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.MessageResponse;
+import utility.Config;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,7 +13,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public MessageResponse[] getMessageByChatId(Long chatId, String jwtToken) {
         try{
-            String url = "http://localhost:10000/chats/" + chatId + "/messages";
+            String url = Config.BASE_HTTP_URL + "chats/" + chatId + "/messages";
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer " + jwtToken);
@@ -35,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     public MessageResponse[] getGroupMessageByGroupId(Long groupId, String jwtToken) {
 
         try{
-            String url = "http://localhost:10000/api/groups/" + groupId + "/messages";
+            String url = Config.BASE_HTTP_URL + "api/groups/" + groupId + "/messages";
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer " + jwtToken);

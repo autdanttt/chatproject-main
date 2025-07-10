@@ -5,28 +5,21 @@ import com.google.common.eventbus.Subscribe;
 import di.BaseController;
 import event.ChatSelectedEvent;
 import event.FullNameUpdateEvent;
-import event.GroupRenamedEvent;
 import model.ChatGroupDTO;
-import model.ChatGroupResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import view.main.UserToken;
 import view.main.dialog.Rename.RenameGroupDialog;
+import view.main.dialog.Rename.RenameGroupImpl;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import view.main.dialog.Rename.RenameGroupImpl;
-import view.main.rightPanel.otherInfoTop.InfoOtherAndFeature;
-import view.main.rightPanel.otherInfoTop.InfoOtherAndFeatureController;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.function.Consumer;
 
 

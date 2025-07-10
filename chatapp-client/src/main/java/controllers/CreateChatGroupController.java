@@ -3,17 +3,12 @@ package controllers;
 import api.ChatApi;
 import api.UserApi;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import di.BaseController;
 import event.ChatCreatedEvent;
-import event.TakeUserID;
-import model.ChatGroupResponse;
-import model.User;
 import model.UserOther;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.login.TokenManager;
-import view.main.UserToken;
 import view.main.dialog.CreateGroupChat;
 
 import javax.inject.Inject;

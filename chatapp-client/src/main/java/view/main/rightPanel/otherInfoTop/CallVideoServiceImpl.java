@@ -6,15 +6,15 @@ import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import payload.CallRequestPayload;
+import utility.Config;
 import view.ErrorDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class CallVideoServiceImpl implements CallVideoService{
-    private static final String CALL_REQUEST_URL = "http://localhost:10000/video-call/call-request";
+    private static final String CALL_REQUEST_URL = Config.BASE_HTTP_URL + "video-call/call-request";
 
     private Logger logger = LoggerFactory.getLogger(CallVideoServiceImpl.class);
 
