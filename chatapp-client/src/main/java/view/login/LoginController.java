@@ -50,6 +50,8 @@ public class LoginController extends BaseController {
                 TokenManager.setAvatarUrl(userLogin.getAvatarUrl());
                 if (userLogin.getStatusCode() == 200) {
                     navigator.navigateTo("MainChat", userLogin.getUserId(), userLogin.getEmail(), userLogin.getFullName(), userLogin.getAvatarUrl(), TokenManager.getAccessToken());
+                } else {
+                    JOptionPane.showMessageDialog(loginView,"Email và mật khẩu không chính xác. Vui lòng nhập lại");
                 }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);

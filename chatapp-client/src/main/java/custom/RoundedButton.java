@@ -1,19 +1,24 @@
 package custom;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class RoundedButton extends JButton {
-    private Color normalTextColor = Color.WHITE;
-    private Color hoverTextColor = Color.decode("#090040");
+    Dotenv dotenv = Dotenv.load();
+    String COLOR_BG = dotenv.get("COLOR_BG");
 
-    private Color normalBackgroundColor = Color.decode("#090040");
-    private Color hoverBackgroundColor = Color.WHITE;
+    private final Color normalTextColor = Color.WHITE;
+    private final Color hoverTextColor = Color.decode("#090040");
+
+    private final Color normalBackgroundColor = Color.decode("#090040");
+    private final Color hoverBackgroundColor = Color.WHITE;
 
     private float animationProgress = 0.0f;
-    private Timer animationTimer;
+    private final Timer animationTimer;
     private boolean hovering = false;
 
     public RoundedButton(String text) {
