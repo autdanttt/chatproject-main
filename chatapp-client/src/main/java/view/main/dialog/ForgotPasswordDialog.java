@@ -33,6 +33,7 @@ public class ForgotPasswordDialog extends JDialog {
         gbc.insets = new Insets(8, 0, 0, 0);
 
         JLabel titleLabel = new JLabel("QUÊN MẬT KHẨU", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.decode("#090040"));
         titleLabel.setFont(new Font("Montserrat", Font.BOLD, 25));
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -44,7 +45,8 @@ public class ForgotPasswordDialog extends JDialog {
         gbc.insets = new Insets(4, 0, 4, 0);
         gbc.gridwidth = 1;
         JLabel emailLabel = new JLabel("Nhập email:");
-        emailLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        emailLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
+        emailLabel.setForeground(Color.decode("#090040"));
         gbc.gridx = 0;
         gbc.gridy = 1;
         contentPanel.add(emailLabel, gbc);
@@ -69,7 +71,8 @@ public class ForgotPasswordDialog extends JDialog {
 
         // Nhập OTP
         JLabel otpLabel = new JLabel("Nhập OTP:");
-        otpLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        otpLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
+        otpLabel.setForeground(Color.decode("#090040"));
         gbc.gridx = 0;
         gbc.gridy = 3;
         contentPanel.add(otpLabel, gbc);
@@ -82,7 +85,8 @@ public class ForgotPasswordDialog extends JDialog {
 
         // Nhập mật khẩu mới
         JLabel newPasswordLabel = new JLabel("Nhập mật khẩu mới:");
-        newPasswordLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        newPasswordLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
+        newPasswordLabel.setForeground(Color.decode("#090040"));
         gbc.gridx = 0;
         gbc.gridy = 5;
         contentPanel.add(newPasswordLabel, gbc);
@@ -95,7 +99,8 @@ public class ForgotPasswordDialog extends JDialog {
 
         // Nhập lại mật khẩu
         JLabel confirmPasswordLabel = new JLabel("Nhập lại mật khẩu:");
-        confirmPasswordLabel.setFont(new Font("Montserrat", Font.PLAIN, 14));
+        confirmPasswordLabel.setFont(new Font("Montserrat", Font.BOLD, 14));
+        confirmPasswordLabel.setForeground(Color.decode("#090040"));
         gbc.gridx = 0;
         gbc.gridy = 7;
         contentPanel.add(confirmPasswordLabel, gbc);
