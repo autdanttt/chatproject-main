@@ -55,7 +55,7 @@ public class ChatGroupService {
         if(!"".equals(image)){
             group.setImage(image);
         }else {
-            group.setImage("https://res.cloudinary.com/dm8tfyppk/image/upload/v1751297593/avatar/default.jpg");
+            group.setImage("https://res.cloudinary.com/dm8tfyppk/image/upload/v1752140380/group/default.jpg");
         }
 
         chatGroupRepository.save(group);
