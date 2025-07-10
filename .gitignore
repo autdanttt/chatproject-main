@@ -13,7 +13,8 @@ docker-compose.yml
 /chatapp-client/activity-chart
 # Logs
 *.log
-
+/redis-data
+/chatapp-server/.env
 # Dependency directories
 /lib/
 /libs/
