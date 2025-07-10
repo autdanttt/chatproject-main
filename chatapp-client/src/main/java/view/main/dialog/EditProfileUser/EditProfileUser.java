@@ -1,11 +1,10 @@
-package view.main.dialog;
+package view.main.dialog.EditProfileUser;
 
 import custom.RoundedButton;
 import custom.RoundedPasswordField;
 import custom.RoundedTextField;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -125,7 +124,52 @@ public class EditProfileUser extends JDialog {
         setContentPane(mainPanel);
     }
 
+    public JTextField getUsernameField() {
+        return usernameField;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
+    }
+
+    public JLabel getAvatarLabel() {
+        return avatarLabel;
+    }
+
+    public JButton getUploadButton() {
+        return uploadButton;
+    }
+
+    public JButton getSubmitButton() {
+        return submitButton;
+    }
+
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
     public void addCacelActionListener(ActionListener e) {
         cancelButton.addActionListener(e);
     }
+
+    public void addSubmitActionListener(ActionListener listener) {
+        submitButton.addActionListener(listener);
+    }
+
+    public void addUploadActionListener(ActionListener listener) {
+        uploadButton.addActionListener(listener);
+    }
+
+    public String getUsername() {
+        return usernameField.getText().trim();
+    }
+
+    public String getPassword() {
+        return new String(passwordField.getPassword());
+    }
+
+    public void setAvatarImage(String imagePath) {
+        avatarLabel.setIcon(new ImageIcon(new ImageIcon(imagePath).getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+    }
+
 }

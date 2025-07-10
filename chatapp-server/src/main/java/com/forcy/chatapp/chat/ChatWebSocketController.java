@@ -7,12 +7,14 @@ import com.forcy.chatapp.message.MessageDeliveryRepository;
 import com.forcy.chatapp.message.MessageMapper;
 import com.forcy.chatapp.message.MessageRepository;
 import com.forcy.chatapp.message.MessageResponse;
+import com.forcy.chatapp.redis.StatusNotification;
 import com.forcy.chatapp.security.InMemorySessionManager;
 import com.forcy.chatapp.user.UserNotFoundException;
 import com.forcy.chatapp.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -21,11 +23,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class ChatWebSocketController {
@@ -37,17 +42,20 @@ public class ChatWebSocketController {
 
     private MessageDeliveryRepository messageDeliveryRepository;
 
+    private RedisTemplate<String, String> redisTemplate;
+
     // A → B (ai đang xem ai)
     private final Map<String, String> watchingMap = new ConcurrentHashMap<>();
 
     private UserRepository userRepository;
 
-    public ChatWebSocketController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, UserRepository userRepository, MessageDeliveryRepository messageDeliveryRepository, InMemorySessionManager inMemorySessionManager) {
+    public ChatWebSocketController(SimpMessagingTemplate messagingTemplate, MessageRepository messageRepository, UserRepository userRepository, MessageDeliveryRepository messageDeliveryRepository, InMemorySessionManager inMemorySessionManager, RedisTemplate redisTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.messageDeliveryRepository = messageDeliveryRepository;
         this.inMemorySessionManager = inMemorySessionManager;
+        this.redisTemplate = redisTemplate;
     }
 
     @MessageMapping("/ready")
@@ -102,7 +110,8 @@ public class ChatWebSocketController {
         User otherUser = userRepository.findById(watchingRequest.getOtherUserId())
                         .orElseThrow(() -> new UserNotFoundException(watchingRequest.getOtherUserId()));
 
-        watchingMap.put(user.getEmail(), otherUser.getEmail());
+//        watchingMap.put(user.getEmail(), otherUser.getEmail());
+        redisTemplate.opsForSet().add("user:" + otherUser.getEmail()+":watchers", user.getEmail());
     }
     // B gửi heartbeat
     @MessageMapping("/heartbeat")
@@ -115,20 +124,41 @@ public class ChatWebSocketController {
 
 
         String fromEmail = user.getEmail();
-        inMemorySessionManager.updateLastSeen(fromEmail);
+//        inMemorySessionManager.updateLastSeen(fromEmail);
+
+        redisTemplate.opsForValue().set("user:" + fromEmail + ":status", "online", Duration.ofSeconds(60));
+        Long ttl = redisTemplate.getExpire("user:" + fromEmail + ":status", TimeUnit.SECONDS);
+        logger.info("✅ [TTL Check] TTL for user {}: {}s", fromEmail, ttl);
+
+        redisTemplate.opsForValue().set("user:" + fromEmail + ":lastSeen", String.valueOf(System.currentTimeMillis()));
 
         UserStatus status = new UserStatus(fromEmail, "Đang hoạt động");
-
-        watchingMap.forEach((viewerEmail, watchingTarget) -> {
-            if (watchingTarget.equals(fromEmail)) {
+        StatusNotification notification = new StatusNotification();
+        notification.setEmail(fromEmail);
+        notification.setStatus("online");
+        notification.setLast(null);
+        // Lấy watchers từ Redis và notify
+        Set<String> watchers = redisTemplate.opsForSet().members("user:" + fromEmail + ":watchers");
+        if (watchers != null) {
+            for (String viewerEmail : watchers) {
                 logger.info("Send heartbeat to user: {}", viewerEmail);
                 messagingTemplate.convertAndSendToUser(
-                        viewerEmail, "/queue/heartbeat", status
+                        viewerEmail, "/queue/status",notification
                 );
             }
-        });
+        }
+
+//        watchingMap.forEach((viewerEmail, watchingTarget) -> {
+//            if (watchingTarget.equals(fromEmail)) {
+//                logger.info("Send heartbeat to user: {}", viewerEmail);
+//                messagingTemplate.convertAndSendToUser(
+//                        viewerEmail, "/queue/heartbeat", status
+//                );
+//            }
+//        });
     }
     // Scheduled task để phát hiện người mất kết nối và báo lại
+    @Deprecated
     @Scheduled(fixedRate = 60_000)
     public void notifyOfflineStatus() {
         long now = System.currentTimeMillis();

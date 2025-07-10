@@ -6,14 +6,14 @@ import com.google.inject.Inject;
 import custom.ConfirmCustom;
 import custom.RoundedImageUtil;
 import di.BaseController;
-import event.ChatSelectedEvent;
 import event.UserLogoutEvent;
+import event.UserProfileUpdatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import view.login.TokenManager;
 import view.main.UserToken;
 import view.main.dialog.AvatarPopupMenu;
-import view.main.dialog.EditProfileUser;
+import view.main.dialog.EditProfileUser.EditProfileUser;
 import view.main.rightPanel.components.HeaderRightPanel;
 
 import javax.swing.*;
@@ -82,6 +82,12 @@ public class HeaderRightController extends BaseController {
         setFullName(userToken.getFullName());
         setAvatarIcon(userToken.getAvatarUrl());
     }
+    @Subscribe
+    public void onUserProfileUpdated(UserProfileUpdatedEvent event) {
+        setFullName(event.getFullName());
+        setAvatarIcon(event.getAvatarUrl());
+    }
+
 
     private void setFullName(String fullName) {
         headerRightPanel.getUserLabel().setText(fullName);
