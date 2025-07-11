@@ -5,10 +5,6 @@ import custom.RoundedButton;
 import custom.RoundedPanel;
 import custom.RoundedTextField;
 import model.UserOther;
-import model.UserOther;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import view.login.LoginController;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -36,10 +32,7 @@ public class CreateChat extends JDialog {
         headerPanel.setLayout(new GridLayout(2, 1));
         JLabel title = new JLabel("Danh sách người dùng");
         title.setFont(new Font("Montserrat", Font.BOLD, 20));
-        JTextField searchtxt = new RoundedTextField(20);
-        headerPanel.setPreferredSize(new Dimension(500, 100));
         headerPanel.add(title);
-        headerPanel.add(searchtxt);
 
         JPanel contentPanel = new RoundedPanel(20, Color.WHITE, Color.decode("#33333"), 2);
         userListModel = new DefaultListModel<>();

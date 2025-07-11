@@ -3,6 +3,7 @@ package view.main.leftPanel.chatlist;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import di.BaseController;
 import event.*;
 import model.ChatGroupResponse;
 import model.ChatItem;
@@ -10,7 +11,6 @@ import model.ChatResponse;
 import model.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import di.BaseController;
 import view.login.TokenManager;
 import view.main.UserToken;
 
@@ -60,7 +60,6 @@ public class ChatListController extends BaseController {
                     String type = selectedChat.getOtherUserId() == null ? "GROUP" : "CHAT";
                     eventBus.post(new ChatSelectedEvent(selectedChat.getChatId(), selectedChat.getOtherUserId(), type));
                     eventBus.post(new FullNameUpdateEvent(selectedChat.getOtherUserFullName(), selectedChat.getAvatarUrl()));
-                    logger.info("nameeeeeeeee: "+ selectedChat.getOtherUserFullName());
                 }
             }
         });
@@ -139,6 +138,7 @@ public class ChatListController extends BaseController {
             chatListPanel.getChatListModel().addElement(item);
         }
     }
+
     @Subscribe
     public void addMessage(MessageResponse response) {
         updateChatListOnNewMessage(response);
@@ -151,7 +151,7 @@ public class ChatListController extends BaseController {
         JList<ChatItem> chatList = chatListPanel.getChatList();
         DefaultListModel<ChatItem> model = chatListPanel.getChatListModel();
 
-        // ✅ Lưu lại ID của chat hiện đang được chọn
+        // Lưu lại ID của chat hiện đang được chọn
         Long selectedChatId = null;
         boolean selectedIsGroup = false;
 
@@ -161,7 +161,7 @@ public class ChatListController extends BaseController {
             selectedIsGroup = (selectedItem.getOtherUserId() == null);
         }
 
-        // ✅ Tìm và cập nhật hoặc tạo ChatItem mới
+        // Tìm và cập nhật hoặc tạo ChatItem mới
         for (int i = 0; i < model.size(); i++) {
             ChatItem item = model.get(i);
 
@@ -210,7 +210,7 @@ public class ChatListController extends BaseController {
             model.add(0, newItem);
         }
 
-        // ✅ Restore lại selection nếu chat đang mở không phải cái vừa update
+        //  Restore lại selection nếu chat đang mở không phải cái vừa update
         if (selectedChatId != null) {
             for (int i = 0; i < model.size(); i++) {
                 ChatItem item = model.get(i);
@@ -222,120 +222,6 @@ public class ChatListController extends BaseController {
             }
         }
     }
-
-
-//    public void updateChatListOnNewMessage(MessageResponse message) {
-//        boolean isGroup = message.getGroupId() != null;
-//        Long key = isGroup ? message.getGroupId() : message.getChatId();
-//
-//        DefaultListModel<ChatItem> model = chatListPanel.getChatListModel();
-//
-//        // 1. Kiểm tra nếu ChatItem đã tồn tại trong model → cập nhật rồi di chuyển lên đầu
-//        for (int i = 0; i < model.size(); i++) {
-//            ChatItem item = model.get(i);
-//
-//            boolean isSameType = (item.getOtherUserId() == null) == isGroup; // true nếu cùng kiểu group hoặc private
-//            if (Objects.equals(item.getChatId(), key) && isSameType) {
-//                item.setLastMessage(message.getContent());
-//                item.setLastMessageTime(message.getSentAt());
-//                model.remove(i);
-//                model.add(0, item);
-//                return;
-//            }
-//        }
-//
-//        // 2. Nếu chưa có → lấy từ cache
-//        ChatItem cached = isGroup ? groupChatCache.get(key) : privateChatCache.get(key);
-//
-//        ChatItem newItem;
-//        if (cached != null) {
-//            newItem = ChatItem.builder()
-//                    .chatId(cached.getChatId())
-//                    .otherUserId(cached.getOtherUserId())
-//                    .otherUserFullName(cached.getOtherUserFullName())
-//                    .lastMessage(message.getContent())
-//                    .lastMessageTime(message.getSentAt())
-//                    .avatarUrl(cached.getAvatarUrl())
-//                    .build();
-//        } else {
-//            // 3. Nếu cache cũng không có → tạo mới đơn giản, avatarUrl = null (hiển thị avatar mặc định)
-//            newItem = ChatItem.builder()
-//                    .chatId(key)
-//                    .otherUserId(isGroup ? null : message.getFromUserId())
-//                    .otherUserFullName(message.getFromFullName())
-//                    .lastMessage(message.getContent())
-//                    .lastMessageTime(message.getSentAt())
-//                    .avatarUrl(null)
-//                    .build();
-//        }
-//
-//        model.add(0, newItem);
-//    }
-
-
-//    public void updateChatListOnNewMessage(MessageResponse message) {
-//        DefaultListModel<ChatItem> model = chatListPanel.getChatListModel();
-//
-//        for (int i = 0; i < model.size(); i++) {
-//            ChatItem item = model.get(i);
-//
-//            boolean isGroupMessage = message.getGroupId() != null;
-//
-//            boolean isMatch = isGroupMessage
-//                    ? Objects.equals(item.getChatId(), message.getGroupId()) && item.getOtherUserId() == null
-//                    : Objects.equals(item.getChatId(), message.getChatId()) && item.getOtherUserId() != null;
-//
-//            if (isMatch) {
-//                item.setLastMessage(message.getContent());
-//                item.setLastMessageTime(message.getSentAt());
-//
-//                // Di chuyển lên đầu danh sách
-//                model.remove(i);
-//                model.add(0, item);
-//                return;
-//            }
-//        }
-//
-//        // Nếu là cuộc trò chuyện mới, thêm mới vào đầu danh sách
-//        ChatItem newItem = new ChatItem(
-//                message.getGroupId() != null ? message.getGroupId() : message.getChatId(),
-//                message.getGroupId() == null ? message.getFromUserId() : null,
-//                message.getFromFullName(),
-//                message.getContent(),
-//                message.getSentAt(),
-//                message// avatarUrl, bạn có thể thêm nếu biết URL
-//        );
-//        model.add(0, newItem);
-//    }
-
-//    public void reloadChatList() {
-//        ChatResponse[] list = getListChat();
-//        chatListPanel.getChatListModel().clear();
-//
-//        for (ChatResponse chat : list) {
-//            chatListPanel.getChatListModel().addElement(new ChatItem(
-//                    chat.getChatId(),
-//                    chat.getOtherUserId(),
-//                    chat.getOtherUserFullName(),
-//                    chat.getLastMessage(),
-//                    chat.getLastMessageTime(),
-//                    chat.getImageUrl()
-//            ));
-//        }
-//
-//
-//        ChatGroupResponse[] listGroup = chatListService.getChatGroupList(TokenManager.getAccessToken());
-//        for (ChatGroupResponse group : listGroup) {
-//            chatListPanel.getChatListModel().addElement(new ChatItem(
-//                    group.getGroupId(),
-//                    null,
-//                    group.getGroupName(),
-//                    group.getLastMessageContent(),
-//                    group.getLastMessageTime(),
-//                    group.getImageUrl()
-//            ));
-//        }
-//    }
 
     @Subscribe
     public void onUserLogout(UserLogoutEvent event) {

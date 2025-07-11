@@ -3,14 +3,16 @@ package view.main.dialog.EditProfileUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.UpdateUserRequest;
 import model.UserOther;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import java.io.File;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import utility.Config;
+
+import java.io.File;
 import java.util.List;
 
 
@@ -20,7 +22,7 @@ public class EditProfileImpl implements EditProfileService {
     @Override
     public UserOther editProfile(UpdateUserRequest updateUserRequest, File imageFile, String jwtToken) {
         try {
-            String url = "http://localhost:10000/api/users/update";
+            String url = Config.BASE_HTTP_URL + "api/users/update";
 
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();

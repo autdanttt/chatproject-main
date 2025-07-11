@@ -1,7 +1,6 @@
 package view.main.dialog.Rename;
 
 import model.ChatGroupDTO;
-import model.ChatGroupResponse;
 
 import java.io.File;
 

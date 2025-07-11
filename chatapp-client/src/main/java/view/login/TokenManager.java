@@ -1,10 +1,5 @@
 package view.login;
 
-import lombok.Getter;
-import lombok.Setter;
-import view.main.dialog.EditProfileUser.EditProfileUser;
-@Getter
-@Setter
 public class TokenManager {
     private static Long userId;
     private static String accessToken;
@@ -25,16 +20,16 @@ public class TokenManager {
         return accessToken;
     }
 
-    public static void setAccessToken(String token) {
-        accessToken = token;
+    public static void setAccessToken(String accessToken) {
+        TokenManager.accessToken = accessToken;
     }
 
     public static String getRefreshToken() {
         return refreshToken;
     }
 
-    public static void setRefreshToken(String token) {
-        refreshToken = token;
+    public static void setRefreshToken(String refreshToken) {
+        TokenManager.refreshToken = refreshToken;
     }
 
     public static String getEmail() {
@@ -45,6 +40,22 @@ public class TokenManager {
         TokenManager.email = email;
     }
 
+    public static String getFullName() {
+        return fullName;
+    }
+
+    public static void setFullName(String fullName) {
+        TokenManager.fullName = fullName;
+    }
+
+    public static String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public static void setAvatarUrl(String avatarUrl) {
+        TokenManager.avatarUrl = avatarUrl;
+    }
+
     public static void clear() {
         userId = null;
         accessToken = null;
@@ -52,21 +63,5 @@ public class TokenManager {
         email = null;
         fullName = null;
         avatarUrl = null;
-    }
-
-    public static void setFullName(String fullName) {
-        TokenManager.fullName = fullName;
-    }
-
-    public static void setAvatarUrl(String avatarUrl) {
-        TokenManager.avatarUrl = avatarUrl;
-    }
-
-    public static String getFullName() {
-        return fullName;
-    }
-
-    public static String getAvatarUrl() {
-        return avatarUrl;
     }
 }

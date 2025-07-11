@@ -1,9 +1,9 @@
 package view.main.rightPanel;
 
 import com.google.inject.Inject;
+import controllers.HeaderRightController;
 import view.main.rightPanel.components.CenterRightPanel;
 import view.main.rightPanel.components.FooterRightPanel;
-import controllers.HeaderRightController;
 import view.main.rightPanel.components.HeaderRightPanel;
 import view.main.rightPanel.message.MessageController;
 import view.main.rightPanel.message.MessagePanel;
@@ -42,7 +42,7 @@ public class RightPanel extends JPanel {
     }
 
     public void reload() {
-        revalidate();         // Cập nhật lại layout nếu cần
-        repaint();            // Vẽ lại
+        revalidate();
+        repaint();
     }
 }

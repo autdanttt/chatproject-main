@@ -6,14 +6,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import dev.onvoid.webrtc.media.audio.AudioDevice;
-import dev.onvoid.webrtc.media.video.VideoDevice;
-import event.MessageSeenEvent;
-import model.ReadyMessage;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCSdpType;
 import dev.onvoid.webrtc.RTCSessionDescription;
+import dev.onvoid.webrtc.media.audio.AudioDevice;
+import dev.onvoid.webrtc.media.video.VideoDevice;
+import event.ChatSelectedEvent;
+import event.MessageSeenEvent;
 import model.MessageResponse;
+import model.ReadyMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -28,8 +29,6 @@ import payload.*;
 import view.*;
 import view.login.TokenManager;
 import view.main.UserToken;
-import event.ChatSelectedEvent;
-import view.main.rightPanel.otherInfoTop.UserStatus;
 
 import javax.swing.*;
 import java.lang.reflect.Type;
@@ -42,7 +41,8 @@ import java.util.concurrent.TimeoutException;
 
 public class WebSocketClientManager {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketClientManager.class);
-    private final static String url = "ws://localhost:10000/chat";
+//    private final static String url = "ws://localhost:10000/chat";
+    private final static String url = Config.BASE_WS_URL+ "chat";
     private StandardWebSocketClient webSocketClient;
     private StompSession stompSession;
     private final EventBus eventBus;
@@ -350,7 +350,7 @@ public class WebSocketClientManager {
 
             try {
                 RestTemplate restTemplate = new RestTemplate();
-                String url = "http://localhost:10000/video-call/call-response";
+                String url = Config.BASE_HTTP_URL + "video-call/call-response";
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
@@ -497,111 +497,6 @@ public class WebSocketClientManager {
             logger.info("Can't send hangup event since stomp session is not connected");
         }
     }
-//    public ConnectionResult setupWebSocket(String jwtToken, String username) {
-//        webSocketClient = new StandardWebSocketClient();
-//        WebSocketStompClient stompClient = new WebSocketStompClient(webSocketClient);
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        objectMapper.registerModule(new JSR310Module());
-//        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-//        converter.setObjectMapper(objectMapper);
-//        stompClient.setMessageConverter(converter);
-//
-//
-//        StompHeaders headers = new StompHeaders();
-//        headers.add("Authorization", "Bearer " + jwtToken);
-//        logger.info("Connecting with headers: " + headers);
-//
-//        StompSessionHandler sessionHandler = new StompSessionHandlerAdapter() {
-//            @Override
-//            public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
-//                stompSession = session;
-//                logger.info("Connected to WebSocket server: {}", connectedHeaders);
-//
-//                session.subscribe("/user/queue/messages", new StompFrameHandler() {
-//
-//                    @Override
-//                    public Type getPayloadType(StompHeaders headers) {
-//                        return MessageResponse.class;
-//                    }
-//
-//                    @Override
-//                    public void handleFrame(StompHeaders headers, Object payload) {
-//                        MessageResponse message = (MessageResponse) payload;
-////                        if (message != null && currentChatId != null && message.getChatId() != null && message.getChatId().equals(currentChatId)) {
-////                            String display = "[" + message.getFromUserId() + "]: " + message.getContent();
-////                            logger.info("Received message for chat {}: {}", currentChatId, display);
-////
-////                            String content = message.getContent();
-////
-////                            //  MessageType messageType = message.getMessageType().equals("TEXT") ? MessageType.TEXT : MessageType.EMOJI;
-////
-////                            MessageType messageType;
-////                            if (message.getMessageType().equals("TEXT")){
-////                                messageType = MessageType.TEXT;
-////                            } else if (message.getMessageType().equals("EMOJI")) {
-////                                messageType = MessageType.EMOJI;
-////                            }else {
-////                                messageType = MessageType.IMAGE;
-////                            }
-////
-////                            SwingUtilities.invokeLater(() -> view.addMessage(content, message.getFromUserId(), message.getFromUserId().equals(userId),
-////                                    message.getSentAt() != null ? message.getSentAt().format(DateTimeFormatter.ofPattern("HH:mm")) : "N/A",messageType));
-////                        } else {
-////                            logger.warn("Received null or irrelevant message for chatId: {}", currentChatId);
-////                        }
-//                        if(message != null){
-//                            logger.info("Message received: {}", message.getContent());
-//                            eventBus.post(message);
-//
-//                        }else {
-//                            logger.warn("received null message from websocket");
-//                        }
-//
-//                    }
-//                });
-//                ReadyMessage readyMessage = new ReadyMessage();
-//                readyMessage.setSender(username);
-//                readyMessage.setType("READY");
-//                session.send("/app/ready", readyMessage);
-//                logger.info("Sent ready message for user: {}", username);
-//
-//                subscribeToSdp();
-//                subscribeToCandidate();
-//            }
-//
-//            @Override
-//            public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
-//                logger.error("Session exception: {}", exception.getMessage(), exception);
-//            }
-//
-//            @Override
-//            public void handleTransportError(StompSession session, Throwable exception) {
-//                logger.error("Transport error: {}", exception.getMessage(), exception);
-//            }
-//        };
-//
-//
-//        if (sessionHandler == null) {
-//            logger.error("StompSessionHandler cannot be null");
-//            throw new IllegalStateException("StompSessionHandler cannot be null");
-//        }
-//        logger.info("Connecting to {}", url);
-//        logger.info("🔐 JWT Token: {}", jwtToken);
-//
-//        CompletableFuture<StompSession> future = stompClient.connectAsync(url, (WebSocketHttpHeaders) null, headers, sessionHandler);
-//        future.whenComplete((stompSession, throwable) -> {
-//            if (throwable != null) {
-//                logger.error("Connection failed: {}", throwable.getMessage(), throwable);
-//            } else {
-//                logger.info("Connection succeeded: {}", stompSession.getSessionId());
-//            }
-//        });
-//
-//        return "kdfs1";
-//    }
-
-
 
 
 }

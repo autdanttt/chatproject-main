@@ -6,30 +6,23 @@ import com.google.inject.Inject;
 import controllers.RenameGroupController;
 import custom.RoundedImageUtil;
 import di.BaseController;
+import event.ChatSelectedEvent;
 import event.FullNameUpdateEvent;
 import event.GroupRenamedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import utility.OtherUserStatusEvent;
 import utility.StatusNotification;
-import utility.WebRTCManager;
 import view.ErrorDTO;
 import view.login.TokenManager;
 import view.main.UserToken;
-import event.ChatSelectedEvent;
 import view.main.dialog.Rename.RenameGroupDialog;
 import view.main.dialog.Rename.RenameGroupService;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
-
 import java.util.Timer;
 import java.util.TimerTask;
 

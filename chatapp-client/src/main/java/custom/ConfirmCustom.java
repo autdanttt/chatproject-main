@@ -9,9 +9,9 @@ public class ConfirmCustom extends JDialog {
     public ConfirmCustom(Frame parent, String message, String title, ImageIcon icon, String cancel, String confirm) {
         super(parent, title, true);
         setLayout(new BorderLayout());
-        setUndecorated(true);
-        getContentPane().setBackground(Color.decode("#A7C1A8"));
+//        setUndecorated(true);
         JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         // Message + Icon

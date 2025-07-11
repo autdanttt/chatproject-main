@@ -1,13 +1,11 @@
 package view.main.dialog;
 
 import custom.RoundedImageUtil;
-import model.User;
 import model.UserOther;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.net.URL;
 
 
 public class UserItemRenderer extends DefaultListCellRenderer {
@@ -27,11 +25,13 @@ public class UserItemRenderer extends DefaultListCellRenderer {
         avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         ImageIcon avatarUser = RoundedImageUtil.loadRoundedAvatarFromURL(user.getAvatarUrl(), 40);
-        if (avatarUser != null) {
-            avatarLabel.setIcon(avatarUser);
-        } else {
-            avatarLabel.setIcon(RoundedImageUtil.loadRoundedAvatarFromFile(basePath + "/images/DEFAULT_AVATAR.png", 40));
-        }
+//        if (avatarUser != null) {
+//            avatarLabel.setIcon(avatarUser);
+//        } else {
+//            avatarLabel.setIcon(RoundedImageUtil.loadRoundedAvatarFromFile(basePath + "/images/DEFAULT_AVATAR.png", 40));
+//        }
+
+        avatarLabel.setIcon(avatarUser);
 
 
         JLabel usernameLabel = new JLabel(user.getFullName());

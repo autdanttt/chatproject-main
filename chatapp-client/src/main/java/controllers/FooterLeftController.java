@@ -6,12 +6,12 @@ import com.google.common.eventbus.Subscribe;
 import custom.ConfirmCustom;
 import di.BaseController;
 import event.ChatDeletedEvent;
+import event.ChatSelectedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import event.ChatSelectedEvent;
-import view.main.leftPanel.components.FooterPanel;
 import view.main.dialog.CreateChat;
 import view.main.dialog.CreateGroupChat;
+import view.main.leftPanel.components.FooterPanel;
 
 import javax.inject.Inject;
 import javax.swing.*;
@@ -76,8 +76,23 @@ public class FooterLeftController extends BaseController {
                     }
                     break;
                 case "GROUP":
-                    boolean successDeleteChatGroup = chatApi.deleteGroupChat(chatIdBoth);
-                    eventBus.post(new ChatDeletedEvent(chatIdBoth));
+//                    if (!currentUserId.equals(creatorId)) {
+//                        JOptionPane.showMessageDialog(mainJFrame,
+//                                "Bạn không phải người tạo nhóm, không thể xóa.",
+//                                "Không đủ quyền",
+//                                JOptionPane.WARNING_MESSAGE);
+//                        return; // Không gọi API
+//                    }
+                    boolean confirmDeleteGroup = ConfirmCustom.showConfirmDialog(mainJFrame,
+                            "Bạn có muốn xóa nhóm này không?",
+                            "Xác nhận xóa nhóm",
+                            imageIcon,
+                            "Hủy",
+                            "Xóa nhóm");
+                    if (confirmDeleteGroup) {
+                        boolean successDeleteChatGroup = chatApi.deleteGroupChat(chatIdBoth);
+                        eventBus.post(new ChatDeletedEvent(chatIdBoth));
+                    }
                     break;
             }
         });

@@ -1,7 +1,6 @@
 package view.main.dialog.Rename;
 
 import custom.RoundedButton;
-import custom.RoundedPasswordField;
 import custom.RoundedTextField;
 
 import javax.swing.*;

@@ -127,9 +127,9 @@ public class LoginView extends JFrame {
         forgetPasswordButton.addActionListener(listener);
     }
 
-    public void addResetPasswordButtonListener(ActionListener listener) {
-        forgetPasswordButton.addActionListener(listener);
-    }
+   public JPasswordField takeConfirmPassWordJPasswordField() {
+        return passwordField;
+   }
 
     public String getUsername() {
         return usernameField.getText();
@@ -138,9 +138,5 @@ public class LoginView extends JFrame {
     public String getPassword() {
         return new String(passwordField.getPassword());
     }
-
-//    public void showError(String message) {
-//        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-//    }
 
 }

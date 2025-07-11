@@ -12,5 +12,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class HeartbeatRequest {
     @JsonProperty("user_id")
-    Long userId;
+    private Long userId;
 }

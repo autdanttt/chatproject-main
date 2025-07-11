@@ -4,6 +4,7 @@ package view.register;
 import custom.RoundedButton;
 import custom.RoundedPasswordField;
 import custom.RoundedTextField;
+import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class RegisterView extends JFrame {
+    @Getter
     private final JTextField emailField, fullNameField, passwordField, confirmPasswordField;
     private final JButton sendButton;
     private final JButton cancelButton;
@@ -134,6 +136,9 @@ public class RegisterView extends JFrame {
         return confirmPasswordField.getText();
     }
 
+    public JTextField takeConfirmPassWordJTextField() {
+        return confirmPasswordField;
+    }
 
     public void addRegisterButtonListener(ActionListener listener) {
         sendButton.addActionListener(listener);
