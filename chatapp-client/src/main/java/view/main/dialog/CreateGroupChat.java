@@ -4,19 +4,22 @@ import custom.ModernScrollBarUI;
 import custom.RoundedButton;
 import custom.RoundedPanel;
 import custom.RoundedTextField;
+import lombok.Getter;
 import model.UserOther;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CreateGroupChat extends JDialog {
-    private DefaultListModel<UserOther> userListModel;
-    private JList<UserOther> userList;
-    private JButton addBtnGroup;
-    private JTextField nameGrouptxt;
+    @Getter
+    private final DefaultListModel<UserOther> userListModel;
+    @Getter
+    private final JList<UserOther> userList;
+    private final JButton addBtnGroup;
+    @Getter
+    private final JTextField nameGrouptxt;
 
     public CreateGroupChat(JFrame parent) {
         super(parent, "Nhắn tin với người dùng", true);
@@ -29,7 +32,7 @@ public class CreateGroupChat extends JDialog {
         mainPanel.setLayout(new BorderLayout(5, 10));
 
         JPanel headerPanel = new JPanel();
-        headerPanel.setPreferredSize(new Dimension(500, 150));
+        headerPanel.setPreferredSize(new Dimension(500, 100));
         headerPanel.setBackground(Color.WHITE);
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
@@ -46,20 +49,7 @@ public class CreateGroupChat extends JDialog {
         nameGrouptxt = new RoundedTextField(20);
         nameGroupRow.add(nameGrouptxt, BorderLayout.CENTER);
 
-        JLabel selectionLabel = new JLabel("Đang chọn:");
-        selectionLabel.setFont(new Font("Montserrat", Font.PLAIN, 13));
-        selectionLabel.setBorder(new EmptyBorder(0, 10, 0, 0));
-        nameGroupRow.add(selectionLabel, BorderLayout.EAST);
-
         headerPanel.add(nameGroupRow);
-        headerPanel.add(Box.createVerticalStrut(10));
-
-        JTextField searchtxt = new RoundedTextField(20);
-        searchtxt.setText("Tìm kiếm người dùng...");
-        searchtxt.setAlignmentX(Component.LEFT_ALIGNMENT);
-        headerPanel.add(searchtxt);
-
-
         JPanel contentPanel = new RoundedPanel(20, Color.WHITE, Color.decode("#33333"), 2);
         userListModel = new DefaultListModel<>();
 
@@ -89,22 +79,6 @@ public class CreateGroupChat extends JDialog {
         add(mainPanel, BorderLayout.CENTER);
 
         setResizable(false);
-    }
-
-    public DefaultListModel<UserOther> getUserListModel() {
-        return userListModel;
-    }
-
-    public JTextField getNameGrouptxt() {
-        return nameGrouptxt;
-    }
-
-    public void selectItemInList(ListSelectionListener e) {
-        userList.addListSelectionListener(e);
-    }
-
-    public JList<UserOther> getUserList() {
-        return userList;
     }
 
     public void addBtnGroupListener(ActionListener actionListener) {

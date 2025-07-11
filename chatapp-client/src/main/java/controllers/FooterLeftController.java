@@ -76,6 +76,13 @@ public class FooterLeftController extends BaseController {
                     }
                     break;
                 case "GROUP":
+//                    if (!currentUserId.equals(creatorId)) {
+//                        JOptionPane.showMessageDialog(mainJFrame,
+//                                "Bạn không phải người tạo nhóm, không thể xóa.",
+//                                "Không đủ quyền",
+//                                JOptionPane.WARNING_MESSAGE);
+//                        return; // Không gọi API
+//                    }
                     boolean confirmDeleteGroup = ConfirmCustom.showConfirmDialog(mainJFrame,
                             "Bạn có muốn xóa nhóm này không?",
                             "Xác nhận xóa nhóm",
